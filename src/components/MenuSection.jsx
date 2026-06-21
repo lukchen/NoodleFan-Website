@@ -1,16 +1,10 @@
-import { useState } from 'react'
 import menu from '../data/menu'
 import { useCart } from '../context/CartContext'
 
 function MenuCard({ item, t, lang }) {
-  const { addItem } = useCart()
-  const [added, setAdded] = useState(false)
-
-  function handleAdd() {
-    addItem(item)
-    setAdded(true)
-    setTimeout(() => setAdded(false), 900)
-  }
+  const { items, addItem, updateQty } = useCart()
+  const cartItem = items.find(i => i.id === item.id)
+  const qty = cartItem?.qty ?? 0
 
   const imgSrc = item.image?.startsWith('/images/')
     ? `${import.meta.env.BASE_URL}${item.image.slice(1)}`
@@ -29,9 +23,16 @@ function MenuCard({ item, t, lang }) {
         )}
         <div className="menu-card-footer">
           <p className="menu-card-price">{t.menu.price(item.price)}</p>
-          <button className={`btn-add${added ? ' btn-add--added' : ''}`} onClick={handleAdd}>
-            {added ? '✓' : t.menu.add}
-          </button>
+          {qty === 0
+            ? <button className="btn-add" onClick={() => addItem(item)}>{t.menu.add}</button>
+            : (
+              <div className="btn-qty">
+                <button onClick={() => updateQty(item.id, qty - 1)}>−</button>
+                <span>{qty}</span>
+                <button onClick={() => addItem(item)}>+</button>
+              </div>
+            )
+          }
         </div>
       </div>
     </div>

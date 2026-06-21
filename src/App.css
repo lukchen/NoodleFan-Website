@@ -198,7 +198,34 @@ body {
 }
 
 .btn-add:hover { background: var(--color-accent-hover); }
-.btn-add--added { background: #27ae60 !important; }
+
+.btn-qty {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--color-accent);
+  border-radius: var(--radius);
+  padding: 0.2rem 0.3rem;
+}
+
+.btn-qty button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0 0.3rem;
+  line-height: 1;
+}
+
+.btn-qty span {
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  min-width: 1.2rem;
+  text-align: center;
+}
 
 /* ── Navbar cart button ── */
 .cart-btn {
