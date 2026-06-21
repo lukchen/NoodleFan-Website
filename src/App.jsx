@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import strings from './i18n/strings'
 import { CartProvider } from './context/CartContext'
 import Navbar from './components/Navbar'
@@ -9,10 +9,36 @@ import Checkout from './components/Checkout'
 import Footer from './components/Footer'
 import './App.css'
 
+function OrderSuccess({ t, onClose }) {
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal" onClick={e => e.stopPropagation()}>
+        <div className="checkout-success">
+          <div className="checkout-success-icon">✓</div>
+          <h2>{t.checkout.successTitle}</h2>
+          <p>{t.checkout.successMsg}</p>
+          <button className="btn-primary" style={{ marginTop: '1.5rem' }} onClick={onClose}>
+            {t.checkout.done}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function App() {
   const [lang, setLang] = useState('zh')
   const [checkoutOpen, setCheckoutOpen] = useState(false)
+  const [orderSuccess, setOrderSuccess] = useState(false)
   const t = { ...strings[lang], lang }
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('success') === 'true') {
+      setOrderSuccess(true)
+      window.history.replaceState({}, '', window.location.pathname)
+    }
+  }, [])
 
   return (
     <CartProvider>
@@ -22,8 +48,9 @@ export default function App() {
         <MenuSection t={t} lang={lang} />
       </main>
       <Footer t={t} />
-      <Cart t={t} onCheckout={() => setCheckoutOpen(true)} />
+      <Cart t={t} onCheckout={() => { setCheckoutOpen(true) }} />
       {checkoutOpen && <Checkout t={t} onClose={() => setCheckoutOpen(false)} />}
+      {orderSuccess && <OrderSuccess t={t} onClose={() => setOrderSuccess(false)} />}
     </CartProvider>
   )
 }

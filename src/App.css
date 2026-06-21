@@ -588,6 +588,15 @@ body {
   color: #fff;
 }
 
+.checkout-error {
+  font-size: 0.85rem;
+  color: #c0392b;
+  background: #fdf0ef;
+  border: 1px solid #f5c6c2;
+  border-radius: var(--radius);
+  padding: 0.6rem 0.9rem;
+}
+
 .checkout-submit {
   width: 100%;
   padding: 0.85rem;

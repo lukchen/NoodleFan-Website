@@ -1,14 +1,14 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useCart } from '../context/CartContext'
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../config'
 
 const TAX_RATE = 0.0625
 
-// Generate 30-min slots from 11:00 to 20:30 (8:30 PM last order)
 function buildSlots() {
   const slots = []
   for (let h = 11; h <= 20; h++) {
     for (const m of [0, 30]) {
-      if (h === 20 && m === 30) break // stop at 8:30 PM
+      if (h === 20 && m === 30) break
       const hh = String(h).padStart(2, '0')
       const mm = String(m).padStart(2, '0')
       const value = `${hh}:${mm}`
@@ -31,7 +31,7 @@ function toLocalDateString(date) {
 }
 
 export default function Checkout({ t, onClose }) {
-  const { items, totalPrice, clearCart } = useCart()
+  const { items, totalPrice } = useCart()
   const tax = totalPrice * TAX_RATE
   const grandTotal = totalPrice + tax
 
@@ -43,8 +43,7 @@ export default function Checkout({ t, onClose }) {
 
   const [form, setForm] = useState({ name: '', phone: '', date: today, time: '', note: '' })
   const [submitting, setSubmitting] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
-  const [confirmedOrder, setConfirmedOrder] = useState(null)
+  const [error, setError] = useState('')
 
   const isDirty = form.name || form.phone || (form.date && form.date !== today) || form.time || form.note
 
@@ -63,58 +62,42 @@ export default function Checkout({ t, onClose }) {
     onClose()
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
+    setError('')
     setSubmitting(true)
-    setTimeout(() => {
-      setConfirmedOrder({ items: [...items], form: { ...form }, grandTotal })
-      clearCart()
-      setSubmitted(true)
+    try {
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/create-checkout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          items,
+          customer: { name: form.name, phone: form.phone },
+          pickupDate: form.date,
+          pickupTime: form.time,
+          note: form.note,
+          subtotal: totalPrice,
+          tax,
+          total: grandTotal,
+        }),
+      })
+      if (!res.ok) throw new Error(await res.text())
+      const { url } = await res.json()
+      window.location.href = url
+    } catch {
+      setError(t.checkout.errorMsg)
       setSubmitting(false)
-    }, 800)
+    }
   }
 
   function formatDateLabel(dateStr) {
     if (dateStr === today) return t.checkout.dateToday
     if (dateStr === tomorrow) return t.checkout.dateTomorrow
-    // e.g. "Mon, Jun 23"
     const d = new Date(dateStr + 'T12:00:00')
     return d.toLocaleDateString(t.lang === 'zh' ? 'zh-CN' : 'en-US', { weekday: 'short', month: 'short', day: 'numeric' })
-  }
-
-  function formatTimeLabel(timeVal) {
-    const slot = TIME_SLOTS.find(s => s.value === timeVal)
-    return slot ? slot.label : timeVal
-  }
-
-  if (submitted && confirmedOrder) {
-    return (
-      <div className="modal-overlay" onClick={onClose}>
-        <div className="modal" onClick={e => e.stopPropagation()}>
-          <div className="checkout-success">
-            <div className="checkout-success-icon">✓</div>
-            <h2>{t.checkout.successTitle}</h2>
-            <p>{t.checkout.successMsg}</p>
-            <div className="checkout-success-summary">
-              {confirmedOrder.items.map(item => (
-                <div key={item.id} className="checkout-summary-row">
-                  <span>{t.lang === 'zh' ? item.nameZh : item.nameEn} × {item.qty}</span>
-                  <span>${(item.price * item.qty).toFixed(2)}</span>
-                </div>
-              ))}
-              <div className="checkout-summary-row checkout-summary-total">
-                <span>{t.cart.total}</span>
-                <span>${confirmedOrder.grandTotal.toFixed(2)}</span>
-              </div>
-              <div className="checkout-success-pickup">
-                🕐 {formatDateLabel(confirmedOrder.form.date)}　{formatTimeLabel(confirmedOrder.form.time)}
-              </div>
-            </div>
-            <button className="btn-primary" onClick={onClose}>{t.checkout.done}</button>
-          </div>
-        </div>
-      </div>
-    )
   }
 
   return (
@@ -156,7 +139,6 @@ export default function Checkout({ t, onClose }) {
             <input name="phone" type="tel" value={form.phone} onChange={handleChange} required placeholder={t.checkout.phonePlaceholder} />
           </label>
 
-          {/* Date picker with Today / Tomorrow quick chips */}
           <div className="checkout-field">
             <span className="checkout-field-label">{t.checkout.date}</span>
             <div className="date-chips">
@@ -183,10 +165,8 @@ export default function Checkout({ t, onClose }) {
             </div>
           </div>
 
-          {/* Time slot grid */}
           <div className="checkout-field">
             <span className="checkout-field-label">{t.checkout.time}</span>
-            {/* Hidden input to satisfy required validation */}
             <input type="hidden" name="time" value={form.time} required />
             <div className="time-slots">
               {TIME_SLOTS.map(slot => (
@@ -206,6 +186,8 @@ export default function Checkout({ t, onClose }) {
             {t.checkout.note}
             <textarea name="note" value={form.note} onChange={handleChange} rows={2} placeholder={t.checkout.notePlaceholder} />
           </label>
+
+          {error && <p className="checkout-error">{error}</p>}
 
           <button
             type="submit"
