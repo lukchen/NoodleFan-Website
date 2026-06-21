@@ -9,7 +9,7 @@ const strings = {
     },
     hero: {
       tagline: 'Authentic Chinese Noodles & Rice Noodles',
-      sub: 'Fresh, handcrafted, delivered to you.',
+      sub: 'Fresh, handcrafted. Order ahead for pickup.',
       cta: 'Order Now',
     },
     menu: {
@@ -27,7 +27,7 @@ const strings = {
     },
     hero: {
       tagline: '正宗中式粉面',
-      sub: '新鲜手工，送餐到家。',
+      sub: '新鲜手工，到店自取。',
       cta: '立即点餐',
     },
     menu: {
