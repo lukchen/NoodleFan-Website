@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useCart } from '../context/CartContext'
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../config'
 
 const TAX_RATE = 0.0625
 
@@ -31,7 +30,7 @@ function toLocalDateString(date) {
 }
 
 export default function Checkout({ t, onClose }) {
-  const { items, totalPrice } = useCart()
+  const { items, totalPrice, clearCart } = useCart()
   const tax = totalPrice * TAX_RATE
   const grandTotal = totalPrice + tax
 
@@ -43,7 +42,8 @@ export default function Checkout({ t, onClose }) {
 
   const [form, setForm] = useState({ name: '', phone: '', date: today, time: '', note: '' })
   const [submitting, setSubmitting] = useState(false)
-  const [error, setError] = useState('')
+  const [submitted, setSubmitted] = useState(false)
+  const [confirmedOrder, setConfirmedOrder] = useState(null)
 
   const isDirty = form.name || form.phone || (form.date && form.date !== today) || form.time || form.note
 
@@ -62,35 +62,15 @@ export default function Checkout({ t, onClose }) {
     onClose()
   }
 
-  async function handleSubmit(e) {
+  function handleSubmit(e) {
     e.preventDefault()
-    setError('')
     setSubmitting(true)
-    try {
-      const res = await fetch(`${SUPABASE_URL}/functions/v1/create-checkout`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({
-          items,
-          customer: { name: form.name, phone: form.phone },
-          pickupDate: form.date,
-          pickupTime: form.time,
-          note: form.note,
-          subtotal: totalPrice,
-          tax,
-          total: grandTotal,
-        }),
-      })
-      if (!res.ok) throw new Error(await res.text())
-      const { url } = await res.json()
-      window.location.href = url
-    } catch {
-      setError(t.checkout.errorMsg)
+    setTimeout(() => {
+      setConfirmedOrder({ items: [...items], form: { ...form }, grandTotal })
+      clearCart()
+      setSubmitted(true)
       setSubmitting(false)
-    }
+    }, 800)
   }
 
   function formatDateLabel(dateStr) {
@@ -98,6 +78,41 @@ export default function Checkout({ t, onClose }) {
     if (dateStr === tomorrow) return t.checkout.dateTomorrow
     const d = new Date(dateStr + 'T12:00:00')
     return d.toLocaleDateString(t.lang === 'zh' ? 'zh-CN' : 'en-US', { weekday: 'short', month: 'short', day: 'numeric' })
+  }
+
+  function formatTimeLabel(timeVal) {
+    const slot = TIME_SLOTS.find(s => s.value === timeVal)
+    return slot ? slot.label : timeVal
+  }
+
+  if (submitted && confirmedOrder) {
+    return (
+      <div className="modal-overlay" onClick={onClose}>
+        <div className="modal" onClick={e => e.stopPropagation()}>
+          <div className="checkout-success">
+            <div className="checkout-success-icon">✓</div>
+            <h2>{t.checkout.successTitle}</h2>
+            <p>{t.checkout.successMsg}</p>
+            <div className="checkout-success-summary">
+              {confirmedOrder.items.map(item => (
+                <div key={item.id} className="checkout-summary-row">
+                  <span>{t.lang === 'zh' ? item.nameZh : item.nameEn} × {item.qty}</span>
+                  <span>${(item.price * item.qty).toFixed(2)}</span>
+                </div>
+              ))}
+              <div className="checkout-summary-row checkout-summary-total">
+                <span>{t.cart.total}</span>
+                <span>${confirmedOrder.grandTotal.toFixed(2)}</span>
+              </div>
+              <div className="checkout-success-pickup">
+                🕐 {formatDateLabel(confirmedOrder.form.date)}　{formatTimeLabel(confirmedOrder.form.time)}
+              </div>
+            </div>
+            <button className="btn-primary" onClick={onClose}>{t.checkout.done}</button>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -186,8 +201,6 @@ export default function Checkout({ t, onClose }) {
             {t.checkout.note}
             <textarea name="note" value={form.note} onChange={handleChange} rows={2} placeholder={t.checkout.notePlaceholder} />
           </label>
-
-          {error && <p className="checkout-error">{error}</p>}
 
           <button
             type="submit"
