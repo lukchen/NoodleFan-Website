@@ -1,6 +1,8 @@
 import menu from '../data/menu'
+import { useCart } from '../context/CartContext'
 
 export default function MenuSection({ t, lang }) {
+  const { addItem } = useCart()
   return (
     <section id="menu" className="menu-section">
       <h2>{t.menu.title}</h2>
@@ -23,7 +25,10 @@ export default function MenuSection({ t, lang }) {
                   {lang === 'en' ? item.descEn : item.descZh}
                 </p>
               )}
-              <p className="menu-card-price">{t.menu.price(item.price)}</p>
+              <div className="menu-card-footer">
+                <p className="menu-card-price">{t.menu.price(item.price)}</p>
+                <button className="btn-add" onClick={() => addItem(item)}>{t.menu.add}</button>
+              </div>
             </div>
           </div>
         ))}
