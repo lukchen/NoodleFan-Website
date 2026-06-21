@@ -1,8 +1,12 @@
 import { useState } from 'react'
 import { useCart } from '../context/CartContext'
 
+const TAX_RATE = 0.0625 // Massachusetts prepared food tax
+
 export default function Checkout({ t, onClose }) {
   const { items, totalPrice, clearCart } = useCart()
+  const tax = totalPrice * TAX_RATE
+  const grandTotal = totalPrice + tax
   const [form, setForm] = useState({ name: '', phone: '', time: '', note: '' })
   const [submitted, setSubmitted] = useState(false)
 
@@ -47,9 +51,17 @@ export default function Checkout({ t, onClose }) {
               <span>${(item.price * item.qty).toFixed(2)}</span>
             </div>
           ))}
+          <div className="checkout-summary-row checkout-summary-subtotal">
+            <span>{t.checkout.subtotal}</span>
+            <span>${totalPrice.toFixed(2)}</span>
+          </div>
+          <div className="checkout-summary-row">
+            <span>{t.checkout.tax}</span>
+            <span>${tax.toFixed(2)}</span>
+          </div>
           <div className="checkout-summary-row checkout-summary-total">
             <span>{t.cart.total}</span>
-            <span>${totalPrice.toFixed(2)}</span>
+            <span>${grandTotal.toFixed(2)}</span>
           </div>
         </div>
 
@@ -71,7 +83,7 @@ export default function Checkout({ t, onClose }) {
             <textarea name="note" value={form.note} onChange={handleChange} rows={3} placeholder={t.checkout.notePlaceholder} />
           </label>
           <button type="submit" className="btn-primary checkout-submit">
-            {t.checkout.pay} ${totalPrice.toFixed(2)}
+            {t.checkout.pay} ${grandTotal.toFixed(2)}
           </button>
         </form>
       </div>
