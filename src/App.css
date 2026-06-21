@@ -500,6 +500,94 @@ body {
 .checkout-form input:focus,
 .checkout-form textarea:focus { border-color: var(--color-accent); }
 
+/* Date / time picker */
+.checkout-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.checkout-field-label {
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.checkout-field-hint {
+  font-size: 0.78rem;
+  color: var(--color-muted);
+  margin-top: 0.25rem;
+}
+
+.date-chips {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.date-chip {
+  padding: 0.38rem 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  font-size: 0.85rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+  color: var(--color-text);
+}
+
+.date-chip:hover { border-color: var(--color-accent); }
+
+.date-chip--active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+}
+
+.date-input-other {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.38rem 0.6rem;
+  font-size: 0.82rem;
+  font-family: inherit;
+  background: var(--color-surface);
+  color: var(--color-text);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.date-input-other:focus { border-color: var(--color-accent); }
+
+.time-slots {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.4rem;
+}
+
+.time-slot {
+  padding: 0.45rem 0.3rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  font-size: 0.8rem;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+  color: var(--color-text);
+}
+
+.time-slot:hover { border-color: var(--color-accent); color: var(--color-accent); }
+
+.time-slot--active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+}
+
 .checkout-submit {
   width: 100%;
   padding: 0.85rem;
