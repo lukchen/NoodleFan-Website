@@ -9,7 +9,7 @@ export default function MenuSection({ t, lang }) {
           <div key={item.id} className="menu-card">
             <div className="menu-card-image">
               {item.image
-                ? <img src={item.image} alt={lang === 'en' ? item.nameEn : item.nameZh} />
+                ? <img src={item.image.startsWith('/images/') ? `${import.meta.env.BASE_URL}${item.image.slice(1)}` : item.image} alt={lang === 'en' ? item.nameEn : item.nameZh} />
                 : <div className="menu-card-placeholder" />
               }
             </div>
