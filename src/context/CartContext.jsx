@@ -12,7 +12,7 @@ export function CartProvider({ children }) {
       if (existing) return prev.map(i => i.id === dish.id ? { ...i, qty: i.qty + 1 } : i)
       return [...prev, { id: dish.id, nameEn: dish.nameEn, nameZh: dish.nameZh, price: dish.price, qty: 1 }]
     })
-    setCartOpen(true)
+    // don't auto-open drawer — user stays on menu to keep adding
   }
 
   function removeItem(id) {
