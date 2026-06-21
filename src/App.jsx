@@ -7,7 +7,7 @@ import Footer from './components/Footer'
 import './App.css'
 
 export default function App() {
-  const [lang, setLang] = useState('en')
+  const [lang, setLang] = useState('zh')
   const t = strings[lang]
 
   return (
