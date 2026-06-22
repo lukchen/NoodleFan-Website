@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import strings from './i18n/strings'
-import { CartProvider } from './context/CartContext'
+import { CartProvider, useCart } from './context/CartContext'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import MenuSection from './components/MenuSection'
@@ -9,13 +9,39 @@ import Checkout from './components/Checkout'
 import Footer from './components/Footer'
 import './App.css'
 
-export default function App() {
-  const [lang, setLang] = useState('zh')
+function OrderSuccess({ t, onClose }) {
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal" onClick={e => e.stopPropagation()}>
+        <div className="checkout-success">
+          <div className="checkout-success-icon">✓</div>
+          <h2>{t.checkout.successTitle}</h2>
+          <p>{t.checkout.successMsg}</p>
+          <button className="btn-primary" style={{ marginTop: '1.5rem' }} onClick={onClose}>
+            {t.checkout.done}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function AppInner({ t, lang, setLang }) {
   const [checkoutOpen, setCheckoutOpen] = useState(false)
-  const t = { ...strings[lang], lang }
+  const [orderSuccess, setOrderSuccess] = useState(false)
+  const { clearCart } = useCart()
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('success') === 'true') {
+      setOrderSuccess(true)
+      clearCart()
+      window.history.replaceState({}, '', window.location.pathname)
+    }
+  }, [clearCart])
 
   return (
-    <CartProvider>
+    <>
       <Navbar t={t} lang={lang} onToggleLang={() => setLang(lang === 'en' ? 'zh' : 'en')} />
       <main>
         <Hero t={t} />
@@ -24,6 +50,18 @@ export default function App() {
       <Footer t={t} />
       <Cart t={t} onCheckout={() => setCheckoutOpen(true)} />
       {checkoutOpen && <Checkout t={t} onClose={() => setCheckoutOpen(false)} />}
+      {orderSuccess && <OrderSuccess t={t} onClose={() => setOrderSuccess(false)} />}
+    </>
+  )
+}
+
+export default function App() {
+  const [lang, setLang] = useState('zh')
+  const t = { ...strings[lang], lang }
+
+  return (
+    <CartProvider>
+      <AppInner t={t} lang={lang} setLang={setLang} />
     </CartProvider>
   )
 }
