@@ -25,6 +25,9 @@ function formatTime(iso) {
 function createAlarm() {
   let ctx = null
   let timer = null
+  let autoStop = null
+  let live = []                 // currently scheduled oscillators
+  const MAX_RING_MS = 60000     // auto-silence after 60s even if unacknowledged
 
   function unlock() {
     if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)()
@@ -42,28 +45,34 @@ function createAlarm() {
     osc.connect(gain).connect(ctx.destination)
     osc.start(when)
     osc.stop(when + dur)
+    osc.onended = () => { live = live.filter(o => o !== osc) }
+    live.push(osc)
   }
 
   function playOnce() {
-    if (!ctx) return
+    if (!ctx || ctx.state !== 'running') return
     const t = ctx.currentTime
     ding(880, t, 0.4)        // ding
     ding(660, t + 0.45, 0.5) // dong
   }
 
-  let autoStop = null
-  const MAX_RING_MS = 60000 // auto-silence after 60s even if unacknowledged
-
   function start() {
-    if (!ctx || timer) return
+    if (!ctx) return
+    if (ctx.state === 'suspended') ctx.resume()
+    if (timer) return
     playOnce()
     timer = setInterval(playOnce, 2000)
     autoStop = setTimeout(stop, MAX_RING_MS)
   }
 
+  // Bulletproof stop: clear timers, hard-stop every scheduled oscillator,
+  // and suspend the whole audio context so nothing can keep sounding.
   function stop() {
     if (timer) { clearInterval(timer); timer = null }
     if (autoStop) { clearTimeout(autoStop); autoStop = null }
+    live.forEach(o => { try { o.stop() } catch { /* already stopped */ } })
+    live = []
+    if (ctx && ctx.state === 'running') { try { ctx.suspend() } catch { /* ignore */ } }
   }
 
   return { unlock, start, stop, isReady: () => !!ctx }
