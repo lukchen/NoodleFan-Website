@@ -51,14 +51,19 @@ function createAlarm() {
     ding(660, t + 0.45, 0.5) // dong
   }
 
+  let autoStop = null
+  const MAX_RING_MS = 60000 // auto-silence after 60s even if unacknowledged
+
   function start() {
     if (!ctx || timer) return
     playOnce()
     timer = setInterval(playOnce, 2000)
+    autoStop = setTimeout(stop, MAX_RING_MS)
   }
 
   function stop() {
     if (timer) { clearInterval(timer); timer = null }
+    if (autoStop) { clearTimeout(autoStop); autoStop = null }
   }
 
   return { unlock, start, stop, isReady: () => !!ctx }
@@ -76,6 +81,19 @@ export default function Admin() {
   const alarm = useRef(null)
   const prevCount = useRef(0)
   if (!alarm.current) alarm.current = createAlarm()
+
+  // Safety: stop ringing if the page is closed/hidden or component unmounts
+  useEffect(() => {
+    const a = alarm.current
+    const onHide = () => { if (document.visibilityState === 'hidden') a.stop() }
+    window.addEventListener('pagehide', a.stop)
+    document.addEventListener('visibilitychange', onHide)
+    return () => {
+      a.stop()
+      window.removeEventListener('pagehide', a.stop)
+      document.removeEventListener('visibilitychange', onHide)
+    }
+  }, [])
 
   const fetchOrders = useCallback(async (pw, { detectNew = false } = {}) => {
     setLoading(true)
