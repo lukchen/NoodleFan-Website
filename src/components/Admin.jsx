@@ -173,9 +173,19 @@ export default function Admin() {
 
             {order.note && <p className="admin-order-note">备注：{order.note}</p>}
 
-            <div className="admin-order-bottom">
-              <span className="admin-order-total">合计 ${Number(order.total).toFixed(2)}</span>
-              <span className="admin-order-time">{formatTime(order.created_at)}</span>
+            <div className="admin-order-summary">
+              <div className="admin-order-bottom">
+                <span className="admin-order-total">合计 ${Number(order.total).toFixed(2)}</span>
+                <span className="admin-order-time">{formatTime(order.created_at)}</span>
+              </div>
+              {order.stripe_fee != null ? (
+                <div className="admin-order-fees">
+                  <span>手续费 −${Number(order.stripe_fee).toFixed(2)}</span>
+                  <span className="admin-order-net">净收入 ${Number(order.net_income).toFixed(2)}</span>
+                </div>
+              ) : (
+                <div className="admin-order-fees admin-order-fees--pending">手续费计算中…</div>
+              )}
             </div>
 
             <div className="admin-status-buttons">
