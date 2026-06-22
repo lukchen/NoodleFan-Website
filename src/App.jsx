@@ -7,6 +7,7 @@ import MenuSection from './components/MenuSection'
 import Cart from './components/Cart'
 import Checkout from './components/Checkout'
 import Footer from './components/Footer'
+import Admin from './components/Admin'
 import './App.css'
 
 function OrderSuccess({ t, onClose }) {
@@ -57,7 +58,16 @@ function AppInner({ t, lang, setLang }) {
 
 export default function App() {
   const [lang, setLang] = useState('zh')
+  const [hash, setHash] = useState(window.location.hash)
   const t = { ...strings[lang], lang }
+
+  useEffect(() => {
+    const onHash = () => setHash(window.location.hash)
+    window.addEventListener('hashchange', onHash)
+    return () => window.removeEventListener('hashchange', onHash)
+  }, [])
+
+  if (hash === '#admin') return <Admin />
 
   return (
     <CartProvider>
