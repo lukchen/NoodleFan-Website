@@ -936,21 +936,23 @@ body {
 
 /* ── Admin: new-order alert + sound ── */
 .admin-alert-banner {
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 50;
+  left: 0;
+  right: 0;
+  z-index: 500;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 1rem;
   background: #c0392b;
   color: #fff;
   font-weight: 700;
-  font-size: 1.05rem;
-  padding: 0.9rem 1rem;
-  border-radius: var(--radius);
-  margin-bottom: 1rem;
+  font-size: 1.15rem;
+  padding: 1.1rem 1rem;
   cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
   animation: alert-pulse 1s ease-in-out infinite;
 }
 
@@ -996,4 +998,16 @@ body {
   border-radius: var(--radius);
   padding: 0.6rem 0.9rem;
   margin-bottom: 1rem;
+}
+
+.admin-stop-btn {
+  background: #c0392b;
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.4rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  animation: alert-pulse 1s ease-in-out infinite;
 }

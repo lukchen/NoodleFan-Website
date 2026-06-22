@@ -207,6 +207,9 @@ export default function Admin() {
       <header className="admin-header">
         <h1>接单后台</h1>
         <div className="admin-header-actions">
+          {alerting && (
+            <button className="admin-stop-btn" onClick={acknowledge}>🔕 停止响铃</button>
+          )}
           <span className="admin-count">{activeOrders.length} 待处理</span>
           {!soundOn ? (
             <button className="admin-sound-btn" onClick={enableSound}>🔔 开启提醒</button>
