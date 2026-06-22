@@ -14,7 +14,8 @@ Deno.serve(async (req) => {
 
     const params = new URLSearchParams()
     params.set('mode', 'payment')
-    params.set('payment_method_types[0]', 'card')
+    // Omit payment_method_types entirely: Checkout then auto-enables every method
+    // turned on in the Stripe Dashboard (card, Apple Pay, Google Pay, Link, ...).
     params.set('success_url', 'https://lukchen.github.io/NoodleFan-Website/?success=true')
     params.set('cancel_url', 'https://lukchen.github.io/NoodleFan-Website/')
 
