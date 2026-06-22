@@ -16,7 +16,10 @@ Deno.serve(async (req) => {
     params.set('mode', 'payment')
     // Omit payment_method_types entirely: Checkout then auto-enables every method
     // turned on in the Stripe Dashboard (card, Apple Pay, Google Pay, Link, ...).
-    params.set('success_url', 'https://lukchen.github.io/NoodleFan-Website/?success=true')
+    // Pass the Checkout Session id back so the confirmation page can look up this order
+    // (pickup code + live status). Stripe substitutes {CHECKOUT_SESSION_ID} server-side;
+    // it's a long unguessable token, so it safely identifies the buyer's own order.
+    params.set('success_url', 'https://lukchen.github.io/NoodleFan-Website/?success=true&session_id={CHECKOUT_SESSION_ID}')
     params.set('cancel_url', 'https://lukchen.github.io/NoodleFan-Website/')
 
     items.forEach((item: any, i: number) => {

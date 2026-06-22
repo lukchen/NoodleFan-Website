@@ -164,7 +164,8 @@ export default function Admin() {
             </div>
 
             <div className="admin-order-pickup">
-              🕐 取餐 {order.pickup_date} {order.pickup_time}
+              <span>🕐 取餐 {order.pickup_date} {order.pickup_time}</span>
+              {order.pickup_code && <span className="admin-order-code">取餐码 {order.pickup_code}</span>}
             </div>
 
             <ul className="admin-order-items">

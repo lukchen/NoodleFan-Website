@@ -95,6 +95,23 @@ async function lookupFeeNet(
   return { fee: null, net: null }
 }
 
+// Generate a 4-digit pickup code (1000-9999) that no other *active* (not yet completed)
+// order is using, so the kitchen can match a customer by code without ambiguity.
+// Collisions are rare at this scale; we retry a few times then accept the last draw.
+async function generatePickupCode(): Promise<string> {
+  for (let i = 0; i < 8; i++) {
+    const code = String(1000 + Math.floor(Math.random() * 9000))
+    const { data } = await supabase
+      .from('orders')
+      .select('id')
+      .eq('pickup_code', code)
+      .neq('status', 'completed')
+      .limit(1)
+    if (!data || data.length === 0) return code
+  }
+  return String(1000 + Math.floor(Math.random() * 9000))
+}
+
 Deno.serve(async (req) => {
   const sig = req.headers.get('stripe-signature')
   const secret = Deno.env.get('STRIPE_WEBHOOK_SECRET')
@@ -115,9 +132,11 @@ Deno.serve(async (req) => {
     // 1. Save the order right away — the kitchen must be alerted without waiting on
     //    Stripe's fee data, which isn't ready the instant this event fires. Fee/net
     //    are filled in below once available.
+    const pickupCode = await generatePickupCode()
     const { error } = await supabase.from('orders').insert({
       stripe_session_id: session.id,
       stripe_payment_intent: paymentIntentId,
+      pickup_code: pickupCode,
       customer_name: m.customer_name,
       customer_phone: m.customer_phone,
       pickup_date: m.pickup_date,

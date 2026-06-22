@@ -32,21 +32,27 @@ Customer (React)
             → customer pays (card / wallet)
             → Stripe fires checkout.session.completed
                  → POST stripe-webhook (Edge Function) [verifies Stripe signature]
-                      → INSERT row into orders (service role)
+                      → assign unique pickup code + INSERT row into orders (service role)
                       → broadcast PII-free "new_order" on Realtime channel "orders"
-       → Stripe redirects back to /?success=true → confirmation modal, cart cleared
+       → Stripe redirects back to /?success=true&session_id=… → OrderStatus page
+            → POST order-status (by session_id) → pickup code + live status
+            → subscribes to "orders" channel → status_changed → re-fetch (status updates live)
 
 Merchant dashboard (#admin, React)
   └─ login (password) → POST admin-orders (list)       [password-gated]
   └─ subscribes to Realtime "orders" channel
        → on "new_order" signal → re-fetch via admin-orders → visual banner
-  └─ change status → POST admin-orders (update)
+  └─ change status → POST admin-orders (update) → broadcast "status_changed"
 ```
 
 **Security model:** the public anon key is in the frontend bundle. Customer data is
 protected by RLS (no anon SELECT policy) — order data is only ever read/written through
-the `admin-orders` function, which checks `ADMIN_PASSWORD`. The Realtime broadcast carries
-no customer data, only a "something arrived" signal.
+Edge Functions (service role). The `admin-orders` function checks `ADMIN_PASSWORD`; the
+public `order-status` function is keyed by the Stripe Checkout Session id — a long
+unguessable token only the buyer holds — and returns just that one order's non-sensitive
+fields (never phone, Stripe ids, or fees), so customers can reopen their own order via a
+saved link without enabling order enumeration. Realtime broadcasts carry no customer data,
+only "something changed" signals (`new_order`, `order_updated`, `status_changed`).
 
 ## Project structure
 
@@ -59,11 +65,13 @@ src/
   i18n/strings.js      All UI text, bilingual EN/ZH — never hardcode strings
   components/
     Navbar, Hero, MenuSection, Cart, Checkout, Footer, LangToggle
+    OrderStatus.jsx    Customer confirmation/status page (pickup code + live status, by session_id)
     Admin.jsx          Merchant dashboard (login, order cards, status flow, realtime)
 supabase/functions/
   create-checkout/     Builds a Stripe Checkout Session (Stripe REST via fetch)
-  stripe-webhook/      Verifies signature, looks up fee/net, inserts order, broadcasts signal
-  admin-orders/        Password-gated list + status update (service role)
+  stripe-webhook/      Verifies signature, assigns pickup code, inserts order, looks up fee/net, broadcasts
+  admin-orders/        Password-gated list + status update (service role); broadcasts status_changed
+  order-status/        Public: returns one order's non-sensitive fields by Stripe session_id
 supabase/migrations/   SQL applied to the Supabase Postgres (source of truth for schema)
 ```
 
@@ -84,8 +92,9 @@ Set with `npx supabase secrets set KEY=value`. Never commit these.
 
 The `orders` table is the source of truth, with schema changes tracked in
 `supabase/migrations/`. To apply a migration, paste it into the Supabase SQL editor
-(or run `npx supabase db push`). The `stripe-webhook` records each paid order's
-Stripe fee (`stripe_fee`) and net payout (`net_income`) for financial reporting.
+(or run `npx supabase db push`). Beyond the order basics, the webhook records each paid
+order's Stripe fee (`stripe_fee`) and net payout (`net_income`) for financial reporting,
+and assigns a short `pickup_code` shown to the customer and the kitchen.
 
 ## Local development
 

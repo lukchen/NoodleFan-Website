@@ -30,6 +30,19 @@ Deno.serve(async (req) => {
     if (id && status) {
       const { error } = await supabase.from('orders').update({ status }).eq('id', id)
       if (error) throw new Error(error.message)
+
+      // Tell any open customer status pages to re-fetch so they see the new status
+      // live. PII-free signal — carries no order data, same channel as new_order.
+      try {
+        await supabase.channel('orders').send({
+          type: 'broadcast',
+          event: 'status_changed',
+          payload: { at: new Date().toISOString() },
+        })
+      } catch (e) {
+        console.error('status_changed broadcast error (non-fatal):', e)
+      }
+
       return new Response(JSON.stringify({ ok: true }), {
         headers: { ...CORS, 'Content-Type': 'application/json' },
       })

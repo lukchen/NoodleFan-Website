@@ -8,6 +8,7 @@ import Cart from './components/Cart'
 import Checkout from './components/Checkout'
 import Footer from './components/Footer'
 import Admin from './components/Admin'
+import OrderStatus from './components/OrderStatus'
 import './App.css'
 
 function OrderSuccess({ t, onClose }) {
@@ -69,9 +70,14 @@ export default function App() {
 
   if (hash === '#admin') return <Admin />
 
+  // A saved/returned-from-Stripe link carries ?session_id — show that order's status.
+  const sessionId = new URLSearchParams(window.location.search).get('session_id')
+
   return (
     <CartProvider>
-      <AppInner t={t} lang={lang} setLang={setLang} />
+      {sessionId
+        ? <OrderStatus sessionId={sessionId} t={t} lang={lang} setLang={setLang} />
+        : <AppInner t={t} lang={lang} setLang={setLang} />}
     </CartProvider>
   )
 }
