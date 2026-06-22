@@ -21,88 +21,15 @@ function formatTime(iso) {
   })
 }
 
-// Looping "ding-dong" alert via Web Audio — no audio file needed.
-function createAlarm() {
-  let ctx = null
-  let timer = null
-  let autoStop = null
-  let live = []                 // currently scheduled oscillators
-  const MAX_RING_MS = 60000     // auto-silence after 60s even if unacknowledged
-
-  function unlock() {
-    if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)()
-    if (ctx.state === 'suspended') ctx.resume()
-  }
-
-  function ding(freq, when, dur) {
-    const osc = ctx.createOscillator()
-    const gain = ctx.createGain()
-    osc.frequency.value = freq
-    osc.type = 'sine'
-    gain.gain.setValueAtTime(0.0001, when)
-    gain.gain.exponentialRampToValueAtTime(0.5, when + 0.02)
-    gain.gain.exponentialRampToValueAtTime(0.0001, when + dur)
-    osc.connect(gain).connect(ctx.destination)
-    osc.start(when)
-    osc.stop(when + dur)
-    osc.onended = () => { live = live.filter(o => o !== osc) }
-    live.push(osc)
-  }
-
-  function playOnce() {
-    if (!ctx || ctx.state !== 'running') return
-    const t = ctx.currentTime
-    ding(880, t, 0.4)        // ding
-    ding(660, t + 0.45, 0.5) // dong
-  }
-
-  function start() {
-    if (!ctx) return
-    if (ctx.state === 'suspended') ctx.resume()
-    if (timer) return
-    playOnce()
-    timer = setInterval(playOnce, 2000)
-    autoStop = setTimeout(stop, MAX_RING_MS)
-  }
-
-  // Bulletproof stop: clear timers, hard-stop every scheduled oscillator,
-  // and suspend the whole audio context so nothing can keep sounding.
-  function stop() {
-    if (timer) { clearInterval(timer); timer = null }
-    if (autoStop) { clearTimeout(autoStop); autoStop = null }
-    live.forEach(o => { try { o.stop() } catch { /* already stopped */ } })
-    live = []
-    if (ctx && ctx.state === 'running') { try { ctx.suspend() } catch { /* ignore */ } }
-  }
-
-  return { unlock, start, stop, isReady: () => !!ctx }
-}
-
 export default function Admin() {
   const [password, setPassword] = useState(() => sessionStorage.getItem('nf_admin_pw') || '')
   const [authed, setAuthed] = useState(false)
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [soundOn, setSoundOn] = useState(false)
   const [alerting, setAlerting] = useState(false)
 
-  const alarm = useRef(null)
   const prevCount = useRef(0)
-  if (!alarm.current) alarm.current = createAlarm()
-
-  // Safety: stop ringing if the page is closed/hidden or component unmounts
-  useEffect(() => {
-    const a = alarm.current
-    const onHide = () => { if (document.visibilityState === 'hidden') a.stop() }
-    window.addEventListener('pagehide', a.stop)
-    document.addEventListener('visibilitychange', onHide)
-    return () => {
-      a.stop()
-      window.removeEventListener('pagehide', a.stop)
-      document.removeEventListener('visibilitychange', onHide)
-    }
-  }, [])
 
   const fetchOrders = useCallback(async (pw, { detectNew = false } = {}) => {
     setLoading(true)
@@ -117,10 +44,9 @@ export default function Admin() {
       if (!res.ok) throw new Error('加载失败')
       const data = await res.json()
       const list = data.orders || []
-      // New order detected → raise alert
-      if (detectNew && list.length > prevCount.current && alarm.current.isReady()) {
+      // New order detected → show visual banner (no sound)
+      if (detectNew && list.length > prevCount.current) {
         setAlerting(true)
-        alarm.current.start()
       }
       prevCount.current = list.length
       setOrders(list)
@@ -158,13 +84,7 @@ export default function Admin() {
     return () => clearInterval(id)
   }, [authed, password, fetchOrders])
 
-  function enableSound() {
-    alarm.current.unlock()
-    setSoundOn(true)
-  }
-
   function acknowledge() {
-    alarm.current.stop()
     setAlerting(false)
   }
 
@@ -205,35 +125,23 @@ export default function Admin() {
 
   return (
     <div className="admin">
-      {/* New-order alert banner */}
+      {/* New-order alert banner (visual only) */}
       {alerting && (
         <div className="admin-alert-banner" onClick={acknowledge}>
-          🔔 新订单！点击「确认收到」
-          <button className="admin-alert-ack" onClick={acknowledge}>确认收到</button>
+          🔔 有新订单！
+          <button className="admin-alert-ack" onClick={acknowledge}>知道了</button>
         </div>
       )}
 
       <header className="admin-header">
         <h1>接单后台</h1>
         <div className="admin-header-actions">
-          {alerting && (
-            <button className="admin-stop-btn" onClick={acknowledge}>🔕 停止响铃</button>
-          )}
           <span className="admin-count">{activeOrders.length} 待处理</span>
-          {!soundOn ? (
-            <button className="admin-sound-btn" onClick={enableSound}>🔔 开启提醒</button>
-          ) : (
-            <span className="admin-sound-on">🔔 提醒已开</span>
-          )}
           <button className="admin-refresh" onClick={() => fetchOrders(password)} disabled={loading}>
             {loading ? '刷新中...' : '↻ 刷新'}
           </button>
         </div>
       </header>
-
-      {!soundOn && (
-        <p className="admin-sound-hint">⚠️ 点「开启提醒」后，新订单会响铃提示（手机/电脑都需先点一次）</p>
-      )}
 
       {orders.length === 0 && <p className="admin-empty">暂无订单</p>}
 
