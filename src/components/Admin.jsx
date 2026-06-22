@@ -1,7 +1,10 @@
-import { useState, useEffect, useCallback } from 'react'
-import { SUPABASE_URL } from '../config'
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { createClient } from '@supabase/supabase-js'
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../config'
 
 const FN_URL = `${SUPABASE_URL}/functions/v1/admin-orders`
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 // Order status flow
 const STATUSES = ['paid', 'preparing', 'ready', 'completed']
@@ -18,14 +21,63 @@ function formatTime(iso) {
   })
 }
 
+// Looping "ding-dong" alert via Web Audio — no audio file needed.
+function createAlarm() {
+  let ctx = null
+  let timer = null
+
+  function unlock() {
+    if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)()
+    if (ctx.state === 'suspended') ctx.resume()
+  }
+
+  function ding(freq, when, dur) {
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.frequency.value = freq
+    osc.type = 'sine'
+    gain.gain.setValueAtTime(0.0001, when)
+    gain.gain.exponentialRampToValueAtTime(0.5, when + 0.02)
+    gain.gain.exponentialRampToValueAtTime(0.0001, when + dur)
+    osc.connect(gain).connect(ctx.destination)
+    osc.start(when)
+    osc.stop(when + dur)
+  }
+
+  function playOnce() {
+    if (!ctx) return
+    const t = ctx.currentTime
+    ding(880, t, 0.4)        // ding
+    ding(660, t + 0.45, 0.5) // dong
+  }
+
+  function start() {
+    if (!ctx || timer) return
+    playOnce()
+    timer = setInterval(playOnce, 2000)
+  }
+
+  function stop() {
+    if (timer) { clearInterval(timer); timer = null }
+  }
+
+  return { unlock, start, stop, isReady: () => !!ctx }
+}
+
 export default function Admin() {
   const [password, setPassword] = useState(() => sessionStorage.getItem('nf_admin_pw') || '')
   const [authed, setAuthed] = useState(false)
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [soundOn, setSoundOn] = useState(false)
+  const [alerting, setAlerting] = useState(false)
 
-  const fetchOrders = useCallback(async (pw) => {
+  const alarm = useRef(null)
+  const prevCount = useRef(0)
+  if (!alarm.current) alarm.current = createAlarm()
+
+  const fetchOrders = useCallback(async (pw, { detectNew = false } = {}) => {
     setLoading(true)
     setError('')
     try {
@@ -37,7 +89,14 @@ export default function Admin() {
       if (res.status === 401) { setError('密码错误'); setAuthed(false); return }
       if (!res.ok) throw new Error('加载失败')
       const data = await res.json()
-      setOrders(data.orders || [])
+      const list = data.orders || []
+      // New order detected → raise alert
+      if (detectNew && list.length > prevCount.current && alarm.current.isReady()) {
+        setAlerting(true)
+        alarm.current.start()
+      }
+      prevCount.current = list.length
+      setOrders(list)
       setAuthed(true)
       sessionStorage.setItem('nf_admin_pw', pw)
     } catch (e) {
@@ -47,18 +106,40 @@ export default function Admin() {
     }
   }, [])
 
-  // Auto-login if password saved in session
+  // Initial auto-login if password saved
   useEffect(() => {
     if (password) fetchOrders(password)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Poll every 20s while authed
+  // Realtime: subscribe to PII-free "new_order" broadcast → instant re-fetch
   useEffect(() => {
     if (!authed) return
-    const id = setInterval(() => fetchOrders(password), 20000)
+    const channel = supabase
+      .channel('orders')
+      .on('broadcast', { event: 'new_order' }, () => {
+        fetchOrders(password, { detectNew: true })
+      })
+      .subscribe()
+    return () => { supabase.removeChannel(channel) }
+  }, [authed, password, fetchOrders])
+
+  // Fallback poll every 30s (belt-and-suspenders in case realtime drops)
+  useEffect(() => {
+    if (!authed) return
+    const id = setInterval(() => fetchOrders(password, { detectNew: true }), 30000)
     return () => clearInterval(id)
   }, [authed, password, fetchOrders])
+
+  function enableSound() {
+    alarm.current.unlock()
+    setSoundOn(true)
+  }
+
+  function acknowledge() {
+    alarm.current.stop()
+    setAlerting(false)
+  }
 
   async function updateStatus(id, status) {
     setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o))
@@ -97,15 +178,32 @@ export default function Admin() {
 
   return (
     <div className="admin">
+      {/* New-order alert banner */}
+      {alerting && (
+        <div className="admin-alert-banner" onClick={acknowledge}>
+          🔔 新订单！点击「确认收到」
+          <button className="admin-alert-ack" onClick={acknowledge}>确认收到</button>
+        </div>
+      )}
+
       <header className="admin-header">
         <h1>接单后台</h1>
         <div className="admin-header-actions">
           <span className="admin-count">{activeOrders.length} 待处理</span>
+          {!soundOn ? (
+            <button className="admin-sound-btn" onClick={enableSound}>🔔 开启提醒</button>
+          ) : (
+            <span className="admin-sound-on">🔔 提醒已开</span>
+          )}
           <button className="admin-refresh" onClick={() => fetchOrders(password)} disabled={loading}>
             {loading ? '刷新中...' : '↻ 刷新'}
           </button>
         </div>
       </header>
+
+      {!soundOn && (
+        <p className="admin-sound-hint">⚠️ 点「开启提醒」后，新订单会响铃提示（手机/电脑都需先点一次）</p>
+      )}
 
       {orders.length === 0 && <p className="admin-empty">暂无订单</p>}
 

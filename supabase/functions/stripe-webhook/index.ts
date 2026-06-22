@@ -65,6 +65,19 @@ Deno.serve(async (req) => {
       console.error('DB insert error:', error)
       return new Response(JSON.stringify({ error: error.message }), { status: 500 })
     }
+
+    // Broadcast a PII-free "new order" signal so the admin dashboard alerts instantly.
+    // The signal carries no customer data — the dashboard re-fetches via the
+    // password-protected admin-orders function.
+    try {
+      await supabase.channel('orders').send({
+        type: 'broadcast',
+        event: 'new_order',
+        payload: { at: new Date().toISOString() },
+      })
+    } catch (e) {
+      console.error('Broadcast error (non-fatal):', e)
+    }
   }
 
   return new Response(JSON.stringify({ received: true }), {

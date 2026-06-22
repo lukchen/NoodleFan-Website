@@ -933,3 +933,67 @@ body {
   .admin-order-name { font-size: 1.05rem; }
   .admin-order-items li { font-size: 0.9rem; padding: 0.25rem 0; }
 }
+
+/* ── Admin: new-order alert + sound ── */
+.admin-alert-banner {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: #c0392b;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.05rem;
+  padding: 0.9rem 1rem;
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+  cursor: pointer;
+  animation: alert-pulse 1s ease-in-out infinite;
+}
+
+@keyframes alert-pulse {
+  0%, 100% { background: #c0392b; }
+  50% { background: #e74c3c; }
+}
+
+.admin-alert-ack {
+  background: #fff;
+  color: #c0392b;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.admin-sound-btn {
+  background: var(--color-accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.4rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-sound-on {
+  font-size: 0.85rem;
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.admin-sound-hint {
+  font-size: 0.82rem;
+  color: var(--color-muted);
+  background: #fdf6e3;
+  border: 1px solid #f0e0b0;
+  border-radius: var(--radius);
+  padding: 0.6rem 0.9rem;
+  margin-bottom: 1rem;
+}
