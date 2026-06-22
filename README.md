@@ -62,8 +62,9 @@ src/
     Admin.jsx          Merchant dashboard (login, order cards, status flow, realtime)
 supabase/functions/
   create-checkout/     Builds a Stripe Checkout Session (Stripe REST via fetch)
-  stripe-webhook/      Verifies signature, inserts order, broadcasts signal
+  stripe-webhook/      Verifies signature, looks up fee/net, inserts order, broadcasts signal
   admin-orders/        Password-gated list + status update (service role)
+supabase/migrations/   SQL applied to the Supabase Postgres (source of truth for schema)
 ```
 
 ## Edge Function secrets
@@ -78,6 +79,13 @@ Set with `npx supabase secrets set KEY=value`. Never commit these.
 | `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | stripe-webhook, admin-orders | Auto-injected by Supabase |
 
 > Stripe is currently in **test mode**. Use card `4242 4242 4242 4242` to test payments.
+
+## Database schema changes
+
+The `orders` table is the source of truth, with schema changes tracked in
+`supabase/migrations/`. To apply a migration, paste it into the Supabase SQL editor
+(or run `npx supabase db push`). The `stripe-webhook` records each paid order's
+Stripe fee (`stripe_fee`) and net payout (`net_income`) for financial reporting.
 
 ## Local development
 
