@@ -73,6 +73,11 @@ export default function Admin() {
       .on('broadcast', { event: 'new_order' }, () => {
         fetchOrders(password, { detectNew: true })
       })
+      // Fee/net backfill finished server-side → refresh silently (no new-order banner)
+      // so "计算中…" flips to the real numbers within ~1s instead of waiting on the poll.
+      .on('broadcast', { event: 'order_updated' }, () => {
+        fetchOrders(password)
+      })
       .subscribe()
     return () => { supabase.removeChannel(channel) }
   }, [authed, password, fetchOrders])

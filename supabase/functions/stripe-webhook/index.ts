@@ -162,7 +162,22 @@ Deno.serve(async (req) => {
             .from('orders')
             .update({ stripe_fee: fee, net_income: net })
             .eq('stripe_session_id', session.id)
-          if (feeErr) console.error('Fee update error:', feeErr)
+          if (feeErr) {
+            console.error('Fee update error:', feeErr)
+          } else {
+            // Fee/net are now in the DB — nudge the dashboard to re-fetch so the card
+            // swaps "计算中…" for the real numbers without waiting on the 30s poll.
+            // PII-free signal, same as new_order.
+            try {
+              await supabase.channel('orders').send({
+                type: 'broadcast',
+                event: 'order_updated',
+                payload: { at: new Date().toISOString() },
+              })
+            } catch (e) {
+              console.error('Order-updated broadcast error (non-fatal):', e)
+            }
+          }
         }
       }
     }
