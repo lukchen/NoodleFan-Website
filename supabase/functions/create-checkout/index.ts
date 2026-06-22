@@ -10,7 +10,7 @@ Deno.serve(async (req) => {
     const stripeKey = Deno.env.get('STRIPE_SECRET_KEY')
     if (!stripeKey) throw new Error('STRIPE_SECRET_KEY not set')
 
-    const { items, customer, pickupDate, pickupTime, note, tax, total } = await req.json()
+    const { items, customer, pickupDate, pickupTime, note, subtotal, tax, total } = await req.json()
 
     const params = new URLSearchParams()
     params.set('mode', 'payment')
@@ -38,6 +38,8 @@ Deno.serve(async (req) => {
     params.set('metadata[pickup_time]', pickupTime)
     params.set('metadata[note]', note ?? '')
     params.set('metadata[items]', JSON.stringify(items))
+    params.set('metadata[subtotal]', String(subtotal))
+    params.set('metadata[tax]', String(tax))
     params.set('metadata[total]', String(total))
 
     const res = await fetch('https://api.stripe.com/v1/checkout/sessions', {
