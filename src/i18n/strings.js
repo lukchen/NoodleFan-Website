@@ -9,7 +9,7 @@ const strings = {
     },
     hero: {
       subA: 'Bone broth simmered fresh every day, ingredients prepped each morning — authentic Chinese flavors in every bowl',
-      subB: 'Every dish made to order. Order ahead for pickup.',
+      subB: 'Every dish made to order — clean, hygienic, and served piping hot.',
       cta: 'Order Now',
     },
     menu: {
@@ -84,7 +84,7 @@ const strings = {
     },
     hero: {
       subA: '骨汤每日现熬，食材当日新鲜，一碗一味，还原地道中式风味',
-      subB: '每一份都用心现做，到店自取，热气腾腾。',
+      subB: '每一份都用心现做，干净卫生，热气腾腾。',
       cta: '立即点餐',
     },
     menu: {
