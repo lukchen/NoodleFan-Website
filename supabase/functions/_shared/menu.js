@@ -121,8 +121,7 @@ const menu = [
         choices: [
           { id: 'no-woodear', nameEn: 'No wood ear mushroom', nameZh: '不要木耳' },
           { id: 'no-soybean', nameEn: 'No soybeans', nameZh: '不要黄豆' },
-          { id: 'no-scallion', nameEn: 'No scallions', nameZh: '不要葱花' },
-          { id: 'no-lard', nameEn: 'No lard', nameZh: '不要猪油' },
+          { id: 'no-shiitake', nameEn: 'No shiitake mushroom', nameZh: '不要香菇' },
         ],
       },
     ],
