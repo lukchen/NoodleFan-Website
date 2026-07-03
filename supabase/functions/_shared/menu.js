@@ -114,8 +114,8 @@ const menu = [
     image: '/images/jiangxi-sancian.jpg',
     nameEn: 'Jiangxi Three Delicacies Noodle',
     nameZh: '江西三鲜泡粉',
-    descEn: 'Silky Jiangxi rice noodles in a clear pork bone broth, topped with soybeans, wood ear mushroom, and scallions — simple, hearty, and deeply satisfying.',
-    descZh: '江西米粉泡在清澈猪骨汤中，铺满黄豆、木耳与葱花，朴实鲜香，回味绵长。',
+    descEn: 'Silky Jiangxi rice noodles in a clear pork bone broth, topped with soybeans, wood ear mushroom, and shiitake — simple, hearty, and deeply satisfying.',
+    descZh: '江西米粉泡在清澈猪骨汤中，铺满黄豆、木耳与香菇，朴实鲜香，回味绵长。',
     optionGroups: [
       {
         id: 'remove', type: 'multi', default: [],
