@@ -6,7 +6,10 @@ export default function Navbar({ t, lang, onToggleLang }) {
 
   return (
     <nav className="navbar">
-      <div className="navbar-brand">NoodleFan 粉面王</div>
+      <div className="navbar-brand">
+        <img className="navbar-logo" src={`${import.meta.env.BASE_URL}images/logo-emblem.png`} alt="" />
+        <span>NoodleFan 粉面王</span>
+      </div>
       <div className="navbar-links">
         <a href="#menu">{t.nav.menu}</a>
         <button className="cart-btn" onClick={() => setCartOpen(true)}>

@@ -75,7 +75,10 @@ export default function OrderStatus({ sessionId, t, lang, setLang }) {
   return (
     <>
       <nav className="navbar">
-        <a className="navbar-brand" href={window.location.pathname}>NoodleFan 粉面王</a>
+        <a className="navbar-brand" href={window.location.pathname}>
+          <img className="navbar-logo" src={`${import.meta.env.BASE_URL}images/logo-emblem.png`} alt="" />
+          <span>NoodleFan 粉面王</span>
+        </a>
         <div className="navbar-links">
           <LangToggle lang={lang} onToggle={() => setLang(lang === 'en' ? 'zh' : 'en')} />
         </div>

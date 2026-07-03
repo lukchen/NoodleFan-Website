@@ -8,6 +8,7 @@
   --color-muted: #857a6b;
   --color-accent: #c0392b;
   --color-accent-hover: #a93226;
+  --color-gold: #b8862e;
   --color-border: #e7ddcc;
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-serif: 'Playfair Display', 'Noto Serif SC', Georgia, serif;
@@ -31,17 +32,26 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 0 1.5rem;
-  height: 60px;
-  background: var(--color-surface);
+  height: 64px;
+  background: var(--color-bg);
   border-bottom: 1px solid var(--color-border);
 }
 
 .navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
   font-family: var(--font-serif);
   font-size: 1.2rem;
   font-weight: 600;
   letter-spacing: 0.01em;
   white-space: nowrap;
+}
+
+.navbar-logo {
+  height: 42px;
+  width: 42px;
+  object-fit: contain;
 }
 
 .navbar-links {
@@ -171,11 +181,10 @@ body {
 
 .cat-rule {
   display: block;
-  width: 54px;
+  width: 56px;
   height: 2px;
   margin: 1rem auto 0;
-  background: var(--color-accent);
-  opacity: 0.85;
+  background: var(--color-gold);
 }
 
 .menu-grid {
@@ -718,10 +727,16 @@ body {
 /* ── Footer ── */
 .footer {
   text-align: center;
-  padding: 2rem;
+  padding: 2.5rem 2rem;
   font-size: 0.85rem;
   color: var(--color-muted);
   border-top: 1px solid var(--color-border);
+}
+
+.footer-logo {
+  height: 96px;
+  width: auto;
+  margin-bottom: 0.75rem;
 }
 
 /* ── Mobile responsive ── */
