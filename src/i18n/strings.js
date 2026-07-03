@@ -13,6 +13,7 @@ const strings = {
       cta: 'Order Now',
     },
     menu: {
+      eyebrow: 'Handcrafted daily',
       title: 'Our Menu',
       price: (p) => `$${p}`,
       add: 'Add',
@@ -88,6 +89,7 @@ const strings = {
       cta: '立即点餐',
     },
     menu: {
+      eyebrow: '每日手作',
       title: '我们的菜单',
       price: (p) => `$${p}`,
       add: '加入',
