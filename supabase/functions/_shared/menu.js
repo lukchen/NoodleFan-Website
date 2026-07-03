@@ -98,14 +98,6 @@ const menu = [
           { id: 'hot', nameEn: 'Extra hot', nameZh: '特辣' },
         ],
       },
-      {
-        id: 'remove', type: 'multi', default: [],
-        nameEn: 'Leave out', nameZh: '不要放',
-        choices: [
-          { id: 'no-egg', nameEn: 'No egg', nameZh: '不要鸡蛋' },
-          { id: 'no-scallion', nameEn: 'No scallions', nameZh: '不要葱' },
-        ],
-      },
     ],
   },
   {
