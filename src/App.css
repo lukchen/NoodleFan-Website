@@ -112,7 +112,7 @@ body {
 }
 
 .hero-content {
-  max-width: 620px;
+  max-width: 720px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -129,6 +129,12 @@ body {
   line-height: 1.85;
   color: #574c42;
   margin-bottom: 2rem;
+}
+
+/* Two clauses, each its own centered line that wraps flexibly by width. */
+.hero-sub span {
+  display: block;
+  text-wrap: balance;
 }
 
 /* ── Menu section ── */

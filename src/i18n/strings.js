@@ -8,7 +8,8 @@ const strings = {
       order: 'Order Now',
     },
     hero: {
-      sub: 'Bone broth simmered fresh every day, ingredients prepped each morning, hand-pulled noodles and slow-braised beef — authentic Chinese flavors restored in every bowl, made to order for pickup.',
+      subA: 'Bone broth simmered fresh every day, ingredients prepped each morning, hand-pulled noodles and slow-braised beef — authentic Chinese flavors in every bowl',
+      subB: 'Every dish made to order. Order ahead for pickup.',
       cta: 'Order Now',
     },
     menu: {
@@ -82,7 +83,8 @@ const strings = {
       order: '立即点餐',
     },
     hero: {
-      sub: '骨汤每日现熬，食材当日新鲜，手工面条配慢炖牛肉，一碗一味，还原地道中式风味——每一份都用心现做，到店自取，热气腾腾。',
+      subA: '骨汤每日现熬，食材当日新鲜，手工面条配慢炖牛肉，一碗一味，还原地道中式风味',
+      subB: '每一份都用心现做，到店自取，热气腾腾。',
       cta: '立即点餐',
     },
     menu: {
