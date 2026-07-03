@@ -66,8 +66,8 @@ const menu = [
     image: '/images/jiangxi-fried-noodle.jpg',
     nameEn: 'Jiangxi Fried Rice Noodle',
     nameZh: '江西炒粉',
-    descEn: 'Wok-tossed Jiangxi flat rice noodles with egg, bean sprouts, and chives in a savory soy-based sauce, with your choice of pork or beef. Smoky wok breath in every bite.',
-    descZh: '江西宽米粉大火爆炒，配鸡蛋、豆芽与韭黄，酱香浓郁，镬气十足。肉类可选猪肉或牛肉。',
+    descEn: 'Wok-tossed Jiangxi rice noodles with egg, vegetables, and shredded meat — your choice of pork or beef. Rich aroma and smoky wok breath in every bite.',
+    descZh: '江西米粉大火爆炒，配鸡蛋、蔬菜与肉丝，香气浓郁，镬气十足。肉类可选猪肉或牛肉。',
     optionGroups: [
       {
         id: 'protein', type: 'single', required: true, default: 'pork',
