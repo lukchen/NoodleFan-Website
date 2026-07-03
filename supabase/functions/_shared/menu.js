@@ -16,7 +16,7 @@
 const menu = [
   {
     id: 1,
-    cuisine: 'tianjin',
+    category: 'noodle',
     price: 16,
     image: '/images/tianjin-beef-noodle.png',
     nameEn: 'Tianjin Yellow Broth Beef Noodle',
@@ -45,7 +45,7 @@ const menu = [
   },
   {
     id: 2,
-    cuisine: 'taiwan',
+    category: 'noodle',
     price: 16,
     image: '/images/taiwanese-beef-noodle.jpg',
     nameEn: 'Taiwanese Beef Noodle',
@@ -66,7 +66,7 @@ const menu = [
   },
   {
     id: 3,
-    cuisine: 'jiangxi',
+    category: 'ricenoodle',
     price: 16,
     image: '/images/jiangxi-fried-noodle.jpg',
     nameEn: 'Jiangxi Signature Fried Rice Noodle',
@@ -105,7 +105,7 @@ const menu = [
   },
   {
     id: 4,
-    cuisine: 'jiangxi',
+    category: 'ricenoodle',
     price: 13,
     image: '/images/jiangxi-sancian.jpg',
     nameEn: 'Jiangxi Three Delicacies Rice Noodle Soup',
@@ -128,7 +128,7 @@ const menu = [
   },
   {
     id: 5,
-    cuisine: 'jiangxi',
+    category: 'ricenoodle',
     price: 16,
     image: '/images/jiangxi-beef-noodle.jpg',
     nameEn: 'Jiangxi Spicy Beef Rice Noodle Soup',
@@ -161,20 +161,16 @@ const menu = [
   },
 ]
 
-// Cuisine sections for the storefront menu — ordered; dishes group by `dish.cuisine`.
-// Presentational only (the create-checkout function ignores this).
-export const cuisines = [
+// Menu sections for the storefront — ordered; dishes group by `dish.category`
+// (wheat noodles vs rice noodles). Presentational only (create-checkout ignores this).
+export const categories = [
   {
-    id: 'tianjin', nameZh: '天津', nameEn: 'Tianjin',
-    taglineZh: '北派骨汤，醇厚绵长', taglineEn: 'Northern bone broth, rich and lingering',
+    id: 'noodle', nameZh: '面', nameEn: 'Noodles',
+    taglineZh: '手工面条，汤醇面劲', taglineEn: 'Handmade wheat noodles in rich broth',
   },
   {
-    id: 'taiwan', nameZh: '台式', nameEn: 'Taiwanese',
-    taglineZh: '红烧慢炖，浓香回甘', taglineEn: 'Slow-braised, deep and savory',
-  },
-  {
-    id: 'jiangxi', nameZh: '江西', nameEn: 'Jiangxi',
-    taglineZh: '米粉当家，镬气鲜辣', taglineEn: 'Rice noodles, wok-fired and bold',
+    id: 'ricenoodle', nameZh: '粉', nameEn: 'Rice Noodles',
+    taglineZh: '江西米粉，爽滑鲜香', taglineEn: 'Silky Jiangxi rice noodles',
   },
 ]
 

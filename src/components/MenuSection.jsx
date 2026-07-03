@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import menu, { cuisines } from '../data/menu'
+import menu, { categories } from '../data/menu'
 import { useCart } from '../context/CartContext'
 import OptionsModal from './OptionsModal'
 
@@ -42,8 +42,8 @@ export default function MenuSection({ t, lang }) {
   const { addItem } = useCart()
   const [customizing, setCustomizing] = useState(null)
 
-  const sections = cuisines
-    .map(c => ({ ...c, dishes: menu.filter(d => d.cuisine === c.id) }))
+  const sections = categories
+    .map(c => ({ ...c, dishes: menu.filter(d => d.category === c.id) }))
     .filter(c => c.dishes.length > 0)
 
   return (
@@ -54,12 +54,12 @@ export default function MenuSection({ t, lang }) {
       </header>
 
       {sections.map(c => (
-        <div key={c.id} className="cuisine-block">
-          <div className="cuisine-header">
-            <span className="cuisine-eyebrow">{lang === 'zh' ? c.nameEn : c.nameZh}</span>
-            <h3 className="cuisine-name">{lang === 'zh' ? c.nameZh : c.nameEn}</h3>
-            <p className="cuisine-tagline">{lang === 'zh' ? c.taglineZh : c.taglineEn}</p>
-            <span className="cuisine-rule" aria-hidden="true" />
+        <div key={c.id} className="cat-block">
+          <div className="cat-header">
+            <span className="cat-eyebrow">{lang === 'zh' ? c.nameEn : c.nameZh}</span>
+            <h3 className="cat-name">{lang === 'zh' ? c.nameZh : c.nameEn}</h3>
+            <p className="cat-tagline">{lang === 'zh' ? c.taglineZh : c.taglineEn}</p>
+            <span className="cat-rule" aria-hidden="true" />
           </div>
           <div className="menu-grid">
             {c.dishes.map(item => (
