@@ -49,7 +49,6 @@ export default function MenuSection({ t, lang }) {
   return (
     <section id="menu" className="menu-section">
       <header className="menu-heading">
-        <span className="menu-heading-eyebrow">{t.menu.eyebrow}</span>
         <h2>{t.menu.title}</h2>
       </header>
 
