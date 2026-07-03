@@ -165,12 +165,12 @@ const menu = [
 // (wheat noodles vs rice noodles). Presentational only (create-checkout ignores this).
 export const categories = [
   {
-    id: 'noodle', nameZh: '面', nameEn: 'Noodles',
-    taglineZh: '劲道面条，汤醇味浓', taglineEn: 'Springy noodles in rich, savory broth',
-  },
-  {
     id: 'ricenoodle', nameZh: '粉', nameEn: 'Rice Noodles',
     taglineZh: '爽滑米粉，鲜香入味', taglineEn: 'Silky rice noodles, fragrant and flavorful',
+  },
+  {
+    id: 'noodle', nameZh: '面', nameEn: 'Noodles',
+    taglineZh: '劲道面条，汤醇味浓', taglineEn: 'Springy noodles in rich, savory broth',
   },
 ]
 

@@ -7,7 +7,11 @@ export default function Hero({ t }) {
   return (
     <section className="hero">
       <div className="hero-content">
-        <h1>{t.hero.tagline}</h1>
+        <img
+          className="hero-logo"
+          src={`${import.meta.env.BASE_URL}images/logo-full.png`}
+          alt="NoodleFan 粉面王"
+        />
         <p>{t.hero.sub}</p>
         <a href="#menu" className="btn-primary" onClick={scrollToMenu}>{t.hero.cta}</a>
       </div>

@@ -8,8 +8,7 @@ const strings = {
       order: 'Order Now',
     },
     hero: {
-      tagline: 'Authentic Chinese Noodles & Rice Noodles',
-      sub: 'Bone broth simmered fresh every day, ingredients prepped each morning, hand-pulled noodles and slow-braised beef — every bowl made to order for pickup.',
+      sub: 'Bone broth simmered fresh every day, ingredients prepped each morning, hand-pulled noodles and slow-braised beef — authentic Chinese flavors restored in every bowl, made to order for pickup.',
       cta: 'Order Now',
     },
     menu: {
@@ -83,8 +82,7 @@ const strings = {
       order: '立即点餐',
     },
     hero: {
-      tagline: '正宗中式粉面',
-      sub: '骨汤每日现熬，食材当日新鲜，手工面条配慢炖牛肉——每一碗都用心现做，到店自取。',
+      sub: '骨汤每日现熬，食材当日新鲜，手工面条配慢炖牛肉，一碗一味，还原地道中式风味——每一份都用心现做，到店自取，热气腾腾。',
       cta: '立即点餐',
     },
     menu: {
