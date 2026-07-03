@@ -166,11 +166,11 @@ const menu = [
 export const categories = [
   {
     id: 'noodle', nameZh: '面', nameEn: 'Noodles',
-    taglineZh: '手工面条，汤醇面劲', taglineEn: 'Handmade wheat noodles in rich broth',
+    taglineZh: '劲道面条，汤醇味浓', taglineEn: 'Springy noodles in rich, savory broth',
   },
   {
     id: 'ricenoodle', nameZh: '粉', nameEn: 'Rice Noodles',
-    taglineZh: '江西米粉，爽滑鲜香', taglineEn: 'Silky Jiangxi rice noodles',
+    taglineZh: '爽滑米粉，鲜香入味', taglineEn: 'Silky rice noodles, fragrant and flavorful',
   },
 ]
 
