@@ -66,8 +66,8 @@ const menu = [
     id: 3,
     price: 16,
     image: '/images/jiangxi-fried-noodle.jpg',
-    nameEn: 'Jiangxi Fried Rice Noodle',
-    nameZh: '江西炒粉',
+    nameEn: 'Jiangxi Signature Fried Rice Noodle',
+    nameZh: '江西精品炒粉',
     descEn: 'Wok-tossed Jiangxi rice noodles with egg, vegetables, and shredded meat — your choice of pork or beef. Rich aroma and smoky wok breath in every bite.',
     descZh: '江西米粉大火爆炒，配鸡蛋、蔬菜与肉丝，香气浓郁，镬气十足。肉类可选猪肉或牛肉。',
     optionGroups: [
@@ -104,8 +104,8 @@ const menu = [
     id: 4,
     price: 13,
     image: '/images/jiangxi-sancian.jpg',
-    nameEn: 'Jiangxi Three Delicacies Noodle',
-    nameZh: '江西三鲜泡粉',
+    nameEn: 'Three Delicacies Rice Noodle Soup',
+    nameZh: '三鲜泡粉',
     descEn: 'Silky Jiangxi rice noodles in a clear pork bone broth, topped with soybeans, wood ear mushroom, and shiitake — simple, hearty, and deeply satisfying.',
     descZh: '江西米粉泡在清澈猪骨汤中，铺满黄豆、木耳与香菇，朴实鲜香，回味绵长。',
     optionGroups: [
@@ -126,8 +126,8 @@ const menu = [
     id: 5,
     price: 16,
     image: '/images/jiangxi-beef-noodle.jpg',
-    nameEn: 'Jiangxi Spicy Beef Rice Noodle',
-    nameZh: '江西牛肉泡粉',
+    nameEn: 'Spicy Beef Rice Noodle Soup',
+    nameZh: '牛肉泡粉',
     descEn: 'Jiangxi rice noodles soaked in a bold, spicy red broth loaded with braised beef chunks, soybeans, and fresh cilantro. Rich heat with every sip.',
     descZh: '江西米粉泡入浓辣红汤，满铺卤牛肉块、黄豆与香菜，汤底醇厚，辣而过瘾。',
     optionGroups: [
