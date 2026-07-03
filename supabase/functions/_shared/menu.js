@@ -37,6 +37,7 @@ const menu = [
         nameEn: 'Leave out', nameZh: '不要放',
         choices: [
           { id: 'no-scallion', nameEn: 'No scallions', nameZh: '不要葱花' },
+          { id: 'no-cilantro', nameEn: 'No cilantro', nameZh: '不要香菜' },
         ],
       },
     ],
@@ -55,7 +56,8 @@ const menu = [
         nameEn: 'Leave out', nameZh: '不要放',
         choices: [
           { id: 'no-pickle', nameEn: 'No pickled mustard greens', nameZh: '不要酸菜' },
-          { id: 'no-scallion', nameEn: 'No scallions', nameZh: '不要葱' },
+          { id: 'no-scallion', nameEn: 'No scallions', nameZh: '不要葱花' },
+          { id: 'no-cilantro', nameEn: 'No cilantro', nameZh: '不要香菜' },
         ],
       },
     ],
@@ -122,6 +124,8 @@ const menu = [
           { id: 'no-woodear', nameEn: 'No wood ear mushroom', nameZh: '不要木耳' },
           { id: 'no-soybean', nameEn: 'No soybeans', nameZh: '不要黄豆' },
           { id: 'no-shiitake', nameEn: 'No shiitake mushroom', nameZh: '不要香菇' },
+          { id: 'no-scallion', nameEn: 'No scallions', nameZh: '不要葱花' },
+          { id: 'no-cilantro', nameEn: 'No cilantro', nameZh: '不要香菜' },
         ],
       },
     ],
