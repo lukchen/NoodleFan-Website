@@ -48,10 +48,11 @@ Deno.serve(async (req) => {
       })
     }
 
-    // List path
+    // List path — 'pending' rows are unpaid checkout drafts, not real orders.
     const { data, error } = await supabase
       .from('orders')
       .select('*')
+      .neq('status', 'pending')
       .order('created_at', { ascending: false })
     if (error) throw new Error(error.message)
 

@@ -25,14 +25,18 @@ There is **no custom server**. All server-side logic lives in Supabase Edge Func
 
 ```
 Customer (React)
-  └─ "Place order & pay"
+  └─ picks dish options (protein / veg / spice / leave-outs) → cart lines keyed by
+     dish + option combination
+  └─ "Place order & pay" — only { id, qty, selections } per line is sent
        → POST create-checkout (Edge Function)         [public, anon key]
-            → Stripe Checkout Session
+            → prices the cart SERVER-SIDE from the canonical menu (client prices ignored)
+            → INSERT draft order row (status 'pending', full details incl. options)
+            → Stripe Checkout Session (metadata = order_id only)
        → browser redirects to Stripe hosted page
             → customer pays (card / wallet)
             → Stripe fires checkout.session.completed
                  → POST stripe-webhook (Edge Function) [verifies Stripe signature]
-                      → assign unique pickup code + INSERT row into orders (service role)
+                      → assign unique pickup code + flip draft 'pending' → 'paid'
                       → broadcast PII-free "new_order" on Realtime channel "orders"
        → Stripe redirects back to /?success=true&session_id=… → OrderStatus page
             → POST order-status (by session_id) → pickup code + live status
@@ -53,6 +57,8 @@ unguessable token only the buyer holds — and returns just that one order's non
 fields (never phone, Stripe ids, or fees), so customers can reopen their own order via a
 saved link without enabling order enumeration. Realtime broadcasts carry no customer data,
 only "something changed" signals (`new_order`, `order_updated`, `status_changed`).
+Prices are computed exclusively server-side (create-checkout) from the canonical menu —
+a tampered client cannot alter what gets charged.
 
 ## Project structure
 
@@ -60,16 +66,19 @@ only "something changed" signals (`new_order`, `order_updated`, `status_changed`
 src/
   App.jsx              Root; hash "#admin" renders <Admin/>, else the storefront
   config.js            Public keys (Supabase URL + anon key) — safe to commit
-  data/menu.js         Menu items (single source of truth)
+  data/menu.js         Re-export of the canonical menu (see supabase/functions/_shared)
   context/CartContext  Global cart state (React Context)
   i18n/strings.js      All UI text, bilingual EN/ZH — never hardcode strings
   components/
     Navbar, Hero, MenuSection, Cart, Checkout, Footer, LangToggle
+    OptionsModal.jsx   Dish customization picker (protein / veg / spice / leave-outs)
     OrderStatus.jsx    Customer confirmation/status page (pickup code + live status, by session_id)
     Admin.jsx          Merchant dashboard (login, order cards, status flow, realtime)
 supabase/functions/
-  create-checkout/     Builds a Stripe Checkout Session (Stripe REST via fetch)
-  stripe-webhook/      Verifies signature, assigns pickup code, inserts order, looks up fee/net, broadcasts
+  _shared/menu.js      CANONICAL menu: dishes, prices, option groups + resolveSelections()
+                       (frontend re-exports it; create-checkout prices from it)
+  create-checkout/     Prices cart server-side, inserts 'pending' draft, creates Stripe session
+  stripe-webhook/      Verifies signature, assigns pickup code, flips draft to paid, fee/net backfill
   admin-orders/        Password-gated list + status update (service role); broadcasts status_changed
   order-status/        Public: returns one order's non-sensitive fields by Stripe session_id
 supabase/migrations/   SQL applied to the Supabase Postgres (source of truth for schema)

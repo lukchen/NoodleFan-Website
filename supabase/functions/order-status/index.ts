@@ -30,10 +30,13 @@ Deno.serve(async (req) => {
     }
 
     // Only safe-to-show columns — no phone, no Stripe ids, no fee/net.
+    // 'pending' drafts are excluded: until the webhook confirms payment the page
+    // keeps polling, same as "not written yet".
     const { data, error } = await supabase
       .from('orders')
       .select('pickup_code, status, items, subtotal, tax, total, pickup_date, pickup_time, customer_name, note, created_at')
       .eq('stripe_session_id', session_id)
+      .neq('status', 'pending')
       .maybeSingle()
     if (error) throw new Error(error.message)
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../config'
 import LangToggle from './LangToggle'
@@ -113,12 +113,18 @@ export default function OrderStatus({ sessionId, t, lang, setLang }) {
             <div className="os-pickup">🕐 {s.pickupAt} {order.pickup_date} {order.pickup_time}</div>
 
             <ul className="os-items">
-              {order.items.map((it, i) => (
-                <li key={i}>
-                  <span>{lang === 'zh' ? it.nameZh : it.nameEn} × {it.qty}</span>
-                  <span>${(it.price * it.qty).toFixed(2)}</span>
-                </li>
-              ))}
+              {order.items.map((it, i) => {
+                const opts = lang === 'zh' ? it.optionsZh : it.optionsEn
+                return (
+                  <li key={i}>
+                    <span>
+                      {lang === 'zh' ? it.nameZh : it.nameEn} × {it.qty}
+                      {opts?.length > 0 && <span className="os-item-opts"> ({opts.join(', ')})</span>}
+                    </span>
+                    <span>${(it.price * it.qty).toFixed(2)}</span>
+                  </li>
+                )
+              })}
               <li className="os-items-total">
                 <span>{t.cart.total}</span>
                 <span>${Number(order.total).toFixed(2)}</span>

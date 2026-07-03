@@ -48,6 +48,10 @@ const strings = {
       successMsg: 'Your order has been placed. We\'ll have it ready for pickup!',
       done: 'Back to Menu',
     },
+    options: {
+      pickAtLeastOne: ' — pick at least one',
+      addToCart: 'Add to cart —',
+    },
     orderStatus: {
       loading: 'Confirming your order…',
       notFound: 'We couldn\'t find this order. If you just paid, give it a moment and refresh.',
@@ -118,6 +122,10 @@ const strings = {
       successTitle: '订单已确认！',
       successMsg: '您的订单已提交，我们将为您备餐！',
       done: '返回菜单',
+    },
+    options: {
+      pickAtLeastOne: '（至少选一项）',
+      addToCart: '加入购物车 —',
     },
     orderStatus: {
       loading: '正在确认您的订单…',

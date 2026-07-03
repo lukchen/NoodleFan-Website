@@ -129,29 +129,59 @@ Deno.serve(async (req) => {
     const m = session.metadata ?? {}
     const paymentIntentId: string | null = session.payment_intent ?? null
 
-    // 1. Save the order right away — the kitchen must be alerted without waiting on
-    //    Stripe's fee data, which isn't ready the instant this event fires. Fee/net
+    // 1. Mark the order paid right away — the kitchen must be alerted without waiting
+    //    on Stripe's fee data, which isn't ready the instant this event fires. Fee/net
     //    are filled in below once available.
     const pickupCode = await generatePickupCode()
-    const { error } = await supabase.from('orders').insert({
-      stripe_session_id: session.id,
-      stripe_payment_intent: paymentIntentId,
-      pickup_code: pickupCode,
-      customer_name: m.customer_name,
-      customer_phone: m.customer_phone,
-      pickup_date: m.pickup_date,
-      pickup_time: m.pickup_time,
-      note: m.note,
-      items: JSON.parse(m.items ?? '[]'),
-      subtotal: parseFloat(m.subtotal ?? '0'),
-      tax: parseFloat(m.tax ?? '0'),
-      total: parseFloat(m.total ?? '0'),
-      status: 'paid',
-    })
 
-    if (error) {
-      console.error('DB insert error:', error)
-      return new Response(JSON.stringify({ error: error.message }), { status: 500 })
+    if (m.order_id) {
+      // Current flow: create-checkout already inserted the full order as a 'pending'
+      // draft; flip it to paid. The status guard makes Stripe webhook retries no-ops.
+      const { data: updated, error } = await supabase
+        .from('orders')
+        .update({
+          status: 'paid',
+          stripe_session_id: session.id,
+          stripe_payment_intent: paymentIntentId,
+          pickup_code: pickupCode,
+        })
+        .eq('id', m.order_id)
+        .eq('status', 'pending')
+        .select('id')
+
+      if (error) {
+        console.error('DB update error:', error)
+        return new Response(JSON.stringify({ error: error.message }), { status: 500 })
+      }
+      if (!updated || updated.length === 0) {
+        // Already processed (webhook retry) — acknowledge without re-broadcasting.
+        return new Response(JSON.stringify({ received: true, duplicate: true }), {
+          headers: { 'Content-Type': 'application/json' },
+        })
+      }
+    } else {
+      // Legacy flow: sessions created before the pending-draft deploy carry the whole
+      // order in metadata. Keep until no such sessions can complete, then remove.
+      const { error } = await supabase.from('orders').insert({
+        stripe_session_id: session.id,
+        stripe_payment_intent: paymentIntentId,
+        pickup_code: pickupCode,
+        customer_name: m.customer_name,
+        customer_phone: m.customer_phone,
+        pickup_date: m.pickup_date,
+        pickup_time: m.pickup_time,
+        note: m.note,
+        items: JSON.parse(m.items ?? '[]'),
+        subtotal: parseFloat(m.subtotal ?? '0'),
+        tax: parseFloat(m.tax ?? '0'),
+        total: parseFloat(m.total ?? '0'),
+        status: 'paid',
+      })
+
+      if (error) {
+        console.error('DB insert error:', error)
+        return new Response(JSON.stringify({ error: error.message }), { status: 500 })
+      }
     }
 
     // 2. Broadcast a PII-free "new order" signal so the admin dashboard alerts instantly.

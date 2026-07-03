@@ -171,7 +171,10 @@ export default function Admin() {
             <ul className="admin-order-items">
               {order.items.map((it, i) => (
                 <li key={i}>
-                  <span>{it.nameZh} × {it.qty}</span>
+                  <span>
+                    {it.nameZh} × {it.qty}
+                    {it.optionsZh?.length > 0 && <span className="admin-order-item-opts"> ({it.optionsZh.join('、')})</span>}
+                  </span>
                   <span>${(it.price * it.qty).toFixed(2)}</span>
                 </li>
               ))}

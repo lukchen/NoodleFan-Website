@@ -74,14 +74,13 @@ export default function Checkout({ t, onClose }) {
           'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify({
-          items,
+          // Price/subtotal/tax/total are computed server-side from the canonical menu —
+          // only the dish id, qty, and chosen options are sent.
+          items: items.map(i => ({ id: i.id, qty: i.qty, selections: i.selections })),
           customer: { name: form.name, phone: form.phone },
           pickupDate: form.date,
           pickupTime: form.time,
           note: form.note,
-          subtotal: totalPrice,
-          tax,
-          total: grandTotal,
         }),
       })
       const data = await res.json()
@@ -102,12 +101,18 @@ export default function Checkout({ t, onClose }) {
         </div>
 
         <div className="checkout-summary">
-          {items.map(item => (
-            <div key={item.id} className="checkout-summary-row">
-              <span>{t.lang === 'zh' ? item.nameZh : item.nameEn} × {item.qty}</span>
-              <span>${(item.price * item.qty).toFixed(2)}</span>
-            </div>
-          ))}
+          {items.map(item => {
+            const opts = t.lang === 'zh' ? item.optionsZh : item.optionsEn
+            return (
+              <div key={item.key} className="checkout-summary-row">
+                <span>
+                  {t.lang === 'zh' ? item.nameZh : item.nameEn} × {item.qty}
+                  {opts?.length > 0 && <span className="checkout-summary-opts"> ({opts.join(', ')})</span>}
+                </span>
+                <span>${(item.unitPrice * item.qty).toFixed(2)}</span>
+              </div>
+            )
+          })}
           <div className="checkout-summary-row checkout-summary-subtotal">
             <span>{t.checkout.subtotal}</span>
             <span>${totalPrice.toFixed(2)}</span>
