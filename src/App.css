@@ -199,8 +199,11 @@ body {
 
 .menu-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(196px, 1fr));
-  gap: 1.15rem;
+  /* Fixed-width cards centered per section — a section with fewer items than fit
+     in a row (e.g. 面 has 2) stays centered instead of left-aligned with a gap. */
+  grid-template-columns: repeat(auto-fit, minmax(196px, 232px));
+  justify-content: center;
+  gap: 1.3rem;
 }
 
 .menu-card {
