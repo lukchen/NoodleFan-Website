@@ -70,7 +70,7 @@ const menu = [
     price: 16,
     image: '/images/jiangxi-fried-noodle.jpg',
     nameEn: 'Jiangxi Signature Fried Rice Noodle',
-    nameZh: '江西精品炒粉',
+    nameZh: '招牌江西炒粉',
     descEn: 'Wok-tossed Jiangxi rice noodles with egg, vegetables, and shredded pork. Rich aroma and smoky wok breath in every bite.',
     descZh: '江西米粉大火爆炒，配鸡蛋、蔬菜与猪肉丝，香气浓郁，镬气十足。',
     optionGroups: [
