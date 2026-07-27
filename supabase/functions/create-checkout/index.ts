@@ -15,7 +15,7 @@ const CORS = {
 }
 
 const TAX_RATE = 0.0625 // MA prepared-food tax
-const SITE_URL = 'https://lukchen.github.io/NoodleFan-Website/'
+const SITE_URL = 'https://noodlefanboston.com/'
 
 const supabase = createClient(
   Deno.env.get('SUPABASE_URL')!,
