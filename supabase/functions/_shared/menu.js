@@ -10,6 +10,8 @@
 //   - multi:  `default` is an array of choice ids; `required` means "pick at least one"
 // Choice:       { id, nameEn, nameZh, delta? }   delta = price adjustment in dollars
 //
+// Prices are the 直营 (direct/website) prices from the Drive 菜品定价 sheet.
+// Sides/drinks/add-ons and 卤肉饭 use a placeholder image (logo) until real photos are uploaded.
 // Option sets are derived from the recipe pages (菜单制作) — keep them in sync
 // with what the kitchen can actually customize.
 
@@ -17,9 +19,9 @@ const menu = [
   {
     id: 1,
     category: 'noodle',
-    price: 16,
+    price: 16.99,
     image: '/images/tianjin-beef-noodle.png',
-    nameEn: 'Tianjin Yellow Broth Beef Noodle',
+    nameEn: 'Golden Soup Beef Noodle',
     nameZh: '天津黄汤牛肉拉面',
     descEn: 'Hand-pulled noodles in a rich golden bone broth seasoned with Tianjin-style spices. Topped with tender braised beef slices and fresh scallions.',
     descZh: '天津风味手工拉面，浓郁金黄骨汤，香料熬制，配以软烂卤牛肉片与葱花。',
@@ -46,7 +48,7 @@ const menu = [
   {
     id: 2,
     category: 'noodle',
-    price: 16,
+    price: 16.99,
     image: '/images/taiwanese-beef-noodle.jpg',
     nameEn: 'Taiwanese Beef Noodle',
     nameZh: '台式牛肉面',
@@ -67,7 +69,7 @@ const menu = [
   {
     id: 3,
     category: 'ricenoodle',
-    price: 16,
+    price: 14.99,
     image: '/images/jiangxi-fried-noodle.jpg',
     nameEn: 'Jiangxi Signature Fried Rice Noodle',
     nameZh: '招牌江西炒粉',
@@ -98,9 +100,9 @@ const menu = [
   {
     id: 4,
     category: 'ricenoodle',
-    price: 13,
+    price: 9.99,
     image: '/images/jiangxi-sancian.jpg',
-    nameEn: 'Jiangxi Three Delicacies Rice Noodle Soup',
+    nameEn: 'Jiangxi Garden Mushroom Rice Noodle Soup',
     nameZh: '江西三鲜泡粉',
     descEn: 'Silky Jiangxi rice noodles in a clear pork bone broth, topped with soybeans, wood ear mushroom, and shiitake — simple, hearty, and deeply satisfying.',
     descZh: '江西米粉泡在清澈猪骨汤中，铺满黄豆、木耳与香菇，朴实鲜香，回味绵长。',
@@ -121,7 +123,7 @@ const menu = [
   {
     id: 5,
     category: 'ricenoodle',
-    price: 16,
+    price: 16.99,
     image: '/images/jiangxi-beef-noodle.jpg',
     nameEn: 'Jiangxi Spicy Beef Rice Noodle Soup',
     nameZh: '江西牛肉泡粉',
@@ -151,10 +153,164 @@ const menu = [
       },
     ],
   },
+  {
+    id: 6,
+    category: 'rice',
+    price: 14.99,
+    image: '/images/logo-emblem.png',
+    nameEn: 'Taiwanese Braised Pork Rice Bowl',
+    nameZh: '台北夜市卤肉饭',
+    descEn: 'Taipei night-market braised pork belly, slow-simmered in soy and spices, ladled over steamed rice with a braised egg.',
+    descZh: '台北夜市风味卤肉饭：五花肉慢卤入味，浇在白饭上，配一颗卤蛋。',
+    optionGroups: [
+      {
+        id: 'remove', type: 'multi', default: [],
+        nameEn: 'Leave out', nameZh: '不要放',
+        choices: [
+          { id: 'no-egg', nameEn: 'No braised egg', nameZh: '不要卤蛋' },
+          { id: 'no-cilantro', nameEn: 'No cilantro', nameZh: '不要香菜' },
+        ],
+      },
+    ],
+  },
+
+  // ── 小菜·饮料 Sides & Drinks (single-order add-ons) ──
+  {
+    id: 7,
+    category: 'side',
+    price: 2.5,
+    image: '/images/logo-emblem.png',
+    nameEn: 'Scallion Oil Fried Egg',
+    nameZh: '葱油煎蛋',
+    descEn: 'Fried egg finished with fragrant scallion oil.',
+    descZh: '葱油煎蛋，香气十足。',
+  },
+  {
+    id: 8,
+    category: 'side',
+    price: 2,
+    image: '/images/logo-emblem.png',
+    nameEn: 'Tea Egg',
+    nameZh: '茶叶蛋',
+    descEn: 'Egg marinated and simmered in spiced tea broth.',
+    descZh: '茶香卤制的茶叶蛋。',
+  },
+  {
+    id: 9,
+    category: 'side',
+    price: 2.5,
+    image: '/images/logo-emblem.png',
+    nameEn: 'Coke',
+    nameZh: '可乐',
+    descEn: 'Chilled canned Coca-Cola.',
+    descZh: '冰镇罐装可乐。',
+  },
+  {
+    id: 10,
+    category: 'side',
+    price: 2.5,
+    image: '/images/logo-emblem.png',
+    nameEn: 'Diet Coke',
+    nameZh: 'Diet可乐',
+    descEn: 'Chilled canned Diet Coke.',
+    descZh: '冰镇罐装健怡可乐。',
+  },
+  {
+    id: 11,
+    category: 'side',
+    price: 2.5,
+    image: '/images/logo-emblem.png',
+    nameEn: 'Sprite',
+    nameZh: '雪碧',
+    descEn: 'Chilled canned Sprite.',
+    descZh: '冰镇罐装雪碧。',
+  },
+  {
+    id: 12,
+    category: 'side',
+    price: 2.5,
+    image: '/images/logo-emblem.png',
+    nameEn: 'Fanta',
+    nameZh: '芬达',
+    descEn: 'Chilled canned Fanta.',
+    descZh: '冰镇罐装芬达。',
+  },
+
+  // ── 加料 Add-ons (extra portions) ──
+  {
+    id: 13,
+    category: 'addon',
+    price: 2,
+    image: '/images/logo-emblem.png',
+    nameEn: 'Extra Rice Noodles',
+    nameZh: '加粉',
+    descEn: 'An extra portion of Jiangxi rice noodles.',
+    descZh: '加一份江西米粉。',
+  },
+  {
+    id: 14,
+    category: 'addon',
+    price: 3,
+    image: '/images/logo-emblem.png',
+    nameEn: 'Extra Noodles',
+    nameZh: '加面',
+    descEn: 'An extra portion of wheat noodles.',
+    descZh: '加一份面条。',
+  },
+  {
+    id: 15,
+    category: 'addon',
+    price: 2,
+    image: '/images/logo-emblem.png',
+    nameEn: 'Extra Rice',
+    nameZh: '加饭',
+    descEn: 'An extra portion of steamed rice.',
+    descZh: '加一份米饭。',
+  },
+  {
+    id: 16,
+    category: 'addon',
+    price: 2,
+    image: '/images/logo-emblem.png',
+    nameEn: 'Extra Garden Mushroom (Wood Ear, Shiitake & Soybean)',
+    nameZh: '加三鲜',
+    descEn: 'An extra portion of wood ear mushroom, shiitake, and soybeans.',
+    descZh: '加一份木耳、香菇与黄豆。',
+  },
+  {
+    id: 17,
+    category: 'addon',
+    price: 3,
+    image: '/images/logo-emblem.png',
+    nameEn: 'Extra Shredded Pork',
+    nameZh: '加猪肉丝',
+    descEn: 'An extra portion of shredded pork.',
+    descZh: '加一份猪肉丝。',
+  },
+  {
+    id: 18,
+    category: 'addon',
+    price: 4.9,
+    image: '/images/logo-emblem.png',
+    nameEn: 'Extra Beef Brisket',
+    nameZh: '加牛腩',
+    descEn: 'An extra portion of braised beef brisket.',
+    descZh: '加一份卤牛腩。',
+  },
+  {
+    id: 19,
+    category: 'addon',
+    price: 4.9,
+    image: '/images/logo-emblem.png',
+    nameEn: 'Extra Braised Pork',
+    nameZh: '加卤肉',
+    descEn: 'An extra portion of braised pork belly.',
+    descZh: '加一份卤肉。',
+  },
 ]
 
-// Menu sections for the storefront — ordered; dishes group by `dish.category`
-// (wheat noodles vs rice noodles). Presentational only (create-checkout ignores this).
+// Menu sections for the storefront — ordered; dishes group by `dish.category`.
+// Presentational only (create-checkout ignores this).
 export const categories = [
   {
     id: 'ricenoodle', nameZh: '粉', nameEn: 'Rice Noodles',
@@ -163,6 +319,18 @@ export const categories = [
   {
     id: 'noodle', nameZh: '面', nameEn: 'Noodles',
     taglineZh: '劲道面条，汤醇味浓', taglineEn: 'Springy noodles in rich, savory broth',
+  },
+  {
+    id: 'rice', nameZh: '饭', nameEn: 'Rice Bowls',
+    taglineZh: '卤香浇饭，扎实满足', taglineEn: 'Savory braise over rice, hearty and filling',
+  },
+  {
+    id: 'side', nameZh: '小菜·饮料', nameEn: 'Sides & Drinks',
+    taglineZh: '小食与冰饮', taglineEn: 'Small bites and cold drinks',
+  },
+  {
+    id: 'addon', nameZh: '加料', nameEn: 'Add-ons',
+    taglineZh: '加量更满足', taglineEn: 'Add an extra portion',
   },
 ]
 
