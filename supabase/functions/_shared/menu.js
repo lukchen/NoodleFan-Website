@@ -77,7 +77,7 @@ const menu = [
     descZh: '台北夜市风味卤肉饭：五花肉慢卤入味，浇在白饭上，配一颗卤蛋。',
   },
 
-  // ── 小菜·饮料 Sides & Drinks (single-order add-ons) ──
+  // ── 小菜 Sides (single-order) ──
   {
     id: 7,
     category: 'side',
@@ -98,9 +98,11 @@ const menu = [
     descEn: 'Egg marinated and simmered in spiced tea broth.',
     descZh: '茶香卤制的茶叶蛋。',
   },
+
+  // ── 饮料 Drinks (single-order) ──
   {
     id: 9,
-    category: 'side',
+    category: 'drink',
     price: 2.5,
     image: '/images/logo-emblem.png',
     nameEn: 'Coke',
@@ -110,7 +112,7 @@ const menu = [
   },
   {
     id: 10,
-    category: 'side',
+    category: 'drink',
     price: 2.5,
     image: '/images/logo-emblem.png',
     nameEn: 'Diet Coke',
@@ -120,7 +122,7 @@ const menu = [
   },
   {
     id: 11,
-    category: 'side',
+    category: 'drink',
     price: 2.5,
     image: '/images/logo-emblem.png',
     nameEn: 'Sprite',
@@ -130,7 +132,7 @@ const menu = [
   },
   {
     id: 20,
-    category: 'side',
+    category: 'drink',
     price: 2,
     image: '/images/logo-emblem.png',
     nameEn: 'Bottled Water',
@@ -156,8 +158,12 @@ export const categories = [
     taglineZh: '卤香浇饭，扎实满足', taglineEn: 'Savory braise over rice, hearty and filling',
   },
   {
-    id: 'side', nameZh: '小菜·饮料', nameEn: 'Sides & Drinks',
-    taglineZh: '小食与冰饮', taglineEn: 'Small bites and cold drinks',
+    id: 'side', nameZh: '小菜', nameEn: 'Sides',
+    taglineZh: '卤香小食，配面配饭', taglineEn: 'Small bites to round out the bowl',
+  },
+  {
+    id: 'drink', nameZh: '饮料', nameEn: 'Drinks',
+    taglineZh: '冰镇罐装与瓶装水', taglineEn: 'Chilled cans and bottled water',
   },
 ]
 
