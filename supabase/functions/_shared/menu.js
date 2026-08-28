@@ -11,7 +11,7 @@
 // Choice:       { id, nameEn, nameZh, delta? }   delta = price adjustment in dollars
 //
 // Prices are the 直营 (direct/website) prices from the Drive 菜品定价 sheet.
-// Sides/drinks/add-ons and 卤肉饭 use a placeholder image (logo) until real photos are uploaded.
+// 六道主菜均已换成正式菜品图(2026-08-28);小菜/饮料仍用 logo 占位。
 // Option sets (辣度/面型/忌口/加料) mirror the Drive 菜品定价 sheet columns
 // 「Modifier Group 1-4」 — that sheet is the single source of truth; see MODIFIERS below.
 
@@ -20,7 +20,7 @@ const menu = [
     id: 1,
     category: 'noodle',
     price: 16.99,
-    image: '/images/tianjin-beef-noodle.png',
+    image: '/images/tianjin-beef-noodle.jpg',
     nameEn: 'Golden Soup Beef Noodle',
     nameZh: '天津黄汤牛肉拉面',
     descEn: 'Hand-pulled noodles in a rich golden bone broth seasoned with Tianjin-style spices. Topped with tender braised beef slices and fresh scallions.',
@@ -70,7 +70,7 @@ const menu = [
     id: 6,
     category: 'rice',
     price: 14.99,
-    image: '/images/logo-emblem.png',
+    image: '/images/taiwanese-braised-pork-rice.jpg',
     nameEn: 'Taiwanese Braised Pork Rice Bowl',
     nameZh: '台北夜市卤肉饭',
     descEn: 'Taipei night-market braised pork belly, slow-simmered in soy and spices, ladled over steamed rice with a braised egg.',
