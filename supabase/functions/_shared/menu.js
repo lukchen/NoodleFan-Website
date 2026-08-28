@@ -72,12 +72,12 @@ const menu = [
     price: 14.99,
     image: '/images/jiangxi-fried-noodle.jpg',
     nameEn: 'Authentic Jiangxi Fried Rice Noodle',
-    nameZh: '地道江西炒粉',
+    nameZh: '招牌江西炒粉',
     descEn: 'Wok-tossed Jiangxi rice noodles with egg, vegetables, and shredded pork. Rich aroma and smoky wok breath in every bite.',
     descZh: '江西米粉大火爆炒，配鸡蛋、蔬菜与猪肉丝，香气浓郁，镬气十足。',
     optionGroups: [
       {
-        id: 'veg', type: 'multi', required: true, default: ['cabbage'],
+        id: 'veg', type: 'multi', required: true, default: ['cabbage', 'bokchoy'],
         nameEn: 'Vegetables (pick one or mix)', nameZh: '蔬菜（可单选或混搭）',
         choices: [
           { id: 'cabbage', nameEn: 'Cabbage', nameZh: '包菜' },
@@ -100,10 +100,10 @@ const menu = [
   {
     id: 4,
     category: 'ricenoodle',
-    price: 9.99,
+    price: 12.99,
     image: '/images/jiangxi-sancian.jpg',
     nameEn: 'Jiangxi Garden Mushroom Rice Noodle Soup',
-    nameZh: '招牌江西三鲜泡粉',
+    nameZh: '江西三鲜泡粉',
     descEn: 'Silky Jiangxi rice noodles in a clear pork bone broth, topped with soybeans, wood ear mushroom, and shiitake — simple, hearty, and deeply satisfying.',
     descZh: '江西米粉泡在清澈猪骨汤中，铺满黄豆、木耳与香菇，朴实鲜香，回味绵长。',
     optionGroups: [
@@ -126,7 +126,7 @@ const menu = [
     price: 16.99,
     image: '/images/jiangxi-beef-noodle.jpg',
     nameEn: 'Jiangxi Spicy Beef Rice Noodle Soup',
-    nameZh: '招牌江西牛肉泡粉',
+    nameZh: '江西香辣牛肉泡粉',
     descEn: 'Jiangxi rice noodles soaked in a bold, spicy red broth loaded with braised beef chunks, soybeans, and fresh cilantro. Rich heat with every sip.',
     descZh: '江西米粉泡入浓辣红汤，满铺卤牛肉块、黄豆与香菜，汤底醇厚，辣而过瘾。',
     optionGroups: [
@@ -226,21 +226,21 @@ const menu = [
     descZh: '冰镇罐装雪碧。',
   },
   {
-    id: 12,
+    id: 20,
     category: 'side',
-    price: 2.5,
+    price: 2,
     image: '/images/logo-emblem.png',
-    nameEn: 'Fanta',
-    nameZh: '芬达',
-    descEn: 'Chilled canned Fanta.',
-    descZh: '冰镇罐装芬达。',
+    nameEn: 'Bottled Water',
+    nameZh: '矿泉水',
+    descEn: 'Chilled bottled water.',
+    descZh: '冰镇瓶装水。',
   },
 
   // ── 加料 Add-ons (extra portions) ──
   {
     id: 13,
     category: 'addon',
-    price: 2,
+    price: 2.5,
     image: '/images/logo-emblem.png',
     nameEn: 'Extra Rice Noodles',
     nameZh: '加粉',
@@ -250,7 +250,7 @@ const menu = [
   {
     id: 14,
     category: 'addon',
-    price: 3,
+    price: 3.5,
     image: '/images/logo-emblem.png',
     nameEn: 'Extra Noodles',
     nameZh: '加面',
@@ -260,7 +260,7 @@ const menu = [
   {
     id: 15,
     category: 'addon',
-    price: 2,
+    price: 2.5,
     image: '/images/logo-emblem.png',
     nameEn: 'Extra Rice',
     nameZh: '加饭',
@@ -270,7 +270,7 @@ const menu = [
   {
     id: 16,
     category: 'addon',
-    price: 2,
+    price: 2.5,
     image: '/images/logo-emblem.png',
     nameEn: 'Extra Garden Mushroom (Wood Ear, Shiitake & Soybean)',
     nameZh: '加三鲜',
@@ -280,7 +280,7 @@ const menu = [
   {
     id: 17,
     category: 'addon',
-    price: 3,
+    price: 2.5,
     image: '/images/logo-emblem.png',
     nameEn: 'Extra Shredded Pork',
     nameZh: '加猪肉丝',
@@ -290,7 +290,7 @@ const menu = [
   {
     id: 18,
     category: 'addon',
-    price: 4.9,
+    price: 4.5,
     image: '/images/logo-emblem.png',
     nameEn: 'Extra Beef Brisket',
     nameZh: '加牛腩',
@@ -300,12 +300,32 @@ const menu = [
   {
     id: 19,
     category: 'addon',
-    price: 4.9,
+    price: 4.5,
     image: '/images/logo-emblem.png',
     nameEn: 'Extra Braised Pork',
     nameZh: '加卤肉',
     descEn: 'An extra portion of braised pork belly.',
     descZh: '加一份卤肉。',
+  },
+  {
+    id: 21,
+    category: 'addon',
+    price: 1.5,
+    image: '/images/logo-emblem.png',
+    nameEn: 'Extra Egg',
+    nameZh: '加鸡蛋',
+    descEn: 'An extra egg.',
+    descZh: '加一个鸡蛋。',
+  },
+  {
+    id: 22,
+    category: 'addon',
+    price: 2,
+    image: '/images/logo-emblem.png',
+    nameEn: 'Extra Vegetables',
+    nameZh: '加蔬菜',
+    descEn: 'An extra portion of vegetables.',
+    descZh: '加一份蔬菜。',
   },
 ]
 
