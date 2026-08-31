@@ -23,8 +23,8 @@ const menu = [
     image: '/images/Golden%20Curry%20Beef%20Noodle.jpg',
     nameEn: 'Golden Curry Beef Noodle',
     nameZh: '天津黄汤牛肉拉面',
-    descEn: 'Hand-pulled noodles in a rich golden bone broth seasoned with Tianjin-style spices. Topped with tender beef brisket, a fried egg and fresh scallions.',
-    descZh: '天津风味手工拉面，浓郁金黄骨汤，香料熬制，配软烂牛腩片、煎蛋与葱花。',
+    descEn: 'Hand-pulled noodles in golden curry-spiced beef bone broth with tender brisket, cilantro and a fried egg.',
+    descZh: '天津卫黄汤拉面，咖喱味慢熬的牛骨浓汤，配软烂牛腩、香菜蒜苗与煎蛋。',
   },
   {
     id: 2,
@@ -33,8 +33,8 @@ const menu = [
     image: '/images/Taiwanese%20Beef%20Noodle.jpg',
     nameEn: 'Taiwanese Beef Noodle',
     nameZh: '台式牛肉面',
-    descEn: 'Slow-braised beef brisket in a deep, spiced broth built on beef tallow. Served with fresh noodles, a fried egg and pickled mustard greens.',
-    descZh: '牛腩慢炖，牛油炒香，汤底浓郁醇厚。配新鲜面条、煎蛋与酸菜提鲜。',
+    descEn: 'Slow-braised beef brisket in a tomato, apple and spice broth built on beef tallow, with fresh noodles and a fried egg.',
+    descZh: '台式慢炖牛腩面，牛油炒香、番茄苹果与八角桂皮吊出的醇厚汤头，配新鲜面条与煎蛋。',
   },
   {
     id: 3,
@@ -43,8 +43,8 @@ const menu = [
     image: '/images/Authentic%20Jiangxi%20Fried%20Rice%20Noodle.jpg',
     nameEn: 'Authentic Jiangxi Fried Rice Noodle',
     nameZh: '招牌江西炒粉',
-    descEn: 'Wok-tossed Jiangxi rice noodles with egg, vegetables, and shredded pork. Rich aroma and smoky wok breath in every bite.',
-    descZh: '江西米粉大火爆炒，配鸡蛋、蔬菜与猪肉丝，香气浓郁，锅气十足。',
+    descEn: 'Wok-tossed Jiangxi rice noodles with egg, pork, cabbage and baby bok choy — smoky, savory street-food style.',
+    descZh: '江西街头味的大火猛炒米粉，配鸡蛋、猪肉丝、包菜与小油菜，锅气十足、咸香够味。',
   },
   {
     id: 4,
@@ -53,8 +53,8 @@ const menu = [
     image: '/images/Jiangxi%20Garden%20Mushroom%20Rice%20Noodle%20Soup.jpg',
     nameEn: 'Jiangxi Garden Mushroom Rice Noodle Soup',
     nameZh: '江西三鲜泡粉',
-    descEn: 'Silky Jiangxi rice noodles in a clear pork bone broth, topped with soybeans, wood ear mushroom, and shiitake — simple, hearty, and deeply satisfying.',
-    descZh: '江西米粉泡在清澈猪骨汤中，铺满黄豆、木耳与香菇，朴实鲜香，回味绵长。',
+    descEn: 'Silky rice noodles and a slow-braised pork spine bone in slow-simmered pork bone broth, with soybeans, wood ear, and shiitake. Clean and comforting.',
+    descZh: '猪骨清汤慢煨的招牌泡粉，配黄豆、木耳、香菇三鲜，以及原汤猪脊骨。汤清味鲜，不辣不腻。',
   },
   {
     id: 5,
@@ -63,8 +63,8 @@ const menu = [
     image: '/images/Jiangxi%20Spicy%20Beef%20Rice%20Noodle%20Soup.jpg',
     nameEn: 'Jiangxi Spicy Beef Rice Noodle Soup',
     nameZh: '江西香辣牛肉泡粉',
-    descEn: 'Jiangxi rice noodles in a bold, spicy red broth, topped with chili-simmered beef, soybeans, cilantro and crisp pickled greens. Rich heat with every sip.',
-    descZh: '江西米粉泡入浓辣红汤，铺上香辣牛肉块，配黄豆、香菜与爽口小咸菜，汤底醇厚，辣而过瘾。',
+    descEn: 'Rice noodles in clear pork bone broth, topped with chili-simmered beef in fragrant red oil, with soybeans, cilantro and crisp pickled greens.',
+    descZh: '猪骨清汤打底，铺上小火慢煨的红油香辣牛肉块，配黄豆、香菜与爽口小咸菜，鲜辣入味，江西招牌。',
   },
   {
     id: 6,
@@ -73,8 +73,8 @@ const menu = [
     image: '/images/Taiwanese%20Braised%20Pork%20Rice%20Bowl.jpg',
     nameEn: 'Taiwanese Braised Pork Rice Bowl',
     nameZh: '台北夜市卤肉饭',
-    descEn: 'Taipei night-market braised pork belly, slow-simmered in soy and spices, ladled over steamed rice with a braised egg.',
-    descZh: '台北夜市风味卤肉饭：五花肉慢卤入味，浇在白饭上，配一颗卤蛋。',
+    descEn: 'Taipei street style braised pork belly over rice with pickled daikon, greens and an egg.',
+    descZh: '台北夜市经典卤肉饭，红葱酥慢卤的五花肉浇在热米饭上，配腌黄萝卜、小咸菜、小油菜和香卤蛋。',
   },
 
   // ── 小菜 Sides (single-order) ──
@@ -85,8 +85,8 @@ const menu = [
     image: '/images/Scallion%20Oil%20Fried%20Egg.jpg',
     nameEn: 'Scallion Oil Fried Egg',
     nameZh: '葱油煎蛋',
-    descEn: 'Fried egg finished with fragrant scallion oil.',
-    descZh: '葱油煎蛋，香气十足。',
+    descEn: 'Crispy-edged fried egg finished with fragrant scallion oil. Great on any noodle or rice bowl.',
+    descZh: '现煎葱油煎蛋，边缘焦香、蛋心饱满，配面配饭都好吃。',
   },
   {
     id: 8,
@@ -95,8 +95,8 @@ const menu = [
     image: '/images/Tea%20Egg.jpg',
     nameEn: 'Tea Egg',
     nameZh: '茶叶蛋',
-    descEn: 'Egg marinated and simmered in spiced tea broth.',
-    descZh: '茶香卤制的茶叶蛋。',
+    descEn: 'Tea egg steeped in black tea, star anise and cinnamon.',
+    descZh: '红茶与八角桂皮慢卤、过夜浸味的茶叶蛋，整颗带壳，剥开满是纹路清香。',
   },
 
   // ── 饮料 Drinks (single-order) ──
