@@ -27,7 +27,7 @@ function MenuCard({ item, t, lang, onCustomize }) {
         {altName && <p className="menu-card-subname">{altName}</p>}
         {desc && <p className="menu-card-desc">{desc}</p>}
         <div className="menu-card-footer">
-          <p className="menu-card-price">{t.menu.price(item.price)}</p>
+          {ORDERING_ENABLED && <p className="menu-card-price">{t.menu.price(item.price)}</p>}
           {/* Dishes with options always go through the picker — each add is a specific
               combination; per-line qty is managed in the cart drawer. */}
           {ORDERING_ENABLED && (
