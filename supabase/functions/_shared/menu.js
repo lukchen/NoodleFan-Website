@@ -24,7 +24,7 @@ const menu = [
     nameEn: 'Golden Curry Beef Noodle',
     nameZh: '天津黄汤牛肉拉面',
     descEn: 'Hand-pulled noodles in a rich golden bone broth seasoned with Tianjin-style spices. Topped with tender beef brisket, a fried egg and fresh scallions.',
-    descZh: '天津风味手工拉面，浓郁金黄骨汤，香料熬制，配软烂牛腩片、荷包蛋与葱花。',
+    descZh: '天津风味手工拉面，浓郁金黄骨汤，香料熬制，配软烂牛腩片、煎蛋与葱花。',
   },
   {
     id: 2,
@@ -34,7 +34,7 @@ const menu = [
     nameEn: 'Taiwanese Beef Noodle',
     nameZh: '台式牛肉面',
     descEn: 'Slow-braised beef brisket in a deep, spiced broth built on beef tallow. Served with fresh noodles, a fried egg and pickled mustard greens.',
-    descZh: '牛腩慢炖，牛油炒香，汤底浓郁醇厚。配新鲜面条、荷包蛋与酸菜提鲜。',
+    descZh: '牛腩慢炖，牛油炒香，汤底浓郁醇厚。配新鲜面条、煎蛋与酸菜提鲜。',
   },
   {
     id: 3,
