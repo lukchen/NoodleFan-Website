@@ -1,3 +1,5 @@
+import { ORDERING_ENABLED } from '../config'
+
 export default function Hero({ t }) {
   function scrollToMenu(e) {
     e.preventDefault()
@@ -16,7 +18,14 @@ export default function Hero({ t }) {
           <span>{t.hero.subA}</span>
           <span>{t.hero.subB}</span>
         </p>
-        <a href="#menu" className="btn-primary" onClick={scrollToMenu}>{t.hero.cta}</a>
+        {ORDERING_ENABLED ? (
+          <a href="#menu" className="btn-primary" onClick={scrollToMenu}>{t.hero.cta}</a>
+        ) : (
+          <div className="coming-soon">
+            <span className="coming-soon-badge">{t.hero.comingSoon}</span>
+            <span className="coming-soon-sub">{t.hero.comingSoonSub}</span>
+          </div>
+        )}
       </div>
     </section>
   )

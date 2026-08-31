@@ -9,6 +9,7 @@ import Checkout from './components/Checkout'
 import Footer from './components/Footer'
 import Admin from './components/Admin'
 import OrderStatus from './components/OrderStatus'
+import { ORDERING_ENABLED } from './config'
 import './App.css'
 
 function OrderSuccess({ t, onClose }) {
@@ -50,8 +51,8 @@ function AppInner({ t, lang, setLang }) {
         <MenuSection t={t} lang={lang} />
       </main>
       <Footer t={t} />
-      <Cart t={t} onCheckout={() => setCheckoutOpen(true)} />
-      {checkoutOpen && <Checkout t={t} onClose={() => setCheckoutOpen(false)} />}
+      {ORDERING_ENABLED && <Cart t={t} onCheckout={() => setCheckoutOpen(true)} />}
+      {ORDERING_ENABLED && checkoutOpen && <Checkout t={t} onClose={() => setCheckoutOpen(false)} />}
       {orderSuccess && <OrderSuccess t={t} onClose={() => setOrderSuccess(false)} />}
     </>
   )

@@ -10,6 +10,8 @@ const strings = {
     hero: {
       subA: 'Bone broth simmered fresh every day, ingredients prepped each morning — authentic Chinese flavors in every bowl',
       subB: 'Every dish made fresh to order — never pre-packaged, always made with heart.',
+      comingSoon: 'Online ordering coming soon',
+      comingSoonSub: 'Browse the menu — you\'ll be able to order right here shortly.',
       cta: 'Order Now',
     },
     menu: {
@@ -85,6 +87,8 @@ const strings = {
     hero: {
       subA: '骨汤每日现熬，食材当日新鲜，一碗一味，还原地道中式风味',
       subB: '每一份现点现做，绝不预制，只为吃得放心。',
+      comingSoon: '点餐功能即将上线',
+      comingSoonSub: '菜单先看着，很快就能在这里直接下单。',
       cta: '立即点餐',
     },
     menu: {

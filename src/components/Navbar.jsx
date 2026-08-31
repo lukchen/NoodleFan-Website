@@ -1,5 +1,6 @@
 import LangToggle from './LangToggle'
 import { useCart } from '../context/CartContext'
+import { ORDERING_ENABLED } from '../config'
 
 export default function Navbar({ t, lang, onToggleLang }) {
   const { totalItems, setCartOpen } = useCart()
@@ -12,9 +13,11 @@ export default function Navbar({ t, lang, onToggleLang }) {
       </div>
       <div className="navbar-links">
         <a href="#menu">{t.nav.menu}</a>
-        <button className="cart-btn" onClick={() => setCartOpen(true)}>
-          🛒 {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
-        </button>
+        {ORDERING_ENABLED && (
+          <button className="cart-btn" onClick={() => setCartOpen(true)}>
+            🛒 {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
+          </button>
+        )}
         <LangToggle lang={lang} onToggle={onToggleLang} />
       </div>
     </nav>

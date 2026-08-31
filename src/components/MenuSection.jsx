@@ -2,6 +2,7 @@ import { useState } from 'react'
 import menu, { categories } from '../data/menu'
 import { useCart } from '../context/CartContext'
 import OptionsModal from './OptionsModal'
+import { ORDERING_ENABLED } from '../config'
 
 function MenuCard({ item, t, lang, onCustomize }) {
   const { addItem, dishQty } = useCart()
@@ -29,9 +30,11 @@ function MenuCard({ item, t, lang, onCustomize }) {
           <p className="menu-card-price">{t.menu.price(item.price)}</p>
           {/* Dishes with options always go through the picker — each add is a specific
               combination; per-line qty is managed in the cart drawer. */}
-          <button className="btn-add" onClick={() => (hasOptions ? onCustomize(item) : addItem(item))}>
-            {t.menu.add}{qty > 0 && <span className="btn-add-count"> ×{qty}</span>}
-          </button>
+          {ORDERING_ENABLED && (
+            <button className="btn-add" onClick={() => (hasOptions ? onCustomize(item) : addItem(item))}>
+              {t.menu.add}{qty > 0 && <span className="btn-add-count"> ×{qty}</span>}
+            </button>
+          )}
         </div>
       </div>
     </article>
