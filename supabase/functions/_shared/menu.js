@@ -44,7 +44,7 @@ const menu = [
     nameEn: 'Authentic Jiangxi Fried Rice Noodle',
     nameZh: '招牌江西炒粉',
     descEn: 'Wok-tossed Jiangxi rice noodles with egg, vegetables, and shredded pork. Rich aroma and smoky wok breath in every bite.',
-    descZh: '江西米粉大火爆炒，配鸡蛋、蔬菜与猪肉丝，香气浓郁，镬气十足。',
+    descZh: '江西米粉大火爆炒，配鸡蛋、蔬菜与猪肉丝，香气浓郁，锅气十足。',
   },
   {
     id: 4,
@@ -63,8 +63,8 @@ const menu = [
     image: '/images/Jiangxi%20Spicy%20Beef%20Rice%20Noodle%20Soup.jpg',
     nameEn: 'Jiangxi Spicy Beef Rice Noodle Soup',
     nameZh: '江西香辣牛肉泡粉',
-    descEn: 'Jiangxi rice noodles soaked in a bold, spicy red broth loaded with braised beef chunks, soybeans, and fresh cilantro. Rich heat with every sip.',
-    descZh: '江西米粉泡入浓辣红汤，满铺卤牛肉块、黄豆与香菜，汤底醇厚，辣而过瘾。',
+    descEn: 'Jiangxi rice noodles in a bold, spicy red broth, topped with chili-simmered beef, soybeans, cilantro and crisp pickled greens. Rich heat with every sip.',
+    descZh: '江西米粉泡入浓辣红汤，铺上香辣牛肉块，配黄豆、香菜与爽口小咸菜，汤底醇厚，辣而过瘾。',
   },
   {
     id: 6,
