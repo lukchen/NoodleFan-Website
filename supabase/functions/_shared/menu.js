@@ -107,8 +107,8 @@ const menu = [
     image: '/images/Coke.jpg',
     nameEn: 'Coke',
     nameZh: '可乐',
-    descEn: 'Chilled canned Coca-Cola.',
-    descZh: '冰镇罐装可乐。',
+    descEn: 'Canned Coca-Cola.',
+    descZh: '罐装可乐。',
   },
   {
     id: 10,
@@ -117,8 +117,8 @@ const menu = [
     image: '/images/Diet%20Coke.jpg',
     nameEn: 'Diet Coke',
     nameZh: 'Diet可乐',
-    descEn: 'Chilled canned Diet Coke.',
-    descZh: '冰镇罐装健怡可乐。',
+    descEn: 'Canned Diet Coke.',
+    descZh: '罐装健怡可乐。',
   },
   {
     id: 11,
@@ -127,8 +127,8 @@ const menu = [
     image: '/images/Sprite.jpg',
     nameEn: 'Sprite',
     nameZh: '雪碧',
-    descEn: 'Chilled canned Sprite.',
-    descZh: '冰镇罐装雪碧。',
+    descEn: 'Canned Sprite.',
+    descZh: '罐装雪碧。',
   },
   {
     id: 20,
@@ -137,8 +137,8 @@ const menu = [
     image: '/images/Water.jpg',
     nameEn: 'Bottled Water',
     nameZh: '矿泉水',
-    descEn: 'Chilled bottled water.',
-    descZh: '冰镇瓶装水。',
+    descEn: 'Bottled water.',
+    descZh: '瓶装水。',
   },
 ]
 
@@ -163,7 +163,7 @@ export const categories = [
   },
   {
     id: 'drink', nameZh: '饮料', nameEn: 'Drinks',
-    taglineZh: '冰镇罐装与瓶装水', taglineEn: 'Chilled cans and bottled water',
+    taglineZh: '罐装饮料与瓶装水', taglineEn: 'Canned drinks and bottled water',
   },
 ]
 
