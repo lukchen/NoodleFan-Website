@@ -1378,3 +1378,14 @@ body {
   max-width: 32rem;
   line-height: 1.5;
 }
+.coming-soon-note {
+  margin-top: 1.1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--brand-red, #b3221f);
+  max-width: 32rem;
+  line-height: 1.4;
+}
