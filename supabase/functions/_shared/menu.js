@@ -236,7 +236,7 @@ const ADDONS = {
   noodles:        { id: 'add-noodles',        nameEn: 'Extra Noodles',      nameZh: '加面',     delta: 3.5 },
   rice:           { id: 'add-rice',           nameEn: 'Extra Rice',         nameZh: '加饭',     delta: 2.5 },
   gardenMushroom: { id: 'add-gardenmushroom', nameEn: 'Extra Garden Mushroom (Wood Ear, Shiitake & Soybean)', nameZh: '加三鲜', delta: 2.5 },
-  shreddedPork:   { id: 'add-shreddedpork',   nameEn: 'Extra Shredded Pork', nameZh: '加猪肉丝', delta: 2.5 },
+  shreddedPork:   { id: 'add-shreddedpork',   nameEn: 'Extra Shredded Pork', nameZh: '加额外肉丝', delta: 2.5 },
   beefBrisket:    { id: 'add-beefbrisket',    nameEn: 'Extra Beef Brisket', nameZh: '加牛腩',   delta: 4.5 },
   braisedPork:    { id: 'add-braisedpork',    nameEn: 'Extra Braised Pork', nameZh: '加卤肉',   delta: 4.5 },
   egg:            { id: 'add-egg',            nameEn: 'Extra Egg',          nameZh: '加鸡蛋',   delta: 1.5 },
