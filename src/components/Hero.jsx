@@ -23,6 +23,7 @@ export default function Hero({ t }) {
         ) : (
           <div className="coming-soon">
             <span className="coming-soon-badge">{t.hero.comingSoon}</span>
+            <span className="coming-soon-platforms">{t.hero.platforms}</span>
             <span className="coming-soon-sub">{t.hero.comingSoonSub}</span>
           </div>
         )}
