@@ -10,8 +10,9 @@ const strings = {
     hero: {
       subA: 'Bone broth simmered fresh every day, ingredients prepped each morning — authentic Chinese flavors in every bowl',
       subB: 'Every dish made fresh to order — never pre-packaged, always made with heart.',
-      comingSoon: 'Online ordering coming soon',
-      comingSoonSub: 'Browse the menu — you\'ll be able to order right here shortly.',
+      comingSoon: 'Order now on delivery apps',
+      platforms: 'Fantuan · Uber Eats · DoorDash · Grubhub',
+      comingSoonSub: 'Search "NoodleFan" to order. Ordering on this site is coming soon.',
       cta: 'Order Now',
     },
     menu: {
@@ -87,8 +88,9 @@ const strings = {
     hero: {
       subA: '骨汤每日现熬，食材当日新鲜，一碗一味，还原地道中式风味',
       subB: '每一份现点现做，绝不预制，只为吃得放心。',
-      comingSoon: '点餐功能即将上线',
-      comingSoonSub: '菜单先看着，很快就能在这里直接下单。',
+      comingSoon: '现已在外卖平台接单',
+      platforms: '饭团 · Uber Eats · DoorDash · Grubhub',
+      comingSoonSub: '搜索「粉面王 NoodleFan」即可下单；官网点餐功能即将上线。',
       cta: '立即点餐',
     },
     menu: {
