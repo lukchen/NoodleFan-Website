@@ -1366,7 +1366,15 @@ body {
   color: var(--brand-red, #b3221f);
   background: rgba(255, 255, 255, 0.55);
 }
+.coming-soon-platforms {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  opacity: 0.95;
+}
 .coming-soon-sub {
   font-size: 0.9rem;
   opacity: 0.75;
+  max-width: 32rem;
+  line-height: 1.5;
 }
