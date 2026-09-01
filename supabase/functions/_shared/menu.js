@@ -241,13 +241,14 @@ const ADDONS = {
   braisedPork:    { id: 'add-braisedpork',    nameEn: 'Extra Braised Pork', nameZh: '加卤肉',   delta: 4.5 },
   egg:            { id: 'add-egg',            nameEn: 'Extra Egg',          nameZh: '加鸡蛋',   delta: 1.5 },
   vegetables:     { id: 'add-vegetables',     nameEn: 'Extra Vegetables',   nameZh: '加蔬菜',   delta: 2 },
+  hamSausage:     { id: 'add-hamsausage',     nameEn: 'Extra Ham Sausage',  nameZh: '加火腿肠', delta: 3 },
 }
 
 // dish id -> { spice: [choices, defaultId], noodle: defaultId, remove: [...], addon: [...] }
 const MODIFIERS = {
   1: { spice: [['none', 'extra'], 'none'],                     noodle: 'thick', remove: ['scallion', 'cilantro', 'pickle'],                                  addon: ['noodles', 'beefBrisket', 'egg', 'vegetables'] },
   2: { spice: [['none', 'extra'], 'none'],                     noodle: 'thick', remove: ['scallion', 'cilantro', 'pickle'],                                  addon: ['noodles', 'beefBrisket', 'egg', 'vegetables'] },
-  3: { spice: [['none', 'mild', 'regular', 'extra'], 'regular'],                remove: ['pickle'],                                                          addon: ['riceNoodles', 'shreddedPork', 'egg', 'vegetables'] },
+  3: { spice: [['none', 'mild', 'regular', 'extra'], 'regular'],                remove: ['pickle'],                                                          addon: ['riceNoodles', 'shreddedPork', 'egg', 'vegetables', 'hamSausage'] },
   4: { spice: [['none', 'extra'], 'none'],                                      remove: ['scallion', 'cilantro', 'pickle', 'woodear', 'soybean', 'shiitake'], addon: ['riceNoodles', 'gardenMushroom', 'egg', 'vegetables'] },
   5: { spice: [['mild', 'regular', 'extra'], 'regular'],                        remove: ['scallion', 'cilantro', 'pickle'],                                  addon: ['riceNoodles', 'beefBrisket', 'egg', 'vegetables'] },
   6: {                                                                          remove: ['egg', 'cilantro'],                                                 addon: ['rice', 'braisedPork', 'egg', 'vegetables'] },
