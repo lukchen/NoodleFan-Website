@@ -12,7 +12,8 @@ const strings = {
       subB: 'Every dish made fresh to order — never pre-packaged, always made with heart.',
       comingSoon: 'Order now on delivery apps',
       platforms: 'Fantuan · Uber Eats · DoorDash · Grubhub',
-      comingSoonSub: 'Search "NoodleFan" to order. Ordering on this site is coming soon.',
+      comingSoonSub: 'Search "NoodleFan" to order.',
+      siteOrderingSoon: 'Ordering directly on this site — coming soon',
       cta: 'Order Now',
     },
     menu: {
@@ -90,7 +91,8 @@ const strings = {
       subB: '每一份现点现做，绝不预制，只为吃得放心。',
       comingSoon: '现已在外卖平台接单',
       platforms: '饭团 · Uber Eats · DoorDash · Grubhub',
-      comingSoonSub: '搜索「粉面王」即可下单；官网点餐功能即将上线。',
+      comingSoonSub: '搜索「粉面王」即可下单',
+      siteOrderingSoon: '官网点餐功能即将上线',
       cta: '立即点餐',
     },
     menu: {
