@@ -1,4 +1,4 @@
-import { ORDERING_ENABLED } from '../config'
+import { ORDERING_ENABLED, PLATFORM_LINKS } from '../config'
 
 export default function Hero({ t }) {
   function scrollToMenu(e) {
@@ -22,7 +22,14 @@ export default function Hero({ t }) {
           <a href="#menu" className="btn-primary" onClick={scrollToMenu}>{t.hero.cta}</a>
         ) : (
           <div className="coming-soon">
-            <span className="coming-soon-badge">{t.hero.comingSoon}</span>
+            <a
+              className="btn-primary platform-cta"
+              href={PLATFORM_LINKS.uberEats}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {t.hero.orderUberEats}
+            </a>
             <span className="coming-soon-platforms">{t.hero.platforms}</span>
             <span className="coming-soon-sub">{t.hero.comingSoonSub}</span>
             <span className="coming-soon-note">{t.hero.siteOrderingSoon}</span>
