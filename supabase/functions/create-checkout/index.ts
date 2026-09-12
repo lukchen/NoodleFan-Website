@@ -14,7 +14,7 @@ const CORS = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-const TAX_RATE = 0.0625 // MA prepared-food tax
+const TAX_RATE = 0.07 // MA 6.25% + Boston local option 0.75%
 const SITE_URL = 'https://noodlefanboston.com/'
 
 const supabase = createClient(
