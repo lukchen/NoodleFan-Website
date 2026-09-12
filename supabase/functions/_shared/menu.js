@@ -19,7 +19,7 @@ const menu = [
   {
     id: 1,
     category: 'noodle',
-    price: 16.99,
+    price: 17.99,
     image: '/images/Golden%20Curry%20Beef%20Noodle.jpg',
     nameEn: 'Golden Curry Beef Noodle',
     nameZh: '天津黄汤牛肉拉面',
@@ -29,7 +29,7 @@ const menu = [
   {
     id: 2,
     category: 'noodle',
-    price: 16.99,
+    price: 17.99,
     image: '/images/Taiwanese%20Beef%20Noodle.jpg',
     nameEn: 'Taiwanese Beef Noodle',
     nameZh: '台式牛肉面',
@@ -39,7 +39,7 @@ const menu = [
   {
     id: 3,
     category: 'ricenoodle',
-    price: 14.99,
+    price: 15.99,
     image: '/images/Authentic%20Jiangxi%20Fried%20Rice%20Noodle.jpg',
     nameEn: 'Authentic Jiangxi Fried Rice Noodle',
     nameZh: '招牌江西炒粉',
@@ -49,7 +49,7 @@ const menu = [
   {
     id: 4,
     category: 'ricenoodle',
-    price: 12.99,
+    price: 13.99,
     image: '/images/Jiangxi%20Garden%20Mushroom%20Rice%20Noodle%20Soup.jpg',
     nameEn: 'Jiangxi Garden Mushroom Rice Noodle Soup',
     nameZh: '江西三鲜泡粉',
@@ -59,7 +59,7 @@ const menu = [
   {
     id: 5,
     category: 'ricenoodle',
-    price: 16.99,
+    price: 17.99,
     image: '/images/Jiangxi%20Spicy%20Beef%20Rice%20Noodle%20Soup.jpg',
     nameEn: 'Jiangxi Spicy Beef Rice Noodle Soup',
     nameZh: '江西香辣牛肉泡粉',
@@ -69,7 +69,7 @@ const menu = [
   {
     id: 6,
     category: 'rice',
-    price: 14.99,
+    price: 15.99,
     image: '/images/Taiwanese%20Braised%20Pork%20Rice%20Bowl.jpg',
     nameEn: 'Taiwanese Braised Pork Rice Bowl',
     nameZh: '台北夜市卤肉饭',
@@ -140,6 +140,252 @@ const menu = [
     descEn: 'Bottled water.',
     descZh: '瓶装水。',
   },
+
+  // ── 汤 Soups ──
+  {
+    id: 21,
+    category: 'soup',
+    price: 23.99,
+    image: '/images/Golden%20Curry%20Beef%20Noodle.jpg',
+    nameEn: 'Tianjin Lamb & Offal Soup',
+    nameZh: '天津羊杂汤',
+    descEn: 'Milky lamb bone broth with tender lamb and offal, finished with cilantro, scallion and white pepper.',
+    descZh: '天津街头老味羊杂汤，羊骨慢熬至奶白，羊杂切片入汤，撒香菜蒜苗、现磨白胡椒，汤浓味厚。',
+  },
+
+  // ── 单人套餐 Combo for One ──
+  {
+    id: 101,
+    category: 'combo',
+    price: 18.99,
+    image: '/images/Authentic%20Jiangxi%20Fried%20Rice%20Noodle.jpg',
+    nameEn: 'Authentic Jiangxi Fried Rice Noodle Combo · Ham Sausage',
+    nameZh: '招牌江西炒粉套餐·火腿肠',
+    descEn: 'Wok-tossed Jiangxi rice noodles + ham sausage + your choice of drink.',
+    descZh: '招牌江西炒粉 + 火腿肠 + 自选饮料一杯，比单点更划算。',
+  },
+  {
+    id: 102,
+    category: 'combo',
+    price: 20.99,
+    image: '/images/Jiangxi%20Spicy%20Beef%20Rice%20Noodle%20Soup.jpg',
+    nameEn: 'Jiangxi Spicy Beef Rice Noodle Soup Combo · Tofu Knots',
+    nameZh: '江西香辣牛肉泡粉套餐·豆腐结',
+    descEn: 'Spicy beef rice noodle soup + tofu knots + your choice of drink.',
+    descZh: '江西香辣牛肉泡粉 + 豆腐结 + 自选饮料一杯，比单点更划算。',
+  },
+  {
+    id: 103,
+    category: 'combo',
+    price: 21.99,
+    image: '/images/Jiangxi%20Spicy%20Beef%20Rice%20Noodle%20Soup.jpg',
+    nameEn: 'Jiangxi Spicy Beef Rice Noodle Soup Combo · Beef Balls',
+    nameZh: '江西香辣牛肉泡粉套餐·牛肉丸',
+    descEn: 'Spicy beef rice noodle soup + beef balls + your choice of drink.',
+    descZh: '江西香辣牛肉泡粉 + 牛肉丸 + 自选饮料一杯，比单点更划算。',
+  },
+  {
+    id: 104,
+    category: 'combo',
+    price: 24.99,
+    image: '/images/Jiangxi%20Spicy%20Beef%20Rice%20Noodle%20Soup.jpg',
+    nameEn: 'Jiangxi Spicy Beef Rice Noodle Soup Combo · Deluxe',
+    nameZh: '江西香辣牛肉泡粉套餐·全家福（豆腐结+牛肉丸）',
+    descEn: 'Spicy beef rice noodle soup + tofu knots + beef balls + your choice of drink.',
+    descZh: '江西香辣牛肉泡粉 + 豆腐结与牛肉丸 + 自选饮料一杯，加料双拼。',
+  },
+  {
+    id: 105,
+    category: 'combo',
+    price: 16.99,
+    image: '/images/Jiangxi%20Garden%20Mushroom%20Rice%20Noodle%20Soup.jpg',
+    nameEn: 'Jiangxi Garden Mushroom Rice Noodle Soup Combo · Tofu Knots',
+    nameZh: '江西三鲜泡粉套餐·豆腐结',
+    descEn: 'Garden mushroom rice noodle soup + tofu knots + your choice of drink.',
+    descZh: '江西三鲜泡粉 + 豆腐结 + 自选饮料一杯，比单点更划算。',
+  },
+  {
+    id: 106,
+    category: 'combo',
+    price: 17.99,
+    image: '/images/Jiangxi%20Garden%20Mushroom%20Rice%20Noodle%20Soup.jpg',
+    nameEn: 'Jiangxi Garden Mushroom Rice Noodle Soup Combo · Beef Balls',
+    nameZh: '江西三鲜泡粉套餐·牛肉丸',
+    descEn: 'Garden mushroom rice noodle soup + beef balls + your choice of drink.',
+    descZh: '江西三鲜泡粉 + 牛肉丸 + 自选饮料一杯，比单点更划算。',
+  },
+  {
+    id: 107,
+    category: 'combo',
+    price: 20.99,
+    image: '/images/Jiangxi%20Garden%20Mushroom%20Rice%20Noodle%20Soup.jpg',
+    nameEn: 'Jiangxi Garden Mushroom Rice Noodle Soup Combo · Deluxe',
+    nameZh: '江西三鲜泡粉套餐·全家福（豆腐结+牛肉丸）',
+    descEn: 'Garden mushroom rice noodle soup + tofu knots + beef balls + your choice of drink.',
+    descZh: '江西三鲜泡粉 + 豆腐结与牛肉丸 + 自选饮料一杯，加料双拼。',
+  },
+  {
+    id: 108,
+    category: 'combo',
+    price: 21.99,
+    image: '/images/Golden%20Curry%20Beef%20Noodle.jpg',
+    nameEn: 'Golden Curry Beef Noodle Combo · Tofu Knots',
+    nameZh: '天津黄汤牛肉拉面套餐·豆腐结',
+    descEn: 'Golden curry beef noodle + tofu knots + your choice of drink.',
+    descZh: '天津黄汤牛肉拉面 + 豆腐结 + 自选饮料一杯，比单点更划算。',
+  },
+  {
+    id: 109,
+    category: 'combo',
+    price: 22.99,
+    image: '/images/Golden%20Curry%20Beef%20Noodle.jpg',
+    nameEn: 'Golden Curry Beef Noodle Combo · Beef Balls',
+    nameZh: '天津黄汤牛肉拉面套餐·牛肉丸',
+    descEn: 'Golden curry beef noodle + beef balls + your choice of drink.',
+    descZh: '天津黄汤牛肉拉面 + 牛肉丸 + 自选饮料一杯，比单点更划算。',
+  },
+  {
+    id: 110,
+    category: 'combo',
+    price: 24.99,
+    image: '/images/Golden%20Curry%20Beef%20Noodle.jpg',
+    nameEn: 'Golden Curry Beef Noodle Combo · Deluxe',
+    nameZh: '天津黄汤牛肉拉面套餐·全家福（豆腐结+牛肉丸）',
+    descEn: 'Golden curry beef noodle + tofu knots + beef balls + your choice of drink.',
+    descZh: '天津黄汤牛肉拉面 + 豆腐结与牛肉丸 + 自选饮料一杯，加料双拼。',
+  },
+  {
+    id: 111,
+    category: 'combo',
+    price: 20.99,
+    image: '/images/Taiwanese%20Beef%20Noodle.jpg',
+    nameEn: 'Taiwanese Beef Noodle Combo · Tofu Knots',
+    nameZh: '台式牛肉面套餐·豆腐结',
+    descEn: 'Taiwanese beef noodle + tofu knots + your choice of drink.',
+    descZh: '台式牛肉面 + 豆腐结 + 自选饮料一杯，比单点更划算。',
+  },
+  {
+    id: 112,
+    category: 'combo',
+    price: 21.99,
+    image: '/images/Taiwanese%20Beef%20Noodle.jpg',
+    nameEn: 'Taiwanese Beef Noodle Combo · Beef Balls',
+    nameZh: '台式牛肉面套餐·牛肉丸',
+    descEn: 'Taiwanese beef noodle + beef balls + your choice of drink.',
+    descZh: '台式牛肉面 + 牛肉丸 + 自选饮料一杯，比单点更划算。',
+  },
+  {
+    id: 113,
+    category: 'combo',
+    price: 24.99,
+    image: '/images/Taiwanese%20Beef%20Noodle.jpg',
+    nameEn: 'Taiwanese Beef Noodle Combo · Deluxe',
+    nameZh: '台式牛肉面套餐·全家福（豆腐结+牛肉丸）',
+    descEn: 'Taiwanese beef noodle + tofu knots + beef balls + your choice of drink.',
+    descZh: '台式牛肉面 + 豆腐结与牛肉丸 + 自选饮料一杯，加料双拼。',
+  },
+  {
+    id: 114,
+    category: 'combo',
+    price: 18.99,
+    image: '/images/Taiwanese%20Braised%20Pork%20Rice%20Bowl.jpg',
+    nameEn: 'Taiwanese Braised Pork Rice Bowl Combo · Tofu Knots',
+    nameZh: '台北夜市卤肉饭套餐·豆腐结',
+    descEn: 'Braised pork rice bowl + tofu knots + your choice of drink.',
+    descZh: '台北夜市卤肉饭 + 豆腐结 + 自选饮料一杯，比单点更划算。',
+  },
+  {
+    id: 115,
+    category: 'combo',
+    price: 26.99,
+    image: '/images/Golden%20Curry%20Beef%20Noodle.jpg',
+    nameEn: 'Tianjin Lamb & Offal Soup Combo · Tofu Knots',
+    nameZh: '天津羊杂汤套餐·豆腐结',
+    descEn: 'Tianjin lamb & offal soup + tofu knots + your choice of drink.',
+    descZh: '天津羊杂汤 + 豆腐结 + 自选饮料一杯，比单点更划算。',
+  },
+  {
+    id: 116,
+    category: 'combo',
+    price: 27.99,
+    image: '/images/Golden%20Curry%20Beef%20Noodle.jpg',
+    nameEn: 'Tianjin Lamb & Offal Soup Combo · Beef Balls',
+    nameZh: '天津羊杂汤套餐·牛肉丸',
+    descEn: 'Tianjin lamb & offal soup + beef balls + your choice of drink.',
+    descZh: '天津羊杂汤 + 牛肉丸 + 自选饮料一杯，比单点更划算。',
+  },
+  {
+    id: 117,
+    category: 'combo',
+    price: 29.99,
+    image: '/images/Golden%20Curry%20Beef%20Noodle.jpg',
+    nameEn: 'Tianjin Lamb & Offal Soup Combo · Deluxe',
+    nameZh: '天津羊杂汤套餐·全家福（豆腐结+牛肉丸）',
+    descEn: 'Tianjin lamb & offal soup + tofu knots + beef balls + your choice of drink.',
+    descZh: '天津羊杂汤 + 豆腐结与牛肉丸 + 自选饮料一杯，加料双拼。',
+  },
+
+  // ── 双人套餐 Combo for Two ──
+  {
+    id: 201,
+    category: 'combo2',
+    price: 34.99,
+    image: '/images/Jiangxi%20Garden%20Mushroom%20Rice%20Noodle%20Soup.jpg',
+    nameEn: 'Jiangxi Brothers Combo for Two',
+    nameZh: '① 江西兄弟套餐',
+    descEn: 'For two: Garden Mushroom & Spicy Beef rice noodle soups, plus 2 drinks.',
+    descZh: '双人份：江西三鲜泡粉 + 江西香辣牛肉泡粉，一清一辣，另配自选饮料两杯。',
+  },
+  {
+    id: 202,
+    category: 'combo2',
+    price: 34.99,
+    image: '/images/Taiwanese%20Braised%20Pork%20Rice%20Bowl.jpg',
+    nameEn: 'Taipei Sisters Combo for Two',
+    nameZh: '② 台北姐妹花套餐',
+    descEn: 'For two: Braised Pork Rice Bowl & Taiwanese Beef Noodle, plus 2 drinks.',
+    descZh: '双人份：台北夜市卤肉饭 + 台式牛肉面，一饭一面，另配自选饮料两杯。',
+  },
+  {
+    id: 203,
+    category: 'combo2',
+    price: 34.99,
+    image: '/images/Authentic%20Jiangxi%20Fried%20Rice%20Noodle.jpg',
+    nameEn: 'Jiangxi Double Combo for Two',
+    nameZh: '③ 赣味双拼套餐',
+    descEn: 'For two: Jiangxi Fried Rice Noodle & Spicy Beef Rice Noodle Soup, plus 2 drinks.',
+    descZh: '双人份：招牌江西炒粉 + 江西香辣牛肉泡粉，一炒一泡，另配自选饮料两杯。',
+  },
+  {
+    id: 204,
+    category: 'combo2',
+    price: 34.99,
+    image: '/images/Authentic%20Jiangxi%20Fried%20Rice%20Noodle.jpg',
+    nameEn: 'Coast to Coast Combo for Two',
+    nameZh: '④ 走南闯北套餐',
+    descEn: 'For two: Jiangxi Fried Rice Noodle & Golden Curry Beef Noodle, plus 2 drinks.',
+    descZh: '双人份：招牌江西炒粉 + 天津黄汤牛肉拉面，南炒北汤，另配自选饮料两杯。',
+  },
+  {
+    id: 205,
+    category: 'combo2',
+    price: 37.99,
+    image: '/images/Taiwanese%20Beef%20Noodle.jpg',
+    nameEn: 'Twin Beef Combo for Two',
+    nameZh: '⑤ 海峡双牛套餐',
+    descEn: 'For two: Taiwanese Beef Noodle & Jiangxi Spicy Beef Rice Noodle Soup, plus 2 drinks.',
+    descZh: '双人份：台式牛肉面 + 江西香辣牛肉泡粉，两碗牛肉各有风味，另配自选饮料两杯。',
+  },
+  {
+    id: 206,
+    category: 'combo2',
+    price: 37.99,
+    image: '/images/Jiangxi%20Spicy%20Beef%20Rice%20Noodle%20Soup.jpg',
+    nameEn: 'Beef Duo · Rice Noodle & Wheat Noodle',
+    nameZh: '⑥ 粉面双牛套餐',
+    descEn: 'For two: Spicy Beef Rice Noodle Soup & Golden Curry Beef Noodle, plus 2 drinks.',
+    descZh: '双人份：江西香辣牛肉泡粉 + 天津黄汤牛肉拉面，一粉一面两碗牛肉，另配自选饮料两杯。',
+  },
 ]
 
 // Menu sections for the storefront — ordered; dishes group by `dish.category`.
@@ -160,6 +406,18 @@ export const categories = [
   {
     id: 'side', nameZh: '小菜', nameEn: 'Sides',
     taglineZh: '卤香小食，配面配饭', taglineEn: 'Small bites to round out the bowl',
+  },
+  {
+    id: 'soup', nameZh: '汤', nameEn: 'Soups',
+    taglineZh: '慢熬老汤，暖身暖胃', taglineEn: 'Slow-simmered broths, warming and rich',
+  },
+  {
+    id: 'combo', nameZh: '单人套餐', nameEn: 'Combo for One',
+    taglineZh: '主食+加料+自选饮料，比单点更划算', taglineEn: 'Main + add-on + a drink — better value than ordering separately',
+  },
+  {
+    id: 'combo2', nameZh: '双人套餐', nameEn: 'Combo for Two',
+    taglineZh: '两份主食+两杯饮料，两个人刚刚好', taglineEn: 'Two mains and two drinks — just right for two',
   },
   {
     id: 'drink', nameZh: '饮料', nameEn: 'Drinks',
@@ -237,22 +495,59 @@ const ADDONS = {
   rice:           { id: 'add-rice',           nameEn: 'Extra Rice',         nameZh: '加饭',     delta: 2.5 },
   gardenMushroom: { id: 'add-gardenmushroom', nameEn: 'Extra Garden Mushroom (Wood Ear, Shiitake & Soybean)', nameZh: '加三鲜', delta: 2.5 },
   shreddedPork:   { id: 'add-shreddedpork',   nameEn: 'Extra Shredded Pork', nameZh: '加额外肉丝', delta: 2.5 },
-  beefBrisket:    { id: 'add-beefbrisket',    nameEn: 'Extra Beef Brisket', nameZh: '加牛腩',   delta: 4.5 },
+  beefBrisket:    { id: 'add-beefbrisket',    nameEn: 'Extra Beef',         nameZh: '加牛肉',   delta: 4.5 },
   braisedPork:    { id: 'add-braisedpork',    nameEn: 'Extra Braised Pork', nameZh: '加卤肉',   delta: 4.5 },
   egg:            { id: 'add-egg',            nameEn: 'Extra Egg',          nameZh: '加鸡蛋',   delta: 1.5 },
   vegetables:     { id: 'add-vegetables',     nameEn: 'Extra Vegetables',   nameZh: '加蔬菜',   delta: 2 },
   hamSausage:     { id: 'add-hamsausage',     nameEn: 'Extra Ham Sausage',  nameZh: '加火腿肠', delta: 3 },
+  tofuKnots:      { id: 'add-tofuknots',      nameEn: 'Extra Tofu Knots',   nameZh: '加豆腐结', delta: 3 },
+  beefBalls:      { id: 'add-beefballs',      nameEn: 'Extra Beef Balls',   nameZh: '加牛肉丸', delta: 4.5 },
 }
+
+// 套餐饮料 —— 每份套餐必选一杯
+const COMBO_DRINK = [
+  { id: 'water', nameEn: 'Bottled Water', nameZh: '矿泉水' },
+  { id: 'coke',  nameEn: 'Coke',          nameZh: '可乐' },
+  { id: 'diet',  nameEn: 'Diet Coke',     nameZh: 'Diet可乐' },
+  { id: 'sprite',nameEn: 'Sprite',        nameZh: '雪碧' },
+]
 
 // dish id -> { spice: [choices, defaultId], noodle: defaultId, remove: [...], addon: [...] }
 const MODIFIERS = {
-  1: { spice: [['none', 'extra'], 'none'],                     noodle: 'thick', remove: ['scallion', 'cilantro', 'pickle'],                                  addon: ['noodles', 'beefBrisket', 'egg', 'vegetables'] },
-  2: { spice: [['none', 'extra'], 'none'],                     noodle: 'thick', remove: ['scallion', 'cilantro', 'pickle'],                                  addon: ['noodles', 'beefBrisket', 'egg', 'vegetables'] },
-  3: { spice: [['none', 'mild', 'regular', 'extra'], 'regular'],                remove: ['pickle'],                                                          addon: ['riceNoodles', 'shreddedPork', 'egg', 'vegetables', 'hamSausage'] },
-  4: { spice: [['none', 'extra'], 'none'],                                      remove: ['scallion', 'cilantro', 'pickle', 'woodear', 'soybean', 'shiitake'], addon: ['riceNoodles', 'gardenMushroom', 'egg', 'vegetables'] },
-  5: { spice: [['mild', 'regular', 'extra'], 'regular'],                        remove: ['scallion', 'cilantro', 'pickle'],                                  addon: ['riceNoodles', 'beefBrisket', 'egg', 'vegetables'] },
-  6: {                                                                          remove: ['egg', 'cilantro'],                                                 addon: ['rice', 'braisedPork', 'egg', 'vegetables'] },
+  // ── 单品 ──
+  1: { spice: [['none', 'extra'], 'none'],                      noodle: 'thick', remove: ['scallion', 'cilantro', 'pickle'],                                  addon: ['noodles', 'beefBrisket', 'egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
+  2: { spice: [['none', 'extra'], 'none'],                      noodle: 'thick', remove: ['scallion', 'cilantro', 'pickle'],                                  addon: ['noodles', 'beefBrisket', 'egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
+  3: { spice: [['none', 'mild', 'regular', 'extra'], 'regular'],                 remove: ['pickle'],                                                          addon: ['riceNoodles', 'shreddedPork', 'egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
+  4: { spice: [['none', 'extra'], 'none'],                                       remove: ['scallion', 'cilantro', 'pickle', 'woodear', 'soybean', 'shiitake'], addon: ['riceNoodles', 'gardenMushroom', 'egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
+  5: { spice: [['mild', 'regular', 'extra'], 'regular'],                         remove: ['scallion', 'cilantro', 'pickle'],                                  addon: ['riceNoodles', 'beefBrisket', 'egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
+  6: {                                                                           remove: ['egg', 'cilantro'],                                                 addon: ['rice', 'braisedPork', 'egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
+  21:{ spice: [['none', 'extra'], 'none'],                                       remove: ['scallion', 'cilantro'],                                            addon: ['egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
 }
+
+// 套餐沿用其主食的辣度/面型/忌口/加料，另加一个必选的「套餐饮料」。
+// combo id -> base dish id（单人套餐 1 杯饮料；双人套餐 2 杯，各选一次）
+const COMBO_BASE = {
+  101: 3, 102: 5, 103: 5, 104: 5, 105: 4, 106: 4, 107: 4,
+  108: 1, 109: 1, 110: 1, 111: 2, 112: 2, 113: 2,
+  114: 6, 115: 21, 116: 21, 117: 21,
+}
+const COMBO2_BASE = { 201: [4, 5], 202: [6, 2], 203: [3, 5], 204: [3, 1], 205: [2, 5], 206: [5, 1] }
+
+for (const [comboId, baseId] of Object.entries(COMBO_BASE)) {
+  MODIFIERS[comboId] = { ...MODIFIERS[baseId], drinks: 1 }
+}
+for (const [comboId, bases] of Object.entries(COMBO2_BASE)) {
+  // 两份主食，辣度/面型每份各选一次；加料取两者并集；饮料两杯
+  const [a, b] = bases.map((id) => MODIFIERS[id])
+  MODIFIERS[comboId] = {
+    spice: a.spice ?? b.spice,
+    noodle: a.noodle ?? b.noodle,
+    remove: [...new Set([...(a.remove ?? []), ...(b.remove ?? [])])],
+    addon: ['egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'],
+    drinks: 2,
+  }
+}
+
 
 for (const dish of menu) {
   const m = MODIFIERS[dish.id]
@@ -284,6 +579,14 @@ for (const dish of menu) {
     nameEn: 'Add-ons', nameZh: '加料',
     choices: m.addon.map(k => ADDONS[k]),
   })
+  for (let i = 0; i < (m.drinks ?? 0); i++) {
+    const n = m.drinks > 1 ? ` ${i + 1}` : ''
+    groups.push({
+      id: `drink${i + 1}`, type: 'single', required: true, default: 'coke',
+      nameEn: `Combo drink${n}`, nameZh: `套餐饮料${m.drinks > 1 ? ` ${i + 1}` : ''}`,
+      choices: COMBO_DRINK,
+    })
+  }
   dish.optionGroups = groups
 }
 
