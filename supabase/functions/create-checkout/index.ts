@@ -92,7 +92,7 @@ Deno.serve(async (req) => {
 
     const taxIdx = enriched.length
     params.set(`line_items[${taxIdx}][price_data][currency]`, 'usd')
-    params.set(`line_items[${taxIdx}][price_data][product_data][name]`, 'MA Sales Tax (6.25%)')
+    params.set(`line_items[${taxIdx}][price_data][product_data][name]`, 'MA Sales Tax (7%)')
     params.set(`line_items[${taxIdx}][price_data][unit_amount]`, String(taxCents))
     params.set(`line_items[${taxIdx}][quantity]`, '1')
 
