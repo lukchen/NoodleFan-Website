@@ -4,6 +4,7 @@ import { useCart } from '../context/CartContext'
 import { usePickup } from '../context/PickupContext'
 import OptionsModal from './OptionsModal'
 import CartPanel from './CartPanel'
+import PickupPicker from './PickupPicker'
 import { ORDERING_ENABLED } from '../config'
 
 function MenuCard({ item, t, lang, onCustomize, remaining }) {
@@ -61,7 +62,7 @@ function MenuCard({ item, t, lang, onCustomize, remaining }) {
   )
 }
 
-export default function MenuSection({ t, lang, onChoosePickup }) {
+export default function MenuSection({ t, lang, choosingPickup, onPickupChosen }) {
   const { addItem } = useCart()
   const { point, remainingFor } = usePickup()
   const [customizing, setCustomizing] = useState(null)
@@ -95,19 +96,12 @@ export default function MenuSection({ t, lang, onChoosePickup }) {
   // Dropoff points cap each dish per day; store pickup has no cap.
   const capped = point?.kind === 'dropoff'
 
-  // 菜单在取餐方式之后。没选之前只给一个明确的入口,不给半个菜单 ——
-  // 否则客人加完购物车才发现今天那个点不发车。
-  if (ORDERING_ENABLED && !point) {
+  // 菜单在取餐方式之后。没选之前(或客人点了「更换」)菜单的位置直接铺三个大按钮,
+  // 不弹窗 —— 否则客人加完购物车才发现今天那个点不发车。
+  if (choosingPickup) {
     return (
       <section id="menu" className="menu-section">
-        <div className="menu-gate">
-          <span className="menu-gate-step">{t.pickup.step1}</span>
-          <h3 className="menu-gate-title">{t.pickup.gateTitle}</h3>
-          <p className="menu-gate-note">{t.pickup.gateNote}</p>
-          <button className="btn-primary menu-gate-btn" onClick={onChoosePickup}>
-            {t.pickup.gateBtn}
-          </button>
-        </div>
+        <PickupPicker t={t} lang={lang} inline onClose={onPickupChosen} />
       </section>
     )
   }
