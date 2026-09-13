@@ -72,6 +72,11 @@ const strings = {
       onlyLeft: (n) => `Only ${n} left today`,
       soldOut: 'Sold out for today',
       pickupAtLabel: 'Pickup spot',
+      step1: 'Step 1 of 2',
+      gateTitle: 'Choose a pickup spot to see the menu',
+      gateNote: 'What we can prep — and when orders close — depends on the spot.',
+      gateBtn: 'Choose pickup spot',
+      changeLong: 'Change pickup spot',
     },
     options: {
       pickAtLeastOne: ' — pick at least one',
@@ -179,6 +184,11 @@ const strings = {
       onlyLeft: (n) => `仅剩 ${n} 份`,
       soldOut: '今日已订满',
       pickupAtLabel: '取餐点',
+      step1: '第 1 步 / 共 2 步',
+      gateTitle: '先选取餐方式,再看菜单',
+      gateNote: '不同取餐点的截单时间和当天备料份数不一样。',
+      gateBtn: '选择取餐方式',
+      changeLong: '更换取餐方式',
     },
     options: {
       pickAtLeastOne: '（至少选一项）',
