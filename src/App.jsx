@@ -36,6 +36,8 @@ function OrderSuccess({ t, onClose }) {
 function AppInner({ t, lang, setLang }) {
   const [checkoutOpen, setCheckoutOpen] = useState(false)
   const [orderSuccess, setOrderSuccess] = useState(false)
+  // 第一次进站(还没选过取餐点)直接把选择器推到脸上 —— 取餐点决定截单时间和
+  // 当天备料,菜单必须在它之后。没选之前这个弹窗不可关闭。
   const [pickerOpen, setPickerOpen] = useState(false)
   const { clearCart } = useCart()
   const { point } = usePickup()
@@ -57,12 +59,17 @@ function AppInner({ t, lang, setLang }) {
       )}
       <main>
         <Hero t={t} onOrder={ORDERING_ENABLED && !point ? () => setPickerOpen(true) : undefined} />
-        <MenuSection t={t} lang={lang} />
+        <MenuSection t={t} lang={lang} onChoosePickup={() => setPickerOpen(true)} />
       </main>
       <Footer t={t} />
       {ORDERING_ENABLED && <MobileCartBar t={t} />}
-      {ORDERING_ENABLED && pickerOpen && (
-        <PickupPicker t={t} lang={lang} onClose={() => setPickerOpen(false)} />
+      {ORDERING_ENABLED && (pickerOpen || !point) && (
+        <PickupPicker
+          t={t}
+          lang={lang}
+          dismissable={!!point}
+          onClose={() => setPickerOpen(false)}
+        />
       )}
       {ORDERING_ENABLED && <Cart t={t} onCheckout={() => setCheckoutOpen(true)} />}
       {ORDERING_ENABLED && checkoutOpen && <Checkout t={t} onClose={() => setCheckoutOpen(false)} />}
