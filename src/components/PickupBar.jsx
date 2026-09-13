@@ -24,7 +24,7 @@ export default function PickupBar({ t, lang, onChange }) {
           {run && <span className="pickup-bar-meta">{formatRun(run, lang)}</span>}
           {countdown && !countdown.expired && (
             <span className="pickup-bar-countdown">
-              {countdown.hours &lt; 24
+              {countdown.hours < 24
                 ? t.pickup.closesIn(countdown.hours, countdown.minutes)
                 : t.pickup.closesOn(formatCutoffDay(run, lang))}
             </span>
