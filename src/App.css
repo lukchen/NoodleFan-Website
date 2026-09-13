@@ -1741,32 +1741,67 @@ body {
 
 .pbc-short { display: none; }
 
-/* ── 菜单闸门:没选取餐方式之前不给菜单 ── */
-.menu-gate {
-  max-width: 520px;
-  margin: 3.5rem auto;
-  padding: 2.4rem 1.6rem;
+/* ── 取餐方式选择:首页上中下三个大按钮,占住菜单的位置 ── */
+.pickup-choose {
+  max-width: 640px;
+  margin: 2.5rem auto 4rem;
   text-align: center;
-  background: #fffaf2;
-  border: 1px dashed #d9c9ae;
-  border-radius: 16px;
 }
 
-.menu-gate-step {
+.pickup-choose-step {
   display: inline-block;
   font-size: 0.7rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--color-accent);
   font-weight: 700;
-  margin-bottom: 0.6rem;
 }
 
-.menu-gate-title { font-size: 1.25rem; margin: 0 0 0.5rem; }
+.pickup-choose-title {
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  margin: 0.5rem 0 0.4rem;
+}
 
-.menu-gate-note { color: var(--color-muted); font-size: 0.9rem; margin: 0 0 1.4rem; }
+.pickup-choose-sub {
+  color: var(--color-muted);
+  font-size: 0.92rem;
+  margin: 0 0 1.6rem;
+}
 
-.menu-gate-btn { padding: 0.7rem 1.6rem; }
+.pickup-choose .pickup-options { gap: 1rem; text-align: left; }
+
+.pickup-choose .pickup-option {
+  padding: 1.4rem 1.5rem;
+  border-width: 2px;
+  border-radius: 18px;
+  gap: 0.4rem;
+  box-shadow: 0 2px 10px rgba(60, 40, 20, 0.06);
+}
+
+.pickup-choose .pickup-option:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(60, 40, 20, 0.12);
+}
+
+.pickup-choose .pickup-option-name { font-size: 1.28rem; }
+.pickup-choose .pickup-icon { font-size: 1.35rem; }
+.pickup-choose .pickup-option-area,
+.pickup-choose .pickup-option-note { font-size: 0.9rem; }
+
+.pickup-choose .pickup-option::after {
+  content: '→';
+  position: absolute;
+  right: 1.3rem;
+  bottom: 1.2rem;
+  font-size: 1.3rem;
+  color: var(--color-accent);
+  opacity: 0.5;
+}
+
+.pickup-choose .pickup-option { position: relative; }
+
+.pickup-choose .pickup-fineprint { text-align: left; margin-top: 1.2rem; }
 
 /* ── 菜品余量 ── */
 .menu-card-stock {
@@ -1998,7 +2033,11 @@ body {
   .pickup-bar-change { padding: 0.28rem 0.7rem; font-size: 0.74rem; }
   .pbc-long { display: none; }
   .pbc-short { display: inline; }
-  .menu-gate { margin: 2rem 0.4rem; padding: 2rem 1.1rem; }
+  .pickup-choose { margin: 1.6rem 0.2rem 3rem; }
+  .pickup-choose-title { font-size: 1.35rem; }
+  .pickup-choose .pickup-option { padding: 1.15rem 1.2rem; }
+  .pickup-choose .pickup-option-name { font-size: 1.12rem; }
+  .pickup-choose .pickup-option::after { display: none; }
 
   .mobile-cart-bar {
     display: flex;
