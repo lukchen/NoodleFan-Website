@@ -37,7 +37,15 @@ export default function PickupPicker({ t, lang, onClose, dismissable = true, inl
                 <span className="pickup-option-area">{zh ? p.areaZh : p.areaEn}</span>
 
                 {isStore ? (
-                  <span className="pickup-option-note">{zh ? p.noteZh : p.noteEn}</span>
+                  <>
+                    <span className="pickup-when">
+                      <span className="pw-item">
+                        <span className="pw-label">{t.pickup.hoursRow}</span>
+                        <span className="pw-value">{zh ? p.hoursZh : p.hoursEn}</span>
+                      </span>
+                    </span>
+                    <span className="pickup-option-note">{zh ? p.noteZh : p.noteEn}</span>
+                  </>
                 ) : run ? (
                   <>
                     <span className="pickup-when">
