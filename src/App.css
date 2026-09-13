@@ -1676,17 +1676,36 @@ body {
   z-index: 40;
   display: flex;
   align-items: center;
-  gap: 0.55rem;
-  flex-wrap: wrap;
-  padding: 0.5rem 1.2rem;
+  gap: 0.8rem;
+  padding: 0.6rem 1.2rem;
   background: #3a2f26;
+  border-left: 5px solid var(--color-accent);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
   color: #f6efe3;
-  font-size: 0.84rem;
+  font-size: 0.86rem;
 }
 
 .pickup-bar--store { background: #4a3d31; }
 
-.pickup-bar-main { font-weight: 600; }
+.pickup-bar-icon { font-size: 1.15rem; line-height: 1; }
+
+.pickup-bar-text { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+
+.pickup-bar-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #bfae95;
+}
+
+.pickup-bar-line {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.pickup-bar-main { font-weight: 700; font-size: 1rem; }
 
 .pickup-bar-meta { color: #d8cbb7; }
 
@@ -1707,16 +1726,47 @@ body {
 
 .pickup-bar-change {
   margin-left: auto;
-  background: none;
-  border: 1px solid rgba(246, 239, 227, 0.4);
+  flex-shrink: 0;
+  background: rgba(246, 239, 227, 0.08);
+  border: 1px solid rgba(246, 239, 227, 0.5);
   color: inherit;
   border-radius: 999px;
-  padding: 0.15rem 0.7rem;
-  font-size: 0.78rem;
+  padding: 0.3rem 0.9rem;
+  font-size: 0.8rem;
+  font-weight: 600;
   cursor: pointer;
 }
 
-.pickup-bar-change:hover { border-color: #f6efe3; }
+.pickup-bar-change:hover { border-color: #f6efe3; background: rgba(246, 239, 227, 0.18); }
+
+.pbc-short { display: none; }
+
+/* ── 菜单闸门:没选取餐方式之前不给菜单 ── */
+.menu-gate {
+  max-width: 520px;
+  margin: 3.5rem auto;
+  padding: 2.4rem 1.6rem;
+  text-align: center;
+  background: #fffaf2;
+  border: 1px dashed #d9c9ae;
+  border-radius: 16px;
+}
+
+.menu-gate-step {
+  display: inline-block;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  font-weight: 700;
+  margin-bottom: 0.6rem;
+}
+
+.menu-gate-title { font-size: 1.25rem; margin: 0 0 0.5rem; }
+
+.menu-gate-note { color: var(--color-muted); font-size: 0.9rem; margin: 0 0 1.4rem; }
+
+.menu-gate-btn { padding: 0.7rem 1.6rem; }
 
 /* ── 菜品余量 ── */
 .menu-card-stock {
@@ -1935,12 +1985,20 @@ body {
 
   .pickup-bar {
     top: 52px;
-    padding: 0.4rem 0.9rem;
-    font-size: 0.76rem;
-    gap: 0.4rem;
+    padding: 0.5rem 0.8rem;
+    font-size: 0.78rem;
+    gap: 0.5rem;
+    border-left-width: 4px;
   }
 
-  .pickup-bar-meta { display: none; }
+  .pickup-bar-main { font-size: 0.92rem; }
+  .pickup-bar-meta,
+  .pickup-bar-label { display: none; }
+  .pickup-bar-line { flex-wrap: nowrap; overflow: hidden; }
+  .pickup-bar-change { padding: 0.28rem 0.7rem; font-size: 0.74rem; }
+  .pbc-long { display: none; }
+  .pbc-short { display: inline; }
+  .menu-gate { margin: 2rem 0.4rem; padding: 2rem 1.1rem; }
 
   .mobile-cart-bar {
     display: flex;
