@@ -61,7 +61,7 @@ function MenuCard({ item, t, lang, onCustomize, remaining }) {
   )
 }
 
-export default function MenuSection({ t, lang }) {
+export default function MenuSection({ t, lang, onChoosePickup }) {
   const { addItem } = useCart()
   const { point, remainingFor } = usePickup()
   const [customizing, setCustomizing] = useState(null)
@@ -94,6 +94,23 @@ export default function MenuSection({ t, lang }) {
 
   // Dropoff points cap each dish per day; store pickup has no cap.
   const capped = point?.kind === 'dropoff'
+
+  // 菜单在取餐方式之后。没选之前只给一个明确的入口,不给半个菜单 ——
+  // 否则客人加完购物车才发现今天那个点不发车。
+  if (ORDERING_ENABLED && !point) {
+    return (
+      <section id="menu" className="menu-section">
+        <div className="menu-gate">
+          <span className="menu-gate-step">{t.pickup.step1}</span>
+          <h3 className="menu-gate-title">{t.pickup.gateTitle}</h3>
+          <p className="menu-gate-note">{t.pickup.gateNote}</p>
+          <button className="btn-primary menu-gate-btn" onClick={onChoosePickup}>
+            {t.pickup.gateBtn}
+          </button>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section id="menu" className="menu-section">
