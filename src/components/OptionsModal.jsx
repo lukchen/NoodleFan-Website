@@ -2,8 +2,11 @@ import { useState, useEffect, useMemo } from 'react'
 import { resolveSelections } from '../data/menu'
 
 // Option picker shown when adding a dish that has optionGroups.
-// Single groups render as radio-style chips (default preselected); multi groups as
-// toggle chips. Confirm adds ONE unit of the chosen combination to the cart.
+//
+// The `combo` group ("Make it a Combo") renders as side-by-side cards instead of
+// chips: fast-food convention — show the TOTAL price of each path, strike through
+// what the same food would cost bought separately, and badge the savings. Groups
+// carrying `showWhen` (the combo drink) only appear once the combo is chosen.
 export default function OptionsModal({ dish, t, lang, onAdd, onClose }) {
   const [selections, setSelections] = useState(() => {
     const init = {}
@@ -33,8 +36,14 @@ export default function OptionsModal({ dish, t, lang, onAdd, onClose }) {
     })
   }
 
+  // A group is hidden until its `showWhen` condition holds (combo drink).
+  const visible = (dish.optionGroups ?? []).filter(g => {
+    if (!g.showWhen) return true
+    return selections[g.showWhen.group] !== g.showWhen.not
+  })
+
   // Required multi groups (e.g. 炒粉 vegetables) need at least one pick.
-  const missingRequired = (dish.optionGroups ?? []).some(
+  const missingRequired = visible.some(
     g => g.type === 'multi' && g.required && (selections[g.id] ?? []).length === 0,
   )
 
@@ -44,7 +53,49 @@ export default function OptionsModal({ dish, t, lang, onAdd, onClose }) {
     return (Math.round(dish.price * 100) + deltaCents) / 100
   }, [dish, selections, missingRequired])
 
+  // Savings on the currently chosen combo, for the running footer line.
+  const comboGroup = (dish.optionGroups ?? []).find(g => g.style === 'combo')
+  const chosenCombo = comboGroup?.choices.find(c => c.id === selections[comboGroup.id])
+  const saved = chosenCombo?.alaCarte ? chosenCombo.alaCarte - chosenCombo.delta : 0
+
   const name = lang === 'zh' ? dish.nameZh : dish.nameEn
+  const money = n => `$${n.toFixed(2)}`
+
+  function renderCombo(g) {
+    return (
+      <div key={g.id} className="opt-group combo-group">
+        <span className="opt-group-label">{lang === 'zh' ? g.nameZh : g.nameEn}</span>
+        <div className="combo-cards">
+          {g.choices.map(c => {
+            const active = selections[g.id] === c.id
+            const isCombo = !!c.delta
+            const total = dish.price + (c.delta ?? 0)
+            const listed = isCombo ? dish.price + c.alaCarte : null
+            const save = isCombo ? c.alaCarte - c.delta : 0
+            return (
+              <button
+                key={c.id}
+                type="button"
+                className={`combo-card${active ? ' combo-card--active' : ''}`}
+                onClick={() => pickSingle(g.id, c.id)}>
+                {save > 0 && (
+                  <span className="combo-save">{t.options.save} {money(save)}</span>
+                )}
+                <span className="combo-card-name">{lang === 'zh' ? c.nameZh : c.nameEn}</span>
+                <span className="combo-card-sub">
+                  {isCombo ? `🍜 + 🥢 + 🥤 ${t.options.comboIncludes}` : `🍜 ${t.options.mainOnly}`}
+                </span>
+                <span className="combo-card-prices">
+                  {listed && <s className="combo-card-was">{money(listed)}</s>}
+                  <strong className="combo-card-now">{money(total)}</strong>
+                </span>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -54,7 +105,7 @@ export default function OptionsModal({ dish, t, lang, onAdd, onClose }) {
           <button className="cart-close" onClick={onClose}>✕</button>
         </div>
 
-        {(dish.optionGroups ?? []).map(g => (
+        {visible.map(g => g.style === 'combo' ? renderCombo(g) : (
           <div key={g.id} className="opt-group">
             <span className="opt-group-label">
               {lang === 'zh' ? g.nameZh : g.nameEn}
@@ -82,11 +133,15 @@ export default function OptionsModal({ dish, t, lang, onAdd, onClose }) {
           </div>
         ))}
 
+        {saved > 0 && (
+          <p className="combo-saved-line">{t.options.youSave} <strong>{money(saved)}</strong></p>
+        )}
+
         <button
           className="btn-primary options-add-btn"
           disabled={missingRequired}
           onClick={() => { onAdd(dish, selections); onClose() }}>
-          {t.options.addToCart} ${unitPrice.toFixed(2)}
+          {t.options.addToCart} {money(unitPrice)}
         </button>
       </div>
     </div>
