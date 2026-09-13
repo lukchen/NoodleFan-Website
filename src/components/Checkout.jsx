@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useCart } from '../context/CartContext'
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../config'
+import { SUPABASE_URL, SUPABASE_ANON_KEY, CHECKOUT_ENABLED } from '../config'
 
-const TAX_RATE = 0.0625
+const TAX_RATE = 0.07 // MA 6.25% + Boston 本地附加 0.75%（与 create-checkout 保持一致）
 
 function buildSlots() {
   const slots = []
@@ -64,6 +64,7 @@ export default function Checkout({ t, onClose }) {
 
   async function handleSubmit(e) {
     e.preventDefault()
+    if (!CHECKOUT_ENABLED) return
     setError('')
     setSubmitting(true)
     try {
@@ -187,11 +188,17 @@ export default function Checkout({ t, onClose }) {
 
           {error && <p className="checkout-error">{error}</p>}
 
+          {!CHECKOUT_ENABLED && (
+            <p className="checkout-disabled-note">{t.checkout.disabledNote}</p>
+          )}
+
           <button
             type="submit"
             className="btn-primary checkout-submit"
-            disabled={submitting || !form.time}>
-            {submitting ? t.checkout.processing : `${t.checkout.pay} $${grandTotal.toFixed(2)}`}
+            disabled={!CHECKOUT_ENABLED || submitting || !form.time}>
+            {!CHECKOUT_ENABLED
+              ? t.checkout.disabled
+              : submitting ? t.checkout.processing : `${t.checkout.pay} $${grandTotal.toFixed(2)}`}
           </button>
         </form>
       </div>
