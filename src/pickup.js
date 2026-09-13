@@ -68,6 +68,30 @@ export function nextRun(point, now = new Date()) {
   return null
 }
 
+// 「周二 9/16 下午 6:00」/「Tue 9/16 6:00 PM」—— 把星期、日期、时间一次说清,
+// 客人不用自己推算「周二」是哪天。
+function stamp(date, hour, lang) {
+  const days = lang === 'zh' ? DAY_ZH : DAY_EN
+  const d = days[date.getDay()]
+  const md = `${date.getMonth() + 1}/${date.getDate()}`
+  const hour12 = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour
+  if (lang === 'zh') {
+    const ampm = hour >= 12 ? '下午' : '上午'
+    return `${d} ${md} ${ampm}${hour12}:00`
+  }
+  return `${d} ${md} ${hour12}:00 ${hour >= 12 ? 'PM' : 'AM'}`
+}
+
+// 取餐时刻,例:周二 9/16 下午6:00
+export function formatPickupAt(run, lang) {
+  return run ? stamp(run.pickupAt, run.pickupAt.getHours(), lang) : ''
+}
+
+// 截单时刻,例:周二 9/16 下午3:00
+export function formatCutoffAt(run, lang) {
+  return run ? stamp(run.cutoff, run.cutoff.getHours(), lang) : ''
+}
+
 export function formatRun(run, lang) {
   if (!run) return ''
   const days = lang === 'zh' ? DAY_ZH : DAY_EN
