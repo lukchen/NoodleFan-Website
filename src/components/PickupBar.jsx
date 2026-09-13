@@ -22,6 +22,11 @@ export default function PickupBar({ t, lang, onChange }) {
         <span className="pickup-bar-label">{t.pickup.pickupAtLabel}</span>
         <span className="pickup-bar-line">
           <span className="pickup-bar-main">{zh ? point.nameZh : point.nameEn}</span>
+          {/* 更换按钮紧跟取餐点名字,不甩到屏幕最右边 —— 手机单手够得到 */}
+          <button type="button" className="pickup-bar-change" onClick={onChange}>
+            <span className="pbc-long">{t.pickup.changeLong}</span>
+            <span className="pbc-short">{t.pickup.change}</span>
+          </button>
           {isStore ? (
             <span className="pickup-bar-meta">{zh ? point.noteZh : point.noteEn}</span>
           ) : (
@@ -42,10 +47,6 @@ export default function PickupBar({ t, lang, onChange }) {
         </span>
       </span>
 
-      <button type="button" className="pickup-bar-change" onClick={onChange}>
-        <span className="pbc-long">{t.pickup.changeLong}</span>
-        <span className="pbc-short">{t.pickup.change}</span>
-      </button>
     </div>
   )
 }
