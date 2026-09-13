@@ -56,6 +56,13 @@ const strings = {
     options: {
       pickAtLeastOne: ' — pick at least one',
       addToCart: 'Add to cart —',
+      alaCarte: 'À la carte',
+      comboIncludes: 'add-on + a drink',
+      save: 'Save',
+      separately: 'separately',
+      youSave: 'You save',
+      mainOnly: 'main dish only',
+      comboFrom: 'Combo from',
     },
     orderStatus: {
       loading: 'Confirming your order…',
@@ -136,6 +143,13 @@ const strings = {
     options: {
       pickAtLeastOne: '（至少选一项）',
       addToCart: '加入购物车 —',
+      alaCarte: '单点',
+      comboIncludes: '加料 + 自选饮料',
+      save: '省',
+      separately: '单点合计',
+      youSave: '已省',
+      mainOnly: '仅主食',
+      comboFrom: '套餐',
     },
     orderStatus: {
       loading: '正在确认您的订单…',
