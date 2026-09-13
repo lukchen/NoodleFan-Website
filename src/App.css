@@ -1725,7 +1725,6 @@ body {
 .pickup-bar-need--ready { color: #9fe0a6; background: rgba(159, 224, 166, 0.14); }
 
 .pickup-bar-change {
-  margin-left: auto;
   flex-shrink: 0;
   background: rgba(246, 239, 227, 0.08);
   border: 1px solid rgba(246, 239, 227, 0.5);
@@ -2029,7 +2028,7 @@ body {
   .pickup-bar-main { font-size: 0.92rem; }
   .pickup-bar-meta,
   .pickup-bar-label { display: none; }
-  .pickup-bar-line { flex-wrap: nowrap; overflow: hidden; }
+  .pickup-bar-line { row-gap: 0.3rem; }
   .pickup-bar-change { padding: 0.28rem 0.7rem; font-size: 0.74rem; }
   .pbc-long { display: none; }
   .pbc-short { display: inline; }
