@@ -1484,6 +1484,17 @@ body {
 }
 .combo-saved-line strong { font-weight: 700; }
 
+.checkout-disabled-note {
+  margin: 0 0 0.6rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--color-gold);
+  border-radius: var(--radius);
+  background: #fdf6e6;
+  color: #7a5a17;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
 .menu-card-combo::before { content: ' · '; }
 
 .menu-card-combo {
