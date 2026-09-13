@@ -232,16 +232,16 @@ export const categories = [
     taglineZh: '卤香浇饭，扎实满足', taglineEn: 'Savory braise over rice, hearty and filling',
   },
   {
-    id: 'side', nameZh: '小菜', nameEn: 'Sides',
-    taglineZh: '卤香小食，配面配饭', taglineEn: 'Small bites to round out the bowl',
-  },
-  {
     id: 'soup', nameZh: '汤', nameEn: 'Soups',
     taglineZh: '慢熬老汤，暖身暖胃', taglineEn: 'Slow-simmered broths, warming and rich',
   },
   {
     id: 'combo2', nameZh: '双人套餐', nameEn: 'Combo for Two',
     taglineZh: '两份主食+两杯饮料，两个人刚刚好', taglineEn: 'Two mains and two drinks — just right for two',
+  },
+  {
+    id: 'side', nameZh: '小菜', nameEn: 'Sides',
+    taglineZh: '卤香小食，配面配饭', taglineEn: 'Small bites to round out the bowl',
   },
   {
     id: 'drink', nameZh: '饮料', nameEn: 'Drinks',
