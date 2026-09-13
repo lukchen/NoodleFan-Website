@@ -19,8 +19,10 @@ export const PICKUP_POINTS = [
     nameEn: 'Store Pickup',
     areaZh: '94 Shirley St, Roxbury',
     areaEn: '94 Shirley St, Roxbury',
-    noteZh: '随时下单 · 约 20 分钟出餐',
-    noteEn: 'Order anytime · ready in ~20 min',
+    hoursZh: '11:00 AM – 9:00 PM',
+    hoursEn: '11:00 AM – 9:00 PM',
+    noteZh: '营业时间内随时下单 · 约 20 分钟出餐',
+    noteEn: 'Order anytime during open hours · ready in ~20 min',
   },
   {
     id: 'allston',
@@ -68,26 +70,23 @@ export function nextRun(point, now = new Date()) {
   return null
 }
 
-// 「周二 9/16 下午 6:00」/「Tue 9/16 6:00 PM」—— 把星期、日期、时间一次说清,
+// 「周二 9/16 6:00 PM」/「Tue 9/16 6:00 PM」—— 把星期、日期、时间一次说清,
 // 客人不用自己推算「周二」是哪天。
 function stamp(date, hour, lang) {
   const days = lang === 'zh' ? DAY_ZH : DAY_EN
   const d = days[date.getDay()]
   const md = `${date.getMonth() + 1}/${date.getDate()}`
   const hour12 = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour
-  if (lang === 'zh') {
-    const ampm = hour >= 12 ? '下午' : '上午'
-    return `${d} ${md} ${ampm}${hour12}:00`
-  }
-  return `${d} ${md} ${hour12}:00 ${hour >= 12 ? 'PM' : 'AM'}`
+  const ampm = hour >= 12 ? 'PM' : 'AM'
+  return `${d} ${md} ${hour12}:00 ${ampm}`
 }
 
-// 取餐时刻,例:周二 9/16 下午6:00
+// 取餐时刻,例:周二 9/16 6:00 PM
 export function formatPickupAt(run, lang) {
   return run ? stamp(run.pickupAt, run.pickupAt.getHours(), lang) : ''
 }
 
-// 截单时刻,例:周二 9/16 下午3:00
+// 截单时刻,例:周二 9/16 3:00 PM
 export function formatCutoffAt(run, lang) {
   return run ? stamp(run.cutoff, run.cutoff.getHours(), lang) : ''
 }
