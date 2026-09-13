@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import strings from './i18n/strings'
 import { CartProvider, useCart } from './context/CartContext'
+import { PickupProvider, usePickup } from './context/PickupContext'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import MenuSection from './components/MenuSection'
@@ -8,6 +9,9 @@ import Cart from './components/Cart'
 import Checkout from './components/Checkout'
 import Footer from './components/Footer'
 import Admin from './components/Admin'
+import PickupPicker from './components/PickupPicker'
+import PickupBar from './components/PickupBar'
+import MobileCartBar from './components/MobileCartBar'
 import OrderStatus from './components/OrderStatus'
 import { ORDERING_ENABLED } from './config'
 import './App.css'
@@ -32,7 +36,9 @@ function OrderSuccess({ t, onClose }) {
 function AppInner({ t, lang, setLang }) {
   const [checkoutOpen, setCheckoutOpen] = useState(false)
   const [orderSuccess, setOrderSuccess] = useState(false)
+  const [pickerOpen, setPickerOpen] = useState(false)
   const { clearCart } = useCart()
+  const { point } = usePickup()
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -46,11 +52,18 @@ function AppInner({ t, lang, setLang }) {
   return (
     <>
       <Navbar t={t} lang={lang} onToggleLang={() => setLang(lang === 'en' ? 'zh' : 'en')} />
+      {ORDERING_ENABLED && point && (
+        <PickupBar t={t} lang={lang} onChange={() => setPickerOpen(true)} />
+      )}
       <main>
-        <Hero t={t} />
+        <Hero t={t} onOrder={ORDERING_ENABLED && !point ? () => setPickerOpen(true) : undefined} />
         <MenuSection t={t} lang={lang} />
       </main>
       <Footer t={t} />
+      {ORDERING_ENABLED && <MobileCartBar t={t} />}
+      {ORDERING_ENABLED && pickerOpen && (
+        <PickupPicker t={t} lang={lang} onClose={() => setPickerOpen(false)} />
+      )}
       {ORDERING_ENABLED && <Cart t={t} onCheckout={() => setCheckoutOpen(true)} />}
       {ORDERING_ENABLED && checkoutOpen && <Checkout t={t} onClose={() => setCheckoutOpen(false)} />}
       {orderSuccess && <OrderSuccess t={t} onClose={() => setOrderSuccess(false)} />}
@@ -75,10 +88,12 @@ export default function App() {
   const sessionId = new URLSearchParams(window.location.search).get('session_id')
 
   return (
+    <PickupProvider>
     <CartProvider>
       {sessionId
         ? <OrderStatus sessionId={sessionId} t={t} lang={lang} setLang={setLang} />
         : <AppInner t={t} lang={lang} setLang={setLang} />}
     </CartProvider>
+    </PickupProvider>
   )
 }
