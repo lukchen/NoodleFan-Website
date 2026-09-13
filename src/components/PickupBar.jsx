@@ -37,7 +37,15 @@ export default function PickupBar({ t, lang, onChange }) {
         </div>
 
         {isStore ? (
-          <span className="pickup-bar-meta">{zh ? point.noteZh : point.noteEn}</span>
+          <div className="pickup-bar-when">
+            <span className="pw-item">
+              <span className="pw-label">{t.pickup.hoursRow}</span>
+              <span className="pw-value">{zh ? point.hoursZh : point.hoursEn}</span>
+            </span>
+            <span className="pw-item">
+              <span className="pw-value pw-value--soft">{zh ? '约 20 分钟出餐' : 'Ready in ~20 min'}</span>
+            </span>
+          </div>
         ) : run ? (
           <div className="pickup-bar-when">
             <span className="pw-item">
