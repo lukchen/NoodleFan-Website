@@ -1,8 +1,10 @@
 import { ORDERING_ENABLED, PLATFORM_LINKS } from '../config'
 
-export default function Hero({ t }) {
+export default function Hero({ t, onOrder }) {
+  // 还没选取餐点时,「立即点餐」先弹取餐方式选择;选过了就直接滚到菜单。
   function scrollToMenu(e) {
     e.preventDefault()
+    if (onOrder) { onOrder(); return }
     document.getElementById('menu')?.scrollIntoView({ behavior: 'smooth' })
   }
 
