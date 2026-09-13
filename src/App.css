@@ -1573,3 +1573,397 @@ body {
   max-width: 32rem;
   line-height: 1.4;
 }
+
+/* ══ 取餐方式 Pickup ══════════════════════════════════════════════════════ */
+
+.pickup-modal { max-width: 540px; }
+
+.pickup-sub {
+  margin: -0.4rem 0 1rem;
+  font-size: 0.88rem;
+  color: var(--color-muted);
+}
+
+.pickup-options { display: flex; flex-direction: column; gap: 0.7rem; }
+
+.pickup-option {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.3rem;
+  text-align: left;
+  padding: 0.9rem 1rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+
+.pickup-option:hover { border-color: var(--color-accent); }
+
+.pickup-option--active {
+  border-color: var(--color-accent);
+  background: #fdf3f1;
+  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.12);
+}
+
+.pickup-option-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.pickup-icon { font-size: 1rem; }
+
+.pickup-option-name {
+  font-family: var(--font-serif);
+  font-size: 1.02rem;
+  font-weight: 600;
+}
+
+.pickup-cutoff {
+  margin-left: auto;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #8a5a00;
+  background: #fdf0d5;
+  border-radius: 999px;
+  padding: 0.1rem 0.5rem;
+  white-space: nowrap;
+}
+
+.pickup-option-area { font-size: 0.82rem; color: var(--color-muted); }
+.pickup-option-note { font-size: 0.82rem; color: var(--color-text); }
+
+.pickup-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.pickup-dots { display: inline-flex; gap: 4px; }
+
+.pickup-dots i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--color-border);
+  display: inline-block;
+}
+
+.pickup-dots i.on { background: var(--color-gold); }
+
+.pickup-progress-text {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-gold);
+}
+
+.pickup-fineprint {
+  margin: 0.9rem 0 0;
+  font-size: 0.76rem;
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+
+/* ── 吸顶状态条 ── */
+.pickup-bar {
+  position: sticky;
+  top: 58px;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  padding: 0.5rem 1.2rem;
+  background: #3a2f26;
+  color: #f6efe3;
+  font-size: 0.84rem;
+}
+
+.pickup-bar--store { background: #4a3d31; }
+
+.pickup-bar-main { font-weight: 600; }
+
+.pickup-bar-meta { color: #d8cbb7; }
+
+.pickup-bar-countdown {
+  color: #ffd98a;
+  font-variant-numeric: tabular-nums;
+}
+
+.pickup-bar-need {
+  font-weight: 600;
+  color: var(--color-gold);
+  background: rgba(255, 217, 138, 0.14);
+  border-radius: 999px;
+  padding: 0.05rem 0.55rem;
+}
+
+.pickup-bar-need--ready { color: #9fe0a6; background: rgba(159, 224, 166, 0.14); }
+
+.pickup-bar-change {
+  margin-left: auto;
+  background: none;
+  border: 1px solid rgba(246, 239, 227, 0.4);
+  color: inherit;
+  border-radius: 999px;
+  padding: 0.15rem 0.7rem;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.pickup-bar-change:hover { border-color: #f6efe3; }
+
+/* ── 菜品余量 ── */
+.menu-card-stock {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #b4610f;
+  margin-bottom: 0.35rem;
+}
+
+.menu-card-stock--out { color: var(--color-muted); }
+
+.menu-card--soldout { opacity: 0.55; }
+.menu-card--soldout .menu-card-image img { filter: grayscale(1); }
+
+/* ══ 三栏布局 ══════════════════════════════════════════════════════════ */
+
+.menu-layout {
+  display: grid;
+  grid-template-columns: 130px minmax(0, 1fr) 268px;
+  gap: 1.6rem;
+  align-items: start;
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+.cat-rail {
+  position: sticky;
+  top: 110px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.cat-rail-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  padding: 0.45rem 0.7rem;
+  border: none;
+  border-left: 3px solid transparent;
+  background: none;
+  color: var(--color-muted);
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 0 6px 6px 0;
+  transition: all 0.15s;
+}
+
+.cat-rail-item:hover { color: var(--color-text); background: rgba(0, 0, 0, 0.03); }
+
+.cat-rail-item--active {
+  color: var(--color-accent);
+  border-left-color: var(--color-accent);
+  background: rgba(192, 57, 43, 0.06);
+}
+
+.cat-rail-count { font-size: 0.72rem; font-weight: 500; opacity: 0.6; }
+
+.menu-main { min-width: 0; }
+
+/* 三栏下左侧导轨已经列了分类,中间的标题不必再居中占一屏 */
+.menu-layout .cat-block { margin-bottom: 2.2rem; }
+
+.menu-layout .cat-header {
+  text-align: left;
+  margin-bottom: 0.9rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--color-gold);
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0 0.6rem;
+}
+
+.menu-layout .cat-name { font-size: 1.5rem; order: 1; }
+.menu-layout .cat-eyebrow { display: inline; order: 2; margin-bottom: 0; font-size: 0.66rem; }
+.menu-layout .cat-tagline { order: 3; flex-basis: 100%; margin-top: 0.15rem; font-size: 0.82rem; }
+.menu-layout .cat-rule { display: none; }
+
+/* 三栏下中间区域固定两列,信息密度接近点餐系统 */
+.menu-layout .menu-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  justify-content: stretch;
+  gap: 1rem;
+}
+
+/* ── 常驻购物车 ── */
+.cart-panel { position: sticky; top: 110px; }
+
+.cart-panel-inner {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 1rem;
+  max-height: calc(100vh - 140px);
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-panel-title {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  margin-bottom: 0.5rem;
+}
+
+.cart-panel-pickup {
+  font-size: 0.78rem;
+  color: var(--color-muted);
+  padding-bottom: 0.6rem;
+  margin-bottom: 0.6rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.cart-panel-empty {
+  font-size: 0.85rem;
+  color: var(--color-muted);
+  padding: 1.2rem 0;
+  text-align: center;
+}
+
+.cart-panel-items {
+  list-style: none;
+  margin: 0 0 0.6rem;
+  padding: 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.cart-panel-item {
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.85rem;
+}
+
+.cart-panel-footer { padding-top: 0.5rem; border-top: 1px solid var(--color-border); }
+
+.cart-panel-btn { width: 100%; margin-top: 0.7rem; }
+.cart-panel-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* 手机端分类吸顶条:桌面隐藏(用左侧导轨) */
+.cat-tabs { display: none; }
+
+/* 手机端底部固定结算条 */
+.mobile-cart-bar { display: none; }
+
+@media (max-width: 900px) {
+  .menu-layout { grid-template-columns: minmax(0, 1fr); gap: 0; }
+
+  /* 紧凑列表:缩略图在左、文字在右。600-900px 之间也适用,否则中间宽度是大图单列 */
+  .menu-card { flex-direction: row; border-radius: 12px; }
+  .menu-card:hover { transform: none; }
+  .menu-card-image { flex: 0 0 104px; width: 104px; aspect-ratio: 1; align-self: stretch; }
+  .menu-card-body { padding: 0.6rem 0.7rem 0.6rem 0.75rem; }
+  .menu-card-name { font-size: 0.95rem; margin-bottom: 0.1rem; }
+  .menu-card-subname { font-size: 0.72rem; margin-bottom: 0.2rem; }
+  .menu-card-desc {
+    font-size: 0.76rem; line-height: 1.4; margin-bottom: 0.35rem;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .menu-card-price { font-size: 0.95rem; }
+  .menu-card-combo { display: block; font-size: 0.72rem; }
+  .menu-card-combo::before { content: ''; }
+  .menu-card-footer { padding-top: 0.35rem; gap: 0.5rem; }
+  .menu-card-footer .btn-add { padding: 0.4rem 0.85rem; font-size: 0.82rem; }
+
+  /* 分类标题压成左对齐单行 */
+  .cat-block { margin-bottom: 1.8rem; }
+  .cat-header {
+    text-align: left; margin-bottom: 0.75rem; padding-bottom: 0.45rem;
+    border-bottom: 2px solid var(--color-gold);
+    display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 0.5rem;
+  }
+  .cat-name { font-size: 1.25rem; order: 1; }
+  .cat-eyebrow { display: inline; order: 2; font-size: 0.62rem; letter-spacing: 0.2em; margin-bottom: 0; }
+  .cat-tagline { order: 3; flex-basis: 100%; font-size: 0.76rem; margin-top: 0.1rem; }
+  .cat-rule { display: none; }
+  .cat-rail, .cart-panel { display: none; }
+  .menu-layout .menu-grid { grid-template-columns: minmax(0, 1fr); }
+
+  .cat-tabs {
+    display: flex;
+    gap: 0.4rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    position: sticky;
+    top: 92px;
+    z-index: 30;
+    margin: -0.5rem -1rem 1rem;
+    padding: 0.55rem 1rem;
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .cat-tabs::-webkit-scrollbar { display: none; }
+
+  .cat-tab {
+    flex: 0 0 auto;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    border-radius: 999px;
+    padding: 0.32rem 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-muted);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .cat-tab--active {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: #fff;
+  }
+
+  .pickup-bar {
+    top: 52px;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.76rem;
+    gap: 0.4rem;
+  }
+
+  .pickup-bar-meta { display: none; }
+
+  .mobile-cart-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    position: fixed;
+    left: 0.7rem;
+    right: 0.7rem;
+    bottom: 0.7rem;
+    z-index: 60;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 12px;
+    background: var(--color-accent);
+    color: #fff;
+    font-size: 0.92rem;
+    box-shadow: 0 8px 24px rgba(74, 48, 30, 0.3);
+    cursor: pointer;
+  }
+
+  .mobile-cart-bar-cta { font-weight: 700; }
+
+  /* 给底部固定条让出空间,免得挡住最后一道菜 */
+  .menu-section { padding-bottom: 5rem; }
+}
