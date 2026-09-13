@@ -37,7 +37,7 @@ function MenuCard({ item, t, lang, onCustomize }) {
             <p className="menu-card-price">
               {t.menu.price(item.price)}
               {comboFrom && (
-                <span className="menu-card-combo"> · {t.options.comboFrom} ${comboFrom.toFixed(2)}</span>
+                <span className="menu-card-combo">{t.options.comboFrom} ${comboFrom.toFixed(2)}</span>
               )}
             </p>
           )}
