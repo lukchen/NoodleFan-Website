@@ -77,6 +77,9 @@ const strings = {
       gateNote: 'What we can prep — and when orders close — depends on the spot.',
       gateBtn: 'Choose pickup spot',
       changeLong: 'Change pickup spot',
+      pickupAtRow: 'Pickup',
+      cutoffRow: 'Order by',
+      remaining: (h, m) => h >= 24 ? '' : `${h}h ${m}m left`,
     },
     options: {
       pickAtLeastOne: ' — pick at least one',
@@ -189,6 +192,9 @@ const strings = {
       gateNote: '不同取餐点的截单时间和当天备料份数不一样。',
       gateBtn: '选择取餐方式',
       changeLong: '更换取餐方式',
+      pickupAtRow: '取餐时间',
+      cutoffRow: '下单截止',
+      remaining: (h, m) => h >= 24 ? '' : `还剩 ${h}小时${m}分`,
     },
     options: {
       pickAtLeastOne: '（至少选一项）',
