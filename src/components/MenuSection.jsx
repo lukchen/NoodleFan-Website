@@ -17,6 +17,12 @@ function MenuCard({ item, t, lang, onCustomize }) {
   const altName = lang === 'en' ? item.nameZh : null
   const desc = lang === 'en' ? item.descEn : item.descZh
 
+  // Cheapest combo upgrade, surfaced on the card so combos are visible while browsing.
+  const comboGroup = (item.optionGroups ?? []).find(g => g.style === 'combo')
+  const comboFrom = comboGroup
+    ? Math.min(...comboGroup.choices.filter(c => c.delta).map(c => item.price + c.delta))
+    : null
+
   return (
     <article className="menu-card">
       <div className="menu-card-image">
@@ -27,7 +33,14 @@ function MenuCard({ item, t, lang, onCustomize }) {
         {altName && <p className="menu-card-subname">{altName}</p>}
         {desc && <p className="menu-card-desc">{desc}</p>}
         <div className="menu-card-footer">
-          {ORDERING_ENABLED && <p className="menu-card-price">{t.menu.price(item.price)}</p>}
+          {ORDERING_ENABLED && (
+            <p className="menu-card-price">
+              {t.menu.price(item.price)}
+              {comboFrom && (
+                <span className="menu-card-combo"> · {t.options.comboFrom} ${comboFrom.toFixed(2)}</span>
+              )}
+            </p>
+          )}
           {/* Dishes with options always go through the picker — each add is a specific
               combination; per-line qty is managed in the cart drawer. */}
           {ORDERING_ENABLED && (
