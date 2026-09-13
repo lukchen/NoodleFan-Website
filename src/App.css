@@ -1740,6 +1740,82 @@ body {
 
 .pbc-short { display: none; }
 
+/* ── 取餐 / 截单 两项带标签的时间 ── */
+.pickup-bar-when {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.4rem;
+  margin-top: 0.15rem;
+}
+
+.pw-item { display: inline-flex; align-items: baseline; gap: 0.4rem; }
+
+.pw-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: #bfae95;
+  white-space: nowrap;
+}
+
+.pw-value {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.pw-item--cutoff .pw-value { color: #ffd98a; }
+
+.pw-remaining {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #ffd98a;
+  background: rgba(255, 217, 138, 0.14);
+  border-radius: 999px;
+  padding: 0.05rem 0.45rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* 选择卡片里的同一组信息(浅底) */
+.pickup-when {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.2rem;
+}
+
+.pickup-when .pw-item { gap: 0.6rem; }
+
+.pickup-when .pw-label {
+  color: var(--color-muted);
+  font-size: 0.74rem;
+  min-width: 4.5em;
+}
+
+.pickup-when .pw-value { color: var(--color-text); font-size: 0.92rem; }
+.pickup-when .pw-item--cutoff .pw-value { color: #8a5a00; }
+
+/* ── 实时呼吸灯:让「还差 N 单」看起来是活的 ── */
+.live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  display: inline-block;
+  margin-right: 0.35rem;
+  vertical-align: middle;
+  animation: live-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes live-pulse {
+  0%, 100% { opacity: 1;   box-shadow: 0 0 0 0 currentColor; }
+  70%      { opacity: 0.55; box-shadow: 0 0 0 5px rgba(0, 0, 0, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-dot { animation: none; }
+}
+
 /* ── 取餐方式选择:首页上中下三个大按钮,占住菜单的位置 ── */
 .pickup-choose {
   max-width: 640px;
@@ -1828,7 +1904,7 @@ body {
 
 .cat-rail {
   position: sticky;
-  top: 110px;
+  top: 140px;
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
@@ -1988,7 +2064,7 @@ body {
     overflow-x: auto;
     scrollbar-width: none;
     position: sticky;
-    top: 92px;
+    top: 122px;
     z-index: 30;
     margin: -0.5rem -1rem 1rem;
     padding: 0.55rem 1rem;
@@ -2026,8 +2102,9 @@ body {
   }
 
   .pickup-bar-main { font-size: 0.92rem; }
-  .pickup-bar-meta,
   .pickup-bar-label { display: none; }
+  .pickup-bar-when { gap: 0.15rem 0.9rem; font-size: 0.76rem; }
+  .pickup-bar-when .pw-label { font-size: 0.64rem; }
   .pickup-bar-line { row-gap: 0.3rem; }
   .pickup-bar-change { padding: 0.28rem 0.7rem; font-size: 0.74rem; }
   .pbc-long { display: none; }
