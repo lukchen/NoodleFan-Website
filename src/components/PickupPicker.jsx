@@ -1,4 +1,4 @@
-import { PICKUP_POINTS, nextRun, formatRun, MIN_ORDERS } from '../pickup'
+import { PICKUP_POINTS, nextRun, formatPickupAt, formatCutoffAt, MIN_ORDERS } from '../pickup'
 import { usePickup } from '../context/PickupContext'
 
 // 取餐方式三选一 —— 看菜单之前的第一个决定,因为它决定截单时间、备料份数和是否成团。
@@ -32,9 +32,6 @@ export default function PickupPicker({ t, lang, onClose, dismissable = true, inl
                 <span className="pickup-option-head">
                   <span className="pickup-icon" aria-hidden="true">{isStore ? '🏪' : '📍'}</span>
                   <span className="pickup-option-name">{zh ? p.nameZh : p.nameEn}</span>
-                  {!isStore && run && (
-                    <span className="pickup-cutoff">{t.pickup.cutoffAt}</span>
-                  )}
                 </span>
 
                 <span className="pickup-option-area">{zh ? p.areaZh : p.areaEn}</span>
@@ -43,8 +40,15 @@ export default function PickupPicker({ t, lang, onClose, dismissable = true, inl
                   <span className="pickup-option-note">{zh ? p.noteZh : p.noteEn}</span>
                 ) : run ? (
                   <>
-                    <span className="pickup-option-note">
-                      {t.pickup.arrives} {formatRun(run, lang)}
+                    <span className="pickup-when">
+                      <span className="pw-item">
+                        <span className="pw-label">{t.pickup.pickupAtRow}</span>
+                        <span className="pw-value">{formatPickupAt(run, lang)}</span>
+                      </span>
+                      <span className="pw-item pw-item--cutoff">
+                        <span className="pw-label">{t.pickup.cutoffRow}</span>
+                        <span className="pw-value">{formatCutoffAt(run, lang)}</span>
+                      </span>
                     </span>
                     <span className="pickup-progress">
                       <span className="pickup-dots" aria-hidden="true">
@@ -53,6 +57,7 @@ export default function PickupPicker({ t, lang, onClose, dismissable = true, inl
                         ))}
                       </span>
                       <span className="pickup-progress-text">
+                        {left > 0 && <i className="live-dot" aria-hidden="true" />}
                         {left === 0
                           ? t.pickup.ready
                           : t.pickup.needMore(ordersSoFar, minOrders, left)}
