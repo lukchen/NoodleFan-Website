@@ -1,9 +1,12 @@
 import { useEffect } from 'react'
+import useScrollLock from '../useScrollLock'
 import { useCart } from '../context/CartContext'
 import PickupSummary from './PickupSummary'
 
 export default function Cart({ t, lang, onCheckout }) {
-  const { items, removeItem, updateQty, totalPrice, cartOpen, setCartOpen } = useCart()
+  const { items, removeItem, updateQty, totalPrice, cartOpen, setCartOpen, startEdit } = useCart()
+
+  useScrollLock(cartOpen)
 
   useEffect(() => {
     if (!cartOpen) return
@@ -37,6 +40,10 @@ export default function Cart({ t, lang, onCheckout }) {
                       <span className="cart-item-price">${(item.unitPrice * item.qty).toFixed(2)}</span>
                     </div>
                     {opts?.length > 0 && <p className="cart-item-opts">{opts.join(' · ')}</p>}
+                    {/* 加错了辣度不用删了重加 —— 点「修改」原地改配置 */}
+                    <button type="button" className="cart-item-edit" onClick={() => startEdit(item)}>
+                      {t.options.edit}
+                    </button>
                     <div className="cart-item-controls">
                       <button onClick={() => updateQty(item.key, item.qty - 1)}>−</button>
                       <span>{item.qty}</span>
