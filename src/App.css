@@ -1386,6 +1386,21 @@ body {
 
 .opt-group { margin-bottom: 1.1rem; }
 
+.opt-req {
+  margin-left: 0.45rem;
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-radius: 999px;
+  padding: 0.08rem 0.42rem;
+  color: var(--color-muted);
+  background: #ece2d0;
+  vertical-align: 0.1em;
+}
+
+.opt-req--must { color: #fff; background: var(--color-accent); }
+
 .opt-group-label {
   display: block;
   font-size: 0.88rem;
