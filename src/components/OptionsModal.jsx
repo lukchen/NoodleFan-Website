@@ -60,7 +60,10 @@ export default function OptionsModal({ dish, t, lang, onAdd, onClose }) {
     const short = lang === 'zh' ? (dish.shortZh ?? dish.nameZh) : (dish.shortEn ?? dish.nameEn)
     return (
       <div key={g.id} className="opt-group combo-group">
-        <span className="opt-group-label">{lang === 'zh' ? g.nameZh : g.nameEn}</span>
+        <span className="opt-group-label">
+          {lang === 'zh' ? g.nameZh : g.nameEn}
+          <span className="opt-req opt-req--must">{t.options.required}</span>
+        </span>
         <div className="combo-cards">
           {g.choices.map(c => {
             const active = selections[g.id] === c.id
@@ -109,6 +112,10 @@ export default function OptionsModal({ dish, t, lang, onAdd, onClose }) {
           <div key={g.id} className="opt-group">
             <span className="opt-group-label">
               {lang === 'zh' ? g.nameZh : g.nameEn}
+              {/* 必选 / 可选 明着标出来 —— 客人不用靠「有没有默认选中」去猜 */}
+              <span className={`opt-req${g.required ? ' opt-req--must' : ''}`}>
+                {g.required ? t.options.required : t.options.optional}
+              </span>
               {g.type === 'multi' && g.required && (selections[g.id] ?? []).length === 0 && (
                 <em className="opt-group-hint">{t.options.pickAtLeastOne}</em>
               )}
