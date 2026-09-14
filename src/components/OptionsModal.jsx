@@ -83,13 +83,13 @@ export default function OptionsModal({ dish, t, lang, onAdd, onClose }) {
                   <span className="combo-save">{t.options.save} {money(save)}</span>
                 )}
                 <span className="combo-card-name">{lang === 'zh' ? c.nameZh : c.nameEn}</span>
-                {/* 写清楚套餐到底包含什么:炒粉 + 火腿肠 + 饮料。
-                    原来是「🍜+🥢+🥤 加料+自选饮料」,图标花哨但没说是哪样加料。 */}
-                <span className="combo-card-sub">
-                  {isCombo
-                    ? `${short} + ${lang === 'zh' ? c.itemZh : c.itemEn} + ${t.options.drinkWord}`
-                    : t.options.mainOnly}
-                </span>
+                {/* 套餐写清内容:炒粉 + 火腿肠 + 饮料。单点不用解释,卡片标题
+                    「单点」本身就够清楚,多一行说明反而把两张卡的高度撑不齐。 */}
+                {isCombo && (
+                  <span className="combo-card-sub">
+                    {`${short} + ${lang === 'zh' ? c.itemZh : c.itemEn} + ${t.options.drinkWord}`}
+                  </span>
+                )}
                 <span className="combo-card-prices">
                   {listed && <s className="combo-card-was">{money(listed)}</s>}
                   <strong className="combo-card-now">{money(total)}</strong>
