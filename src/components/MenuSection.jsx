@@ -12,9 +12,12 @@ function MenuCard({ item, t, lang, onCustomize, remaining }) {
   const qty = dishQty(item.id)
   const hasOptions = (item.optionGroups ?? []).length > 0
 
-  const imgSrc = item.image?.startsWith('/images/')
-    ? `${import.meta.env.BASE_URL}${item.image.slice(1)}`
-    : item.image
+  const resolve = src => src?.startsWith('/images/')
+    ? `${import.meta.env.BASE_URL}${src.slice(1)}`
+    : src
+  const imgSrc = resolve(item.image)
+  // 双人套餐带两张图 —— 一张卡拼两半,客人一眼看到自己买的是哪两碗
+  const pair = item.images?.length === 2 ? item.images.map(resolve) : null
 
   const name = lang === 'en' ? item.nameEn : item.nameZh
   const altName = lang === 'en' ? item.nameZh : null
@@ -31,8 +34,12 @@ function MenuCard({ item, t, lang, onCustomize, remaining }) {
 
   return (
     <article className={`menu-card${soldOut ? ' menu-card--soldout' : ''}`}>
-      <div className="menu-card-image">
-        {imgSrc ? <img src={imgSrc} alt={name} loading="lazy" /> : <div className="menu-card-placeholder" />}
+      <div className={`menu-card-image${pair ? ' menu-card-image--pair' : ''}`}>
+        {pair
+          ? pair.map((src, i) => <img key={i} src={src} alt="" loading="lazy" />)
+          : imgSrc
+            ? <img src={imgSrc} alt={name} loading="lazy" />
+            : <div className="menu-card-placeholder" />}
       </div>
       <div className="menu-card-body">
         <h4 className="menu-card-name">{name}</h4>
