@@ -622,6 +622,18 @@ body {
 .checkout-form textarea:focus { border-color: var(--color-accent); }
 
 /* Date / time picker */
+.checkout-fixed-run {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  background: #fdf3f1;
+  border: 1.5px solid var(--color-accent);
+  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+}
+
+.checkout-fixed-run strong { font-size: 0.95rem; }
+
 .checkout-field {
   display: flex;
   flex-direction: column;
