@@ -222,7 +222,8 @@ body {
 }
 
 .menu-card-image {
-  aspect-ratio: 4/3;
+  /* 方形 —— 新菜品图是 1:1 带品牌边框的,4:3 会把上下边框切掉 */
+  aspect-ratio: 1;
   overflow: hidden;
   background: #ece2d0;
 }
@@ -230,7 +231,7 @@ body {
 .menu-card-image img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   transition: transform 0.4s ease;
 }
 
@@ -271,7 +272,7 @@ body {
 }
 
 .menu-card-price {
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
   font-size: 1.05rem;
   font-weight: 600;
   color: var(--color-accent);
@@ -2140,4 +2141,30 @@ body {
 
   /* 给底部固定条让出空间,免得挡住最后一道菜 */
   .menu-section { padding-bottom: 5rem; }
+}
+
+
+/* ══ 金额字体 ═══════════════════════════════════════════════════════════
+   价格必须一眼看清,所以不跟标题走 Playfair(它的默认数字是旧式的,
+   高低不齐),统一用无衬线 + 等宽对齐数字。 */
+.menu-card-price,
+.menu-card-combo,
+.cart-item-price,
+.cart-total,
+.cart-total span,
+.combo-card-now,
+.combo-card-was,
+.combo-save,
+.combo-saved-line,
+.combo-saved-line strong,
+.checkout-summary-row,
+.checkout-summary-total,
+.os-items-total,
+.admin-order-total,
+.mobile-cart-bar,
+.cart-panel-btn,
+.options-add-btn {
+  font-family: var(--font-sans);
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: 'lnum' 1, 'tnum' 1;
 }
