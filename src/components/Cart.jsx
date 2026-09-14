@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
 import { useCart } from '../context/CartContext'
+import PickupSummary from './PickupSummary'
 
-export default function Cart({ t, onCheckout }) {
+export default function Cart({ t, lang, onCheckout }) {
   const { items, removeItem, updateQty, totalPrice, cartOpen, setCartOpen } = useCart()
 
   useEffect(() => {
@@ -19,6 +20,8 @@ export default function Cart({ t, onCheckout }) {
           <h2>{t.cart.title}</h2>
           <button className="cart-close" onClick={() => setCartOpen(false)}>✕</button>
         </div>
+
+        <PickupSummary t={t} lang={lang} />
 
         {items.length === 0 ? (
           <p className="cart-empty">{t.cart.empty}</p>
