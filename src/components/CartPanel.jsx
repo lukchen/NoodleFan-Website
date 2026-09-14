@@ -1,24 +1,17 @@
 import { useCart } from '../context/CartContext'
-import { usePickup } from '../context/PickupContext'
-import { formatPickupAt } from '../pickup'
+import PickupSummary from './PickupSummary'
 
 // 桌面端常驻购物车 —— 贴在菜单右侧,客人随时看得到已选和总价,不用开抽屉。
 // 手机端由底部固定条 + 抽屉负责,这个面板在窄屏隐藏。
 export default function CartPanel({ t, lang }) {
   const { items, removeItem, updateQty, totalPrice, setCartOpen } = useCart()
-  const { point, run } = usePickup()
 
   return (
     <aside className="cart-panel">
       <div className="cart-panel-inner">
         <h3 className="cart-panel-title">{t.cart.title}</h3>
 
-        {point && (
-          <p className="cart-panel-pickup">
-            {point.kind === 'store' ? '🏪' : '📍'} {lang === 'zh' ? point.nameZh : point.nameEn}
-            {run && <span> · {t.pickup.pickupAtRow} {formatPickupAt(run, lang)}</span>}
-          </p>
-        )}
+        <PickupSummary t={t} lang={lang} />
 
         {items.length === 0 ? (
           <p className="cart-panel-empty">{t.cart.empty}</p>
