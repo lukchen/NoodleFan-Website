@@ -28,11 +28,23 @@ export function PickupProvider({ children }) {
     } catch { /* 隐私模式下写不进去,不影响使用 */ }
   }, [pointId])
 
+  // 客人点「更换」时置 true,菜单区会换回选择界面。放在 context 里是因为
+  // 触发点(购物车面板、抽屉)和响应点(MenuSection)隔得很远。
+  const [changing, setChanging] = useState(false)
+  function startChange() {
+    setChanging(true)
+    requestAnimationFrame(() => {
+      const el = document.getElementById('menu')
+      if (el) window.scrollTo({ top: el.offsetTop - 120, behavior: 'smooth' })
+    })
+  }
+
   const point = getPoint(pointId)
   const run = useMemo(() => nextRun(point, now), [point, now])
 
   const value = {
     pointId, setPointId,
+    changing, startChange, endChange: () => setChanging(false),
     point, run, now,
     clearPoint: () => setPointId(null),
     ordersSoFar: 0,
