@@ -2016,12 +2016,88 @@ body {
   margin-bottom: 0.5rem;
 }
 
-.cart-panel-pickup {
-  font-size: 0.78rem;
+/* ── 取餐方式摘要:「我的订单」最上面一块 ───────────────────────────────
+   取餐点决定截单时间和能不能成团,所以它是订单的组成部分,不是页面横幅。 */
+.pickup-sum {
+  background: #fdf3f1;
+  border: 1.5px solid var(--color-accent);
+  border-radius: 12px;
+  padding: 0.7rem 0.8rem;
+  margin-bottom: 0.9rem;
+}
+
+.pickup-sum--store { background: #fdf6ec; border-color: #c88a3a; }
+
+.pickup-sum-head {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.45rem;
+}
+
+.pickup-sum-icon { font-size: 1.05rem; line-height: 1; }
+
+.pickup-sum-name {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 1rem;
+  min-width: 0;
+}
+
+.pickup-sum-change {
+  margin-left: auto;
+  flex-shrink: 0;
+  background: none;
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent);
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.pickup-sum-change:hover { background: var(--color-accent); color: #fff; }
+
+.pickup-sum-rows { display: flex; flex-direction: column; gap: 0.2rem; }
+
+.pickup-sum-rows .pw-label {
   color: var(--color-muted);
-  padding-bottom: 0.6rem;
-  margin-bottom: 0.6rem;
-  border-bottom: 1px solid var(--color-border);
+  font-size: 0.72rem;
+  min-width: 4.5em;
+}
+
+.pickup-sum-rows .pw-value { color: var(--color-text); font-size: 0.86rem; }
+.pickup-sum-rows .pw-item--cutoff .pw-value { color: #8a5a00; }
+
+.pickup-sum-foot {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.pickup-sum-foot .pw-remaining {
+  color: #8a5a00;
+  background: #fdf0d5;
+}
+
+.pickup-sum-need {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--color-gold);
+}
+
+.pickup-sum-need--ready { color: #2f7d35; }
+
+/* 手机端底部条上的取餐点 —— 不打开购物车也一眼看到自己在哪个点 */
+.mobile-cart-bar-point {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  opacity: 0.92;
+  margin-bottom: 0.1rem;
 }
 
 .cart-panel-empty {
