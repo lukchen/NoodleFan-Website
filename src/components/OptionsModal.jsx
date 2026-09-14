@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import useScrollLock from '../useScrollLock'
 import { resolveSelections } from '../data/menu'
 import { loadDraft, saveDraft, clearDraft } from '../draft'
 
@@ -8,12 +9,15 @@ import { loadDraft, saveDraft, clearDraft } from '../draft'
 // chips: fast-food convention — show the TOTAL price of each path, strike through
 // what the same food would cost bought separately, and badge the savings. Groups
 // carrying `showWhen` (the combo drink) only appear once the combo is chosen.
-export default function OptionsModal({ dish, t, lang, onAdd, onClose }) {
+export default function OptionsModal({ dish, t, lang, onAdd, onClose, initial = null, mode = 'add' }) {
+  const editing = mode === 'edit'
   // 上次没加完的配置接着改;没有草稿就是默认值。
-  const [selections, setSelections] = useState(() => loadDraft(dish))
+  const [selections, setSelections] = useState(() => initial ?? loadDraft(dish))
 
   // 每改一下就存,所以点框外、按 Esc、甚至直接关标签页都不会丢。
-  useEffect(() => { saveDraft(dish, selections) }, [dish, selections])
+  useScrollLock()
+
+  useEffect(() => { if (!editing) saveDraft(dish, selections) }, [dish, selections, editing])
 
   useEffect(() => {
     function onKey(e) { if (e.key === 'Escape') onClose() }
@@ -144,10 +148,10 @@ export default function OptionsModal({ dish, t, lang, onAdd, onClose }) {
           disabled={missingRequired}
           onClick={() => {
             onAdd(dish, selections)
-            clearDraft(dish)   // 已经进购物车了,下一份从默认开始
+            if (!editing) clearDraft(dish)   // 已经进购物车了,下一份从默认开始
             onClose()
           }}>
-          {t.options.addToCart} {money(unitPrice)}
+          {editing ? t.options.saveChanges : t.options.addToCart} {money(unitPrice)}
         </button>
       </div>
     </div>
