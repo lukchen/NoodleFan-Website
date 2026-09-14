@@ -10,6 +10,8 @@ export default function Navbar({ t, lang, onToggleLang }) {
       <div className="navbar-brand">
         <img className="navbar-logo" src={`${import.meta.env.BASE_URL}images/logo-emblem.png`} alt="" />
         <span>NoodleFan 粉面王</span>
+        {/* 原来 hero 里的大标语挪到这里 —— 首屏留给取餐方式选择,不给一张大 logo */}
+        <span className="navbar-tagline">{t.hero.subA}</span>
       </div>
       <div className="navbar-links">
         <a href="#menu">{t.nav.menu}</a>
