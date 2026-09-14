@@ -1697,90 +1697,15 @@ body {
   color: var(--color-muted);
 }
 
-/* ── 吸顶状态条 ── */
-.pickup-bar {
-  position: sticky;
-  top: 58px;
-  z-index: 40;
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  padding: 0.6rem 1.2rem;
-  background: var(--color-accent);
-  box-shadow: 0 2px 12px rgba(146, 42, 30, 0.28);
-  color: #fff;
-  font-size: 0.86rem;
-}
 
-.pickup-bar--store { background: #7a4a1f; }
 
-.pickup-bar-icon { font-size: 1.15rem; line-height: 1; }
-
-.pickup-bar-text { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
-
-.pickup-bar-label {
-  font-size: 0.68rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.72);
-}
-
-.pickup-bar-line {
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  flex-wrap: wrap;
-}
-
-.pickup-bar-main { font-weight: 700; font-size: 1rem; }
-
-.pickup-bar-meta { color: rgba(255,255,255,0.85); }
-
-.pickup-bar-countdown {
-  color: #ffe9b0;
-  font-variant-numeric: tabular-nums;
-}
-
-.pickup-bar-need {
-  font-weight: 700;
-  color: #fff;
-  background: rgba(0, 0, 0, 0.22);
-  border-radius: 999px;
-  padding: 0.05rem 0.55rem;
-}
-
-.pickup-bar-need--ready { color: #d8ffd9; background: rgba(0, 0, 0, 0.22); }
-
-.pickup-bar-change {
-  flex-shrink: 0;
-  background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.65);
-  color: inherit;
-  border-radius: 999px;
-  padding: 0.3rem 0.9rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.pickup-bar-change:hover { border-color: #fff; background: rgba(255, 255, 255, 0.26); }
-
-.pbc-short { display: none; }
-
-/* ── 取餐 / 截单 两项带标签的时间 ── */
-.pickup-bar-when {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem 1.4rem;
-  margin-top: 0.15rem;
-}
-
+/* ── 取餐 / 截单 两项带标签的时间(选择卡片 + 我的订单共用) ── */
 .pw-item { display: inline-flex; align-items: baseline; gap: 0.4rem; }
 
 .pw-label {
   font-size: 0.68rem;
   letter-spacing: 0.08em;
-  color: rgba(255,255,255,0.72);
+  color: var(--color-muted);
   white-space: nowrap;
 }
 
@@ -1790,14 +1715,13 @@ body {
   white-space: nowrap;
 }
 
-.pw-item--cutoff .pw-value { color: #ffe9b0; }
-.pw-value--soft { font-weight: 400; color: rgba(255,255,255,0.85); }
+.pw-item--cutoff .pw-value { color: #8a5a00; }
 
 .pw-remaining {
   font-size: 0.74rem;
   font-weight: 600;
-  color: #fff;
-  background: rgba(0, 0, 0, 0.22);
+  color: #8a5a00;
+  background: #fdf0d5;
   border-radius: 999px;
   padding: 0.05rem 0.45rem;
   font-variant-numeric: tabular-nums;
@@ -2206,22 +2130,6 @@ body {
     color: #fff;
   }
 
-  .pickup-bar {
-    top: 52px;
-    padding: 0.5rem 0.8rem;
-    font-size: 0.78rem;
-    gap: 0.5rem;
-    border-left-width: 4px;
-  }
-
-  .pickup-bar-main { font-size: 0.92rem; }
-  .pickup-bar-label { display: none; }
-  .pickup-bar-when { gap: 0.15rem 0.9rem; font-size: 0.76rem; }
-  .pickup-bar-when .pw-label { font-size: 0.64rem; }
-  .pickup-bar-line { row-gap: 0.3rem; }
-  .pickup-bar-change { padding: 0.28rem 0.7rem; font-size: 0.74rem; }
-  .pbc-long { display: none; }
-  .pbc-short { display: inline; }
   .menu-section--choose { padding-top: 0.8rem; }
   .pickup-choose { margin: 0 0.2rem 3rem; }
   .pickup-choose-title { font-size: 1.35rem; }
