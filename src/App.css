@@ -49,6 +49,20 @@ body {
   white-space: nowrap;
 }
 
+.navbar-tagline {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--color-muted);
+  letter-spacing: 0;
+  padding-left: 0.9rem;
+  margin-left: 0.3rem;
+  border-left: 1px solid #d8c8a8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .navbar-logo {
   height: 42px;
   width: 42px;
@@ -2038,6 +2052,11 @@ body {
 
 /* 手机端底部固定结算条 */
 .mobile-cart-bar { display: none; }
+
+@media (max-width: 1180px) {
+  /* 窄屏放不下就收起标语,品牌名优先 */
+  .navbar-tagline { display: none; }
+}
 
 @media (max-width: 900px) {
   .menu-layout { grid-template-columns: minmax(0, 1fr); gap: 0; }
