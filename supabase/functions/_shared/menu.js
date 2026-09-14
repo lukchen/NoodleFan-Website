@@ -282,6 +282,13 @@ export function resolveSelections(dish, selections = {}) {
   let deltaCents = 0
 
   for (const g of dish.optionGroups ?? []) {
+    // 条件显示的组(套餐饮料)在条件不成立时整组跳过。
+    // 不跳的话单点也会带上一杯「可乐」—— 客人没付钱,小票上却写着,厨房照发。
+    if (g.showWhen) {
+      const dep = dish.optionGroups.find((x) => x.id === g.showWhen.group)
+      const depValue = selections[g.showWhen.group] ?? dep?.default
+      if (depValue === g.showWhen.not) continue
+    }
     if (g.type === 'single') {
       const chosenId = selections[g.id] ?? g.default
       const c = g.choices.find((x) => x.id === chosenId)
