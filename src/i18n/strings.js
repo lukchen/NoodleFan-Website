@@ -87,7 +87,6 @@ const strings = {
       drinkWord: 'a drink',
       save: 'Save',
       separately: 'separately',
-      youSave: 'You save',
       comboFrom: 'Combo from',
     },
     orderStatus: {
@@ -200,7 +199,6 @@ const strings = {
       drinkWord: '饮料',
       save: '省',
       separately: '单点合计',
-      youSave: '已省',
       comboFrom: '套餐',
     },
     orderStatus: {
