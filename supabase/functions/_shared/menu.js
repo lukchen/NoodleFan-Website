@@ -150,7 +150,7 @@ const menu = [
     nameEn: 'Tianjin Lamb & Offal Soup',
     nameZh: '天津羊杂汤',
     descEn: 'Milky lamb bone broth with tender lamb and offal, finished with cilantro, scallion and white pepper.',
-    descZh: '天津街头老味羊杂汤，羊骨慢熬至奶白，羊杂切片入汤，撒香菜蒜苗、现磨白胡椒，汤浓味厚。',
+    descZh: '天津街头老味羊杂汤，羊骨慢熬至奶白，羊杂切片入汤，撒香菜蒜苗、白胡椒，汤浓味厚。',
   },
 
   // ── 双人套餐 Combo for Two ──
