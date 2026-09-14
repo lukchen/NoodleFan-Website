@@ -1,4 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
+import { usePickup } from '../context/PickupContext'
+import { formatPickupAt } from '../pickup'
 import { useCart } from '../context/CartContext'
 import { SUPABASE_URL, SUPABASE_ANON_KEY, CHECKOUT_ENABLED } from '../config'
 
@@ -41,7 +43,21 @@ export default function Checkout({ t, onClose }) {
     return toLocalDateString(d)
   }, [])
 
+  const { point, run } = usePickup()
+  // 定点配送的取餐时刻是发车时间,不该让客人自己挑 —— 挑了也不作数。
+  const fixedRun = point?.kind === 'dropoff' ? run : null
+
   const [form, setForm] = useState({ name: '', phone: '', date: today, time: '', note: '' })
+
+  // 定点配送:把日期/时间锁成这一班的发车时刻,表单校验照常通过。
+  useEffect(() => {
+    if (!fixedRun) return
+    setForm(prev => ({
+      ...prev,
+      date: toLocalDateString(fixedRun.pickupAt),
+      time: `${String(fixedRun.pickupAt.getHours()).padStart(2, '0')}:00`,
+    }))
+  }, [fixedRun])
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
 
@@ -79,6 +95,10 @@ export default function Checkout({ t, onClose }) {
           // only the dish id, qty, and chosen options are sent.
           items: items.map(i => ({ id: i.id, qty: i.qty, selections: i.selections })),
           customer: { name: form.name, phone: form.phone },
+          // 取餐点必须跟单走:少了它,Allston 的团购单和到店自取单在后台长得一模一样。
+          pickupPoint: point
+            ? { id: point.id, kind: point.kind, nameZh: point.nameZh, nameEn: point.nameEn }
+            : null,
           pickupDate: form.date,
           pickupTime: form.time,
           note: form.note,
@@ -138,6 +158,12 @@ export default function Checkout({ t, onClose }) {
             <input name="phone" type="tel" value={form.phone} onChange={handleChange} required placeholder={t.checkout.phonePlaceholder} />
           </label>
 
+{fixedRun ? (
+            <div className="checkout-fixed-run">
+              <span className="checkout-field-label">{t.checkout.pickupAtLabel}</span>
+              <strong>{t.lang === 'zh' ? point.nameZh : point.nameEn} · {formatPickupAt(run, t.lang)}</strong>
+            </div>
+          ) : (<>
           <div className="checkout-field">
             <span className="checkout-field-label">{t.checkout.date}</span>
             <div className="date-chips">
@@ -180,6 +206,7 @@ export default function Checkout({ t, onClose }) {
             </div>
             {!form.time && <p className="checkout-field-hint">{t.checkout.timeHint}</p>}
           </div>
+          </>)}
 
           <label>
             {t.checkout.note}
