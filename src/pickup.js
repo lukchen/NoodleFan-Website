@@ -10,6 +10,22 @@ export const MIN_ORDERS = 5        // 起送单数
 export const DAILY_LIMIT = 15      // 每道菜每天备料上限
 export const CUTOFF_HOUR = 15      // 15:00 截单
 
+// 店铺营业时间 —— 显示文案和「现在是否营业」都从这两个数字来,避免两处各写一份走偏。
+export const STORE_OPEN_HOUR = 11   // 11:00 AM
+export const STORE_CLOSE_HOUR = 21  // 9:00 PM
+
+function hourLabel(h) {
+  const h12 = h > 12 ? h - 12 : h
+  return `${h12}:00 ${h >= 12 ? 'PM' : 'AM'}`
+}
+export const STORE_HOURS_TEXT = `${hourLabel(STORE_OPEN_HOUR)} – ${hourLabel(STORE_CLOSE_HOUR)}`
+
+// 打烊时间之外不拦单,而是当成预约单 —— 这个函数只用来提示客人,不用来禁用下单。
+export function storeIsOpen(now = new Date()) {
+  const h = now.getHours() + now.getMinutes() / 60
+  return h >= STORE_OPEN_HOUR && h < STORE_CLOSE_HOUR
+}
+
 // weekday: 0=周日 … 6=周六
 export const PICKUP_POINTS = [
   {
@@ -19,8 +35,8 @@ export const PICKUP_POINTS = [
     nameEn: 'Store Pickup',
     areaZh: '94 Shirley St, Roxbury',
     areaEn: '94 Shirley St, Roxbury',
-    hoursZh: '11:00 AM – 9:00 PM',
-    hoursEn: '11:00 AM – 9:00 PM',
+    hoursZh: STORE_HOURS_TEXT,
+    hoursEn: STORE_HOURS_TEXT,
     noteZh: '营业时间内随时下单 · 约 20 分钟出餐',
     noteEn: 'Order anytime during open hours · ready in ~20 min',
   },
