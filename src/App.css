@@ -1860,7 +1860,7 @@ body {
 
 .cat-rail {
   position: sticky;
-  top: 140px;
+  top: 84px;
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
@@ -1922,7 +1922,7 @@ body {
 }
 
 /* ── 常驻购物车 ── */
-.cart-panel { position: sticky; top: 110px; }
+.cart-panel { position: sticky; top: 84px; }
 
 .cart-panel-inner {
   background: var(--color-surface);
@@ -2106,7 +2106,7 @@ body {
     overflow-x: auto;
     scrollbar-width: none;
     position: sticky;
-    top: 122px;
+    top: 56px;
     z-index: 30;
     margin: -0.5rem -1rem 1rem;
     padding: 0.55rem 1rem;
