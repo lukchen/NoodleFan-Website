@@ -104,14 +104,6 @@ export function formatRun(run, lang) {
     : `${days[run.date.getDay()]} ${time}`
 }
 
-// 截单是哪天(倒计时超过 24 小时时用,「距截单 58 小时」没有意义)
-export function formatCutoffDay(run, lang) {
-  if (!run) return ''
-  const days = lang === 'zh' ? DAY_ZH : DAY_EN
-  const d = days[run.cutoff.getDay()]
-  return lang === 'zh' ? `${d} ${CUTOFF_HOUR - 12}:00PM` : `${d} ${CUTOFF_HOUR - 12}:00 PM`
-}
-
 // 距截单还剩多久 —— 返回 { hours, minutes, expired }
 export function timeToCutoff(run, now = new Date()) {
   if (!run) return null
