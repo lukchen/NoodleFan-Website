@@ -23,8 +23,8 @@ const menu = [
     image: '/images/Golden%20Curry%20Beef%20Noodle.png',
     nameEn: 'Golden Curry Beef Noodle',
     nameZh: '天津黄汤牛肉拉面',
-    descEn: 'Hand-pulled noodles in golden curry-spiced beef bone broth with tender brisket, cilantro and a fried egg.',
-    descZh: '天津卫黄汤拉面，咖喱味慢熬的牛骨浓汤，配软烂牛腩、香菜蒜苗与煎蛋。',
+    descEn: 'Hand-pulled noodles in golden curry-spiced beef bone broth with tender brisket, a fried egg, scallion and cilantro.',
+    descZh: '天津卫黄汤拉面，咖喱味慢熬的牛骨浓汤，配软烂牛腩、煎蛋，撒葱和香菜。',
   },
   {
     id: 2,
@@ -33,8 +33,8 @@ const menu = [
     image: '/images/Taiwanese%20Beef%20Noodle.png',
     nameEn: 'Taiwanese Beef Noodle',
     nameZh: '台式牛肉面',
-    descEn: 'Slow-braised beef brisket in a tomato, apple and spice broth built on beef tallow, with fresh noodles and a fried egg.',
-    descZh: '台式慢炖牛腩面，牛油炒香、番茄苹果与八角桂皮吊出的醇厚汤头，配新鲜面条与煎蛋。',
+    descEn: 'Slow-braised beef brisket in a tomato, apple and spice broth built on beef tallow, with fresh noodles, a fried egg, scallion and cilantro.',
+    descZh: '台式慢炖牛腩面，牛油炒香、番茄苹果与八角桂皮吊出的醇厚汤头，配新鲜面条与煎蛋，撒葱和香菜。',
   },
   {
     id: 3,
@@ -53,8 +53,8 @@ const menu = [
     image: '/images/Jiangxi%20Garden%20Mushroom%20Rice%20Noodle%20Soup.png',
     nameEn: 'Jiangxi Garden Mushroom Rice Noodle Soup',
     nameZh: '江西三鲜泡粉',
-    descEn: 'Silky rice noodles and a slow-braised pork spine bone in slow-simmered pork bone broth, with soybeans, wood ear, and shiitake. Clean and comforting.',
-    descZh: '猪骨清汤慢煨的招牌泡粉，配黄豆、木耳、香菇三鲜，以及原汤猪脊骨。汤清味鲜，不辣不腻。',
+    descEn: 'Silky rice noodles and a slow-braised pork spine bone in slow-simmered pork bone broth, with soybeans, wood ear, shiitake, scallion and cilantro. Clean and comforting.',
+    descZh: '猪骨清汤慢煨的招牌泡粉，配黄豆、木耳、香菇三鲜，以及原汤猪脊骨，撒葱和香菜。汤清味鲜，不辣不腻。',
   },
   {
     id: 5,
@@ -63,8 +63,8 @@ const menu = [
     image: '/images/Jiangxi%20Spicy%20Beef%20Rice%20Noodle%20Soup.png',
     nameEn: 'Jiangxi Spicy Beef Rice Noodle Soup',
     nameZh: '江西香辣牛肉泡粉',
-    descEn: 'Rice noodles in clear pork bone broth, topped with chili-simmered beef in fragrant red oil, with soybeans, cilantro and crisp pickled greens.',
-    descZh: '猪骨清汤打底，铺上小火慢煨的红油香辣牛肉块，配黄豆、香菜与爽口小咸菜，鲜辣入味，江西招牌。',
+    descEn: 'Rice noodles in clear pork bone broth, topped with chili-simmered beef in fragrant red oil, with soybeans, crisp pickled greens, scallion and cilantro.',
+    descZh: '猪骨清汤打底，铺上小火慢煨的红油香辣牛肉块，配黄豆、爽口小咸菜，撒葱和香菜，鲜辣入味，江西招牌。',
   },
   {
     id: 6,
@@ -73,8 +73,8 @@ const menu = [
     image: '/images/Taiwanese%20Braised%20Pork%20Rice%20Bowl.png',
     nameEn: 'Taiwanese Braised Pork Rice Bowl',
     nameZh: '台北夜市卤肉饭',
-    descEn: 'Taipei street style braised pork belly over rice with pickled daikon, greens and an egg.',
-    descZh: '台北夜市经典卤肉饭，红葱酥慢卤的五花肉浇在热米饭上，配腌黄萝卜、小咸菜、小油菜和香卤蛋。',
+    descEn: 'Taipei street style braised pork belly over rice with pickled daikon, greens, a braised egg and cilantro.',
+    descZh: '台北夜市经典卤肉饭，红葱酥慢卤的五花肉浇在热米饭上，配腌黄萝卜、小咸菜、小油菜和香卤蛋，撒香菜。',
   },
 
   // ── 小菜 Sides (single-order) ──
@@ -150,7 +150,7 @@ const menu = [
     nameEn: 'Tianjin Lamb & Offal Soup',
     nameZh: '天津羊杂汤',
     descEn: 'Milky lamb bone broth with tender lamb and offal, finished with cilantro, scallion and white pepper.',
-    descZh: '天津街头老味羊杂汤，羊骨慢熬至奶白，羊杂切片入汤，撒香菜蒜苗、白胡椒，汤浓味厚。',
+    descZh: '天津街头老味羊杂汤，羊骨慢熬至奶白，羊杂切片入汤，撒葱和香菜、白胡椒，汤浓味厚。',
   },
 
   // ── 双人套餐 Combo for Two ──
@@ -159,60 +159,66 @@ const menu = [
     category: 'combo2',
     price: 34.99,
     image: '/images/Jiangxi%20Garden%20Mushroom%20Rice%20Noodle%20Soup.png',
+    images: ['/images/Jiangxi%20Garden%20Mushroom%20Rice%20Noodle%20Soup.png', '/images/Jiangxi%20Spicy%20Beef%20Rice%20Noodle%20Soup.png'],
     nameEn: 'Jiangxi Brothers Combo for Two',
     nameZh: '① 江西兄弟套餐',
     descEn: 'For two: Garden Mushroom & Spicy Beef rice noodle soups, plus 2 drinks.',
-    descZh: '双人份：江西三鲜泡粉 + 江西香辣牛肉泡粉，一清一辣，另配自选饮料两杯。',
+    descZh: '双人份：江西三鲜泡粉 + 江西香辣牛肉泡粉，一清一辣，另配自选饮料两份。',
   },
   {
     id: 202,
     category: 'combo2',
     price: 34.99,
     image: '/images/Taiwanese%20Braised%20Pork%20Rice%20Bowl.png',
+    images: ['/images/Taiwanese%20Braised%20Pork%20Rice%20Bowl.png', '/images/Taiwanese%20Beef%20Noodle.png'],
     nameEn: 'Taipei Sisters Combo for Two',
     nameZh: '② 台北姐妹花套餐',
     descEn: 'For two: Braised Pork Rice Bowl & Taiwanese Beef Noodle, plus 2 drinks.',
-    descZh: '双人份：台北夜市卤肉饭 + 台式牛肉面，一饭一面，另配自选饮料两杯。',
+    descZh: '双人份：台北夜市卤肉饭 + 台式牛肉面，一饭一面，另配自选饮料两份。',
   },
   {
     id: 203,
     category: 'combo2',
     price: 34.99,
     image: '/images/Authentic%20Jiangxi%20Fried%20Rice%20Noodle.png',
+    images: ['/images/Authentic%20Jiangxi%20Fried%20Rice%20Noodle.png', '/images/Jiangxi%20Spicy%20Beef%20Rice%20Noodle%20Soup.png'],
     nameEn: 'Jiangxi Double Combo for Two',
     nameZh: '③ 赣味双拼套餐',
     descEn: 'For two: Jiangxi Fried Rice Noodle & Spicy Beef Rice Noodle Soup, plus 2 drinks.',
-    descZh: '双人份：招牌江西炒粉 + 江西香辣牛肉泡粉，一炒一泡，另配自选饮料两杯。',
+    descZh: '双人份：招牌江西炒粉 + 江西香辣牛肉泡粉，一炒一泡，另配自选饮料两份。',
   },
   {
     id: 204,
     category: 'combo2',
     price: 34.99,
     image: '/images/Authentic%20Jiangxi%20Fried%20Rice%20Noodle.png',
+    images: ['/images/Authentic%20Jiangxi%20Fried%20Rice%20Noodle.png', '/images/Golden%20Curry%20Beef%20Noodle.png'],
     nameEn: 'Coast to Coast Combo for Two',
     nameZh: '④ 走南闯北套餐',
     descEn: 'For two: Jiangxi Fried Rice Noodle & Golden Curry Beef Noodle, plus 2 drinks.',
-    descZh: '双人份：招牌江西炒粉 + 天津黄汤牛肉拉面，南炒北汤，另配自选饮料两杯。',
+    descZh: '双人份：招牌江西炒粉 + 天津黄汤牛肉拉面，南炒北汤，另配自选饮料两份。',
   },
   {
     id: 205,
     category: 'combo2',
     price: 37.99,
     image: '/images/Taiwanese%20Beef%20Noodle.png',
+    images: ['/images/Taiwanese%20Beef%20Noodle.png', '/images/Jiangxi%20Spicy%20Beef%20Rice%20Noodle%20Soup.png'],
     nameEn: 'Twin Beef Combo for Two',
     nameZh: '⑤ 海峡双牛套餐',
     descEn: 'For two: Taiwanese Beef Noodle & Jiangxi Spicy Beef Rice Noodle Soup, plus 2 drinks.',
-    descZh: '双人份：台式牛肉面 + 江西香辣牛肉泡粉，两碗牛肉各有风味，另配自选饮料两杯。',
+    descZh: '双人份：台式牛肉面 + 江西香辣牛肉泡粉，两碗牛肉各有风味，另配自选饮料两份。',
   },
   {
     id: 206,
     category: 'combo2',
     price: 37.99,
     image: '/images/Jiangxi%20Spicy%20Beef%20Rice%20Noodle%20Soup.png',
+    images: ['/images/Jiangxi%20Spicy%20Beef%20Rice%20Noodle%20Soup.png', '/images/Golden%20Curry%20Beef%20Noodle.png'],
     nameEn: 'Beef Duo · Rice Noodle & Wheat Noodle',
     nameZh: '⑥ 粉面双牛套餐',
     descEn: 'For two: Spicy Beef Rice Noodle Soup & Golden Curry Beef Noodle, plus 2 drinks.',
-    descZh: '双人份：江西香辣牛肉泡粉 + 天津黄汤牛肉拉面，一粉一面两碗牛肉，另配自选饮料两杯。',
+    descZh: '双人份：江西香辣牛肉泡粉 + 天津黄汤牛肉拉面，一粉一面两碗牛肉，另配自选饮料两份。',
   },
 ]
 
@@ -237,7 +243,7 @@ export const categories = [
   },
   {
     id: 'combo2', nameZh: '双人套餐', nameEn: 'Combo for Two',
-    taglineZh: '两份主食+两杯饮料，两个人刚刚好', taglineEn: 'Two mains and two drinks — just right for two',
+    taglineZh: '两份主食+两份饮料，两个人刚刚好', taglineEn: 'Two mains and two drinks — just right for two',
   },
   {
     id: 'side', nameZh: '小菜', nameEn: 'Sides',
@@ -329,7 +335,7 @@ const ADDONS = {
 }
 
 // ── 套餐 Make it a Combo ───────────────────────────────────────────────────
-// 套餐 = 主食 + 一份加料 + 一杯饮料。加价统一：豆腐结 +$3 / 牛肉丸 +$4 / 全家福 +$7 /
+// 套餐 = 主食 + 一份加料 + 一份饮料。加价统一：豆腐结 +$3 / 牛肉丸 +$4 / 全家福 +$7 /
 // 火腿肠 +$3（仅炒粉）。`alaCarte` 是同样内容分开单点的合计加价（加料原价 + 饮料$2.50），
 // 前端用它做划线原价与「省 $X」徽章 —— 每档固定省 $2.50 / $3.00。
 // 改价请先改 Drive「菜品定价」表，再改这里。
@@ -362,7 +368,7 @@ const MODIFIERS = {
   21:{ spice: [['none', 'extra'], 'none'],                                       remove: ['scallion', 'cilantro'],                                            combo: ['tofu', 'balls', 'deluxe'], addon: ['egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
 }
 
-// 双人套餐：两份主食，辣度/面型每份各选一次，饮料两杯。
+// 双人套餐：两份主食，辣度/面型每份各选一次，饮料两份。
 const COMBO2_BASE = { 201: [4, 5], 202: [6, 2], 203: [3, 5], 204: [3, 1], 205: [2, 5], 206: [5, 1] }
 for (const [comboId, bases] of Object.entries(COMBO2_BASE)) {
   const [a, b] = bases.map((id) => MODIFIERS[id])
