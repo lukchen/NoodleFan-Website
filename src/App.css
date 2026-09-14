@@ -1504,13 +1504,6 @@ body {
   color: var(--color-accent);
 }
 
-.combo-saved-line {
-  margin: 0 0 0.55rem;
-  font-size: 0.85rem;
-  color: var(--color-gold);
-  text-align: right;
-}
-.combo-saved-line strong { font-weight: 700; }
 
 .checkout-disabled-note {
   margin: 0 0 0.6rem;
@@ -2180,8 +2173,6 @@ body {
 .combo-card-now,
 .combo-card-was,
 .combo-save,
-.combo-saved-line,
-.combo-saved-line strong,
 .checkout-summary-row,
 .checkout-summary-total,
 .os-items-total,
