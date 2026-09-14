@@ -360,8 +360,9 @@ const COMBO = {
   balls:  { id: 'combo-balls',  nameEn: 'Combo · Beef Balls',  nameZh: '套餐 · 牛肉丸',              itemEn: 'Beef Balls',  itemZh: '牛肉丸',        delta: 5.5, alaCarte: 7   },
   deluxe: { id: 'combo-deluxe', nameEn: 'Combo · Deluxe (Tofu Knots & Beef Balls)', nameZh: '套餐 · 全家福（豆腐结+牛肉丸）', itemEn: 'Tofu Knots + Beef Balls', itemZh: '豆腐结+牛肉丸', delta: 8.5, alaCarte: 10 },
 }
-// true = 打开选项框时默认already选中套餐（快餐业惯例，客单价更高）；false = 默认单点。
-export const COMBO_DEFAULT_ON = true
+// true = 打开选项框时默认选中套餐（快餐业惯例，客单价更高）；false = 默认单点。
+// 现为 false：默认单点，套餐由客人主动选 —— 不替客人做加价决定。
+export const COMBO_DEFAULT_ON = false
 
 const COMBO_DRINK = [
   { id: 'water', nameEn: 'Bottled Water', nameZh: '矿泉水' },
