@@ -34,6 +34,7 @@ const strings = {
     checkout: {
       title: 'Place Order',
       name: 'Name',
+      pickupAtLabel: 'Pickup',
       namePlaceholder: 'Your name',
       phone: 'Phone',
       phonePlaceholder: 'e.g. 617-555-0100',
@@ -148,6 +149,7 @@ const strings = {
     checkout: {
       title: '提交订单',
       name: '姓名',
+      pickupAtLabel: '取餐',
       namePlaceholder: '你的姓名',
       phone: '电话',
       phonePlaceholder: '例：617-555-0100',
