@@ -88,7 +88,6 @@ const strings = {
       save: 'Save',
       separately: 'separately',
       youSave: 'You save',
-      mainOnly: 'Main dish only — no add-on, no drink',
       comboFrom: 'Combo from',
     },
     orderStatus: {
@@ -202,7 +201,6 @@ const strings = {
       save: '省',
       separately: '单点合计',
       youSave: '已省',
-      mainOnly: '只要主食,不含加料和饮料',
       comboFrom: '套餐',
     },
     orderStatus: {
