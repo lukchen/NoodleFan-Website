@@ -33,8 +33,8 @@ const menu = [
     image: '/images/Taiwanese%20Beef%20Noodle.png',
     nameEn: 'Taiwanese Beef Noodle',
     nameZh: '台式牛肉面',
-    descEn: 'Slow-braised beef brisket in a tomato, apple and spice broth built on beef tallow, with fresh noodles, a fried egg, scallion and cilantro.',
-    descZh: '台式慢炖牛腩面，牛油炒香、番茄苹果与八角桂皮吊出的醇厚汤头，配新鲜面条与煎蛋，撒葱和香菜。',
+    descEn: 'Slow-braised beef brisket in a tomato, apple and spice broth built on beef tallow, with fresh noodles and a fried egg.',
+    descZh: '台式慢炖牛腩面，牛油炒香、番茄苹果与八角桂皮吊出的醇厚汤头，配新鲜面条与煎蛋。',
   },
   {
     id: 3,
@@ -53,8 +53,8 @@ const menu = [
     image: '/images/Jiangxi%20Garden%20Mushroom%20Rice%20Noodle%20Soup.png',
     nameEn: 'Jiangxi Garden Mushroom Rice Noodle Soup',
     nameZh: '江西三鲜泡粉',
-    descEn: 'Silky rice noodles and a slow-braised pork spine bone in slow-simmered pork bone broth, with soybeans, wood ear, shiitake, scallion and cilantro. Clean and comforting.',
-    descZh: '猪骨清汤慢煨的招牌泡粉，配黄豆、木耳、香菇三鲜，以及原汤猪脊骨，撒葱和香菜。汤清味鲜，不辣不腻。',
+    descEn: 'Silky rice noodles and a slow-braised pork spine bone in slow-simmered pork bone broth, with soybeans, wood ear, and shiitake. Clean and comforting.',
+    descZh: '猪骨清汤慢煨的招牌泡粉，配黄豆、木耳、香菇三鲜，以及原汤猪脊骨。汤清味鲜，不辣不腻。',
   },
   {
     id: 5,
@@ -63,8 +63,8 @@ const menu = [
     image: '/images/Jiangxi%20Spicy%20Beef%20Rice%20Noodle%20Soup.png',
     nameEn: 'Jiangxi Spicy Beef Rice Noodle Soup',
     nameZh: '江西香辣牛肉泡粉',
-    descEn: 'Rice noodles in clear pork bone broth, topped with chili-simmered beef in fragrant red oil, with soybeans, crisp pickled greens, scallion and cilantro.',
-    descZh: '猪骨清汤打底，铺上小火慢煨的红油香辣牛肉块，配黄豆、爽口小咸菜，撒葱和香菜，鲜辣入味，江西招牌。',
+    descEn: 'Rice noodles in clear pork bone broth, topped with chili-simmered beef in fragrant red oil, with soybeans, cilantro and crisp pickled greens.',
+    descZh: '猪骨清汤打底，铺上小火慢煨的红油香辣牛肉块，配黄豆、香菜与爽口小咸菜，鲜辣入味，江西招牌。',
   },
   {
     id: 6,
@@ -73,8 +73,8 @@ const menu = [
     image: '/images/Taiwanese%20Braised%20Pork%20Rice%20Bowl.png',
     nameEn: 'Taiwanese Braised Pork Rice Bowl',
     nameZh: '台北夜市卤肉饭',
-    descEn: 'Taipei street style braised pork belly over rice with pickled daikon, greens, a braised egg and cilantro.',
-    descZh: '台北夜市经典卤肉饭，红葱酥慢卤的五花肉浇在热米饭上，配腌黄萝卜、小咸菜、小油菜和香卤蛋，撒香菜。',
+    descEn: 'Taipei street style braised pork belly over rice with pickled daikon, greens and an egg.',
+    descZh: '台北夜市经典卤肉饭，红葱酥慢卤的五花肉浇在热米饭上，配腌黄萝卜、小咸菜、小油菜和香卤蛋。',
   },
 
   // ── 小菜 Sides (single-order) ──
