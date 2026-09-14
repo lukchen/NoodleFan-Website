@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
+import useScrollLock from '../useScrollLock'
 import { usePickup } from '../context/PickupContext'
-import { formatPickupAt } from '../pickup'
+import { formatPickupAt, storeIsOpen, STORE_HOURS_TEXT } from '../pickup'
 import { useCart } from '../context/CartContext'
 import { SUPABASE_URL, SUPABASE_ANON_KEY, CHECKOUT_ENABLED } from '../config'
 
@@ -47,7 +48,29 @@ export default function Checkout({ t, onClose }) {
   // 定点配送的取餐时刻是发车时间,不该让客人自己挑 —— 挑了也不作数。
   const fixedRun = point?.kind === 'dropoff' ? run : null
 
+  // 打烊时段不拦单,当预约单处理 —— 只把已经过去的时段过滤掉,并明确告诉客人这是预约。
+  const now = useMemo(() => new Date(), [])
+  const openNow = storeIsOpen(now)
+  const slotsFor = (dateStr) => {
+    if (dateStr !== today) return TIME_SLOTS
+    const cutoff = now.getHours() * 60 + now.getMinutes() + 20   // 留 20 分钟备餐
+    return TIME_SLOTS.filter(sl => {
+      const [h, m] = sl.value.split(':').map(Number)
+      return h * 60 + m >= cutoff
+    })
+  }
+
   const [form, setForm] = useState({ name: '', phone: '', date: today, time: '', note: '' })
+
+  // 今天已经没有可选时段(太晚了)就自动跳到明天,免得客人对着空列表发愣。
+  useScrollLock()
+
+  useEffect(() => {
+    if (fixedRun) return
+    if (form.date === today && slotsFor(today).length === 0) {
+      setForm(prev => ({ ...prev, date: tomorrow, time: '' }))
+    }
+  }, [fixedRun, form.date, today, tomorrow])
 
   // 定点配送:把日期/时间锁成这一班的发车时刻,表单校验照常通过。
   useEffect(() => {
@@ -164,6 +187,10 @@ export default function Checkout({ t, onClose }) {
               <strong>{t.lang === 'zh' ? point.nameZh : point.nameEn} · {formatPickupAt(run, t.lang)}</strong>
             </div>
           ) : (<>
+          {!openNow && (
+            <p className="checkout-preorder">{t.checkout.preorderNote(STORE_HOURS_TEXT)}</p>
+          )}
+
           <div className="checkout-field">
             <span className="checkout-field-label">{t.checkout.date}</span>
             <div className="date-chips">
@@ -194,7 +221,7 @@ export default function Checkout({ t, onClose }) {
             <span className="checkout-field-label">{t.checkout.time}</span>
             <input type="hidden" name="time" value={form.time} required />
             <div className="time-slots">
-              {TIME_SLOTS.map(slot => (
+              {slotsFor(form.date).map(slot => (
                 <button
                   key={slot.value}
                   type="button"
