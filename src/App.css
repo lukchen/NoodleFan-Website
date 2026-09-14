@@ -622,6 +622,16 @@ body {
 .checkout-form textarea:focus { border-color: var(--color-accent); }
 
 /* Date / time picker */
+.checkout-preorder {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: #8a5a00;
+  background: #fdf0d5;
+  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+}
+
 .checkout-fixed-run {
   display: flex;
   flex-direction: column;
@@ -1555,6 +1565,19 @@ body {
 .btn-add-count { font-size: 0.8rem; opacity: 0.9; }
 
 /* Option summaries on cart lines / checkout summary / status page / admin cards */
+.cart-item-edit {
+  align-self: flex-start;
+  margin-top: 0.15rem;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .cart-item-opts {
   font-size: 0.78rem;
   color: var(--color-muted);
