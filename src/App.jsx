@@ -9,7 +9,6 @@ import Cart from './components/Cart'
 import Checkout from './components/Checkout'
 import Footer from './components/Footer'
 import Admin from './components/Admin'
-import PickupBar from './components/PickupBar'
 import MobileCartBar from './components/MobileCartBar'
 import OrderStatus from './components/OrderStatus'
 import { ORDERING_ENABLED } from './config'
@@ -35,20 +34,9 @@ function OrderSuccess({ t, onClose }) {
 function AppInner({ t, lang, setLang }) {
   const [checkoutOpen, setCheckoutOpen] = useState(false)
   const [orderSuccess, setOrderSuccess] = useState(false)
-  // 取餐方式不用弹窗:首页菜单的位置直接铺三个大按钮,选完才换成菜单。
-  // changing = 客人点了顶栏的「更换取餐方式」,暂时把菜单换回选择界面。
-  const [changing, setChanging] = useState(false)
   const { clearCart } = useCart()
-  const { point } = usePickup()
-
-  // 「更换取餐方式」:把菜单换回选择界面,并滚到它面前。
-  function startChanging() {
-    setChanging(true)
-    requestAnimationFrame(() => {
-      const el = document.getElementById('menu')
-      if (el) window.scrollTo({ top: el.offsetTop - 120, behavior: 'smooth' })
-    })
-  }
+  // 取餐方式不再用吸顶横幅,而是放在「我的订单」最上面 —— 它是订单的一部分。
+  const { point, changing, endChange } = usePickup()
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -62,9 +50,6 @@ function AppInner({ t, lang, setLang }) {
   return (
     <>
       <Navbar t={t} lang={lang} onToggleLang={() => setLang(lang === 'en' ? 'zh' : 'en')} />
-      {ORDERING_ENABLED && point && (
-        <PickupBar t={t} lang={lang} onChange={startChanging} />
-      )}
       <main>
         {/* 点餐开放后首屏直接给取餐方式选择;没开放时才用 hero 承载外卖平台入口 */}
         {!ORDERING_ENABLED && <Hero t={t} />}
@@ -72,12 +57,12 @@ function AppInner({ t, lang, setLang }) {
           t={t}
           lang={lang}
           choosingPickup={ORDERING_ENABLED && (!point || changing)}
-          onPickupChosen={() => setChanging(false)}
+          onPickupChosen={endChange}
         />
       </main>
       <Footer t={t} />
-      {ORDERING_ENABLED && <MobileCartBar t={t} />}
-      {ORDERING_ENABLED && <Cart t={t} onCheckout={() => setCheckoutOpen(true)} />}
+      {ORDERING_ENABLED && <MobileCartBar t={t} lang={lang} />}
+      {ORDERING_ENABLED && <Cart t={t} lang={lang} onCheckout={() => setCheckoutOpen(true)} />}
       {ORDERING_ENABLED && checkoutOpen && <Checkout t={t} onClose={() => setCheckoutOpen(false)} />}
       {orderSuccess && <OrderSuccess t={t} onClose={() => setOrderSuccess(false)} />}
     </>
