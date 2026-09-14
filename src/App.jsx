@@ -66,7 +66,8 @@ function AppInner({ t, lang, setLang }) {
         <PickupBar t={t} lang={lang} onChange={startChanging} />
       )}
       <main>
-        <Hero t={t} />
+        {/* 点餐开放后首屏直接给取餐方式选择;没开放时才用 hero 承载外卖平台入口 */}
+        {!ORDERING_ENABLED && <Hero t={t} />}
         <MenuSection
           t={t}
           lang={lang}
