@@ -8,7 +8,7 @@ const strings = {
       order: 'Order Now',
     },
     hero: {
-      subA: 'Bone broth simmered fresh every day, ingredients prepped each morning — authentic Chinese flavors in every bowl',
+      subA: 'Authentic regional Chinese rice noodles, wheat noodles and rice bowls — bone broth simmered fresh daily, ingredients prepped each morning. More dishes coming soon!',
       subB: 'Every dish made fresh to order — never pre-packaged, always made with heart.',
       comingSoon: 'Now live on Uber Eats',
       orderUberEats: 'Order on Uber Eats',
@@ -121,7 +121,7 @@ const strings = {
       order: '立即点餐',
     },
     hero: {
-      subA: '骨汤每日现熬，食材当日新鲜，一碗一味，还原地道中式风味',
+      subA: '我们主打地道地方特色的粉面饭美食，每日现熬骨汤，食材当日新鲜，未来会上线更多好吃的菜品！',
       subB: '每一份现点现做，绝不预制，只为吃得放心。',
       comingSoon: 'Uber Eats 现已开放点餐',
       orderUberEats: '去 Uber Eats 点餐',
