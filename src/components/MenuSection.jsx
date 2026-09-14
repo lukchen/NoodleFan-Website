@@ -87,16 +87,16 @@ export default function MenuSection({ t, lang, choosingPickup, onPickupChosen })
         const visible = entries.filter(e => e.isIntersecting)
         if (visible.length > 0) setActiveCat(visible[0].target.dataset.cat)
       },
-      { rootMargin: '-170px 0px -70% 0px', threshold: 0 },
+      { rootMargin: '-120px 0px -70% 0px', threshold: 0 },
     )
     Object.values(sectionRefs.current).forEach(el => el && obs.observe(el))
     return () => obs.disconnect()
-  }, [])
+  }, [choosingPickup])
 
   function jumpTo(id) {
     const el = sectionRefs.current[id]
     if (!el) return
-    const y = el.getBoundingClientRect().top + window.scrollY - 160
+    const y = el.getBoundingClientRect().top + window.scrollY - 112
     window.scrollTo({ top: y, behavior: 'smooth' })
   }
 
