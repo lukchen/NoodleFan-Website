@@ -5,6 +5,7 @@ import { PickupProvider, usePickup } from './context/PickupContext'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import MenuSection from './components/MenuSection'
+import OptionsModal from './components/OptionsModal'
 import Cart from './components/Cart'
 import Checkout from './components/Checkout'
 import Footer from './components/Footer'
@@ -34,7 +35,7 @@ function OrderSuccess({ t, onClose }) {
 function AppInner({ t, lang, setLang }) {
   const [checkoutOpen, setCheckoutOpen] = useState(false)
   const [orderSuccess, setOrderSuccess] = useState(false)
-  const { clearCart } = useCart()
+  const { clearCart, editing, stopEdit, replaceItem } = useCart()
   // 取餐方式不再用吸顶横幅,而是放在「我的订单」最上面 —— 它是订单的一部分。
   const { point, changing, endChange } = usePickup()
 
@@ -63,6 +64,17 @@ function AppInner({ t, lang, setLang }) {
       <Footer t={t} />
       {ORDERING_ENABLED && <MobileCartBar t={t} lang={lang} />}
       {ORDERING_ENABLED && <Cart t={t} lang={lang} onCheckout={() => setCheckoutOpen(true)} />}
+      {editing && (
+        <OptionsModal
+          dish={editing.dish}
+          initial={editing.selections}
+          mode="edit"
+          t={t}
+          lang={lang}
+          onAdd={(dish, sel) => replaceItem(editing.key, dish, sel)}
+          onClose={stopEdit}
+        />
+      )}
       {ORDERING_ENABLED && checkoutOpen && <Checkout t={t} onClose={() => setCheckoutOpen(false)} />}
       {orderSuccess && <OrderSuccess t={t} onClose={() => setOrderSuccess(false)} />}
     </>
