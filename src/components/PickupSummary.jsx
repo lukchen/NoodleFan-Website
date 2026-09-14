@@ -21,9 +21,6 @@ export default function PickupSummary({ t, lang }) {
       <div className="pickup-sum-head">
         <span className="pickup-sum-icon" aria-hidden="true">{isStore ? '🏪' : '📍'}</span>
         <span className="pickup-sum-name">{zh ? point.nameZh : point.nameEn}</span>
-        <button type="button" className="pickup-sum-change" onClick={startChange}>
-          {t.pickup.change}
-        </button>
       </div>
 
       {isStore ? (
@@ -56,6 +53,12 @@ export default function PickupSummary({ t, lang }) {
       ) : (
         <div className="pickup-sum-rows"><span className="pw-value">{t.pickup.noRun}</span></div>
       )}
+
+      {/* 整行实心按钮 —— 换取餐点是客人第二常用的动作(仅次于加菜),
+          藏成标题行角落的小圆片既不好按也容易找不到。 */}
+      <button type="button" className="pickup-sum-change" onClick={startChange}>
+        {t.pickup.changeLong}
+      </button>
     </div>
   )
 }
