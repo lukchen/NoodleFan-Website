@@ -1969,19 +1969,24 @@ body {
 }
 
 .pickup-sum-change {
-  margin-left: auto;
-  flex-shrink: 0;
-  background: none;
-  border: 1px solid var(--color-accent);
+  display: block;
+  width: 100%;
+  margin-top: 0.7rem;
+  min-height: 42px;
+  background: #fff;
+  border: 1.5px solid var(--color-accent);
   color: var(--color-accent);
-  border-radius: 999px;
-  padding: 0.15rem 0.6rem;
-  font-size: 0.74rem;
-  font-weight: 600;
+  border-radius: 10px;
+  padding: 0.55rem 0.8rem;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
   cursor: pointer;
+  transition: background 0.15s, color 0.15s;
 }
 
 .pickup-sum-change:hover { background: var(--color-accent); color: #fff; }
+.pickup-sum-change:active { transform: translateY(1px); }
 
 .pickup-sum-rows { display: flex; flex-direction: column; gap: 0.2rem; }
 
