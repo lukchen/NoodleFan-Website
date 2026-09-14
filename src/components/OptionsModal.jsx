@@ -53,11 +53,6 @@ export default function OptionsModal({ dish, t, lang, onAdd, onClose }) {
     return (Math.round(dish.price * 100) + deltaCents) / 100
   }, [dish, selections, missingRequired])
 
-  // Savings on the currently chosen combo, for the running footer line.
-  const comboGroup = (dish.optionGroups ?? []).find(g => g.style === 'combo')
-  const chosenCombo = comboGroup?.choices.find(c => c.id === selections[comboGroup.id])
-  const saved = chosenCombo?.alaCarte ? chosenCombo.alaCarte - chosenCombo.delta : 0
-
   const name = lang === 'zh' ? dish.nameZh : dish.nameEn
   const money = n => `$${n.toFixed(2)}`
 
@@ -137,10 +132,6 @@ export default function OptionsModal({ dish, t, lang, onAdd, onClose }) {
             </div>
           </div>
         ))}
-
-        {saved > 0 && (
-          <p className="combo-saved-line">{t.options.youSave} <strong>{money(saved)}</strong></p>
-        )}
 
         <button
           className="btn-primary options-add-btn"
