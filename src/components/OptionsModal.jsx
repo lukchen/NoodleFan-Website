@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { resolveSelections } from '../data/menu'
+import { loadDraft, saveDraft, clearDraft } from '../draft'
 
 // Option picker shown when adding a dish that has optionGroups.
 //
@@ -8,13 +9,11 @@ import { resolveSelections } from '../data/menu'
 // what the same food would cost bought separately, and badge the savings. Groups
 // carrying `showWhen` (the combo drink) only appear once the combo is chosen.
 export default function OptionsModal({ dish, t, lang, onAdd, onClose }) {
-  const [selections, setSelections] = useState(() => {
-    const init = {}
-    for (const g of dish.optionGroups ?? []) {
-      init[g.id] = g.type === 'single' ? g.default : [...(g.default ?? [])]
-    }
-    return init
-  })
+  // 上次没加完的配置接着改;没有草稿就是默认值。
+  const [selections, setSelections] = useState(() => loadDraft(dish))
+
+  // 每改一下就存,所以点框外、按 Esc、甚至直接关标签页都不会丢。
+  useEffect(() => { saveDraft(dish, selections) }, [dish, selections])
 
   useEffect(() => {
     function onKey(e) { if (e.key === 'Escape') onClose() }
@@ -143,7 +142,11 @@ export default function OptionsModal({ dish, t, lang, onAdd, onClose }) {
         <button
           className="btn-primary options-add-btn"
           disabled={missingRequired}
-          onClick={() => { onAdd(dish, selections); onClose() }}>
+          onClick={() => {
+            onAdd(dish, selections)
+            clearDraft(dish)   // 已经进购物车了,下一份从默认开始
+            onClose()
+          }}>
           {t.options.addToCart} {money(unitPrice)}
         </button>
       </div>
