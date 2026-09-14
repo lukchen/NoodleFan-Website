@@ -341,10 +341,10 @@ const ADDONS = {
 // 改价请先改 Drive「菜品定价」表，再改这里。
 const COMBO_NONE = { id: 'combo-none', nameEn: 'À la carte', nameZh: '单点' }
 const COMBO = {
-  ham:    { id: 'combo-ham',    nameEn: 'Combo · Ham Sausage', nameZh: '套餐 · 火腿肠',              delta: 3, alaCarte: 5.5 },
-  tofu:   { id: 'combo-tofu',   nameEn: 'Combo · Tofu Knots',  nameZh: '套餐 · 豆腐结',              delta: 3, alaCarte: 5.5 },
-  balls:  { id: 'combo-balls',  nameEn: 'Combo · Beef Balls',  nameZh: '套餐 · 牛肉丸',              delta: 4, alaCarte: 7   },
-  deluxe: { id: 'combo-deluxe', nameEn: 'Combo · Deluxe (Tofu Knots & Beef Balls)', nameZh: '套餐 · 全家福（豆腐结+牛肉丸）', delta: 7, alaCarte: 10 },
+  ham:    { id: 'combo-ham',    nameEn: 'Combo · Ham Sausage', nameZh: '套餐 · 火腿肠',              delta: 4, alaCarte: 5.5 },
+  tofu:   { id: 'combo-tofu',   nameEn: 'Combo · Tofu Knots',  nameZh: '套餐 · 豆腐结',              delta: 4, alaCarte: 5.5 },
+  balls:  { id: 'combo-balls',  nameEn: 'Combo · Beef Balls',  nameZh: '套餐 · 牛肉丸',              delta: 5.5, alaCarte: 7   },
+  deluxe: { id: 'combo-deluxe', nameEn: 'Combo · Deluxe (Tofu Knots & Beef Balls)', nameZh: '套餐 · 全家福（豆腐结+牛肉丸）', delta: 8.5, alaCarte: 10 },
 }
 // true = 打开选项框时默认already选中套餐（快餐业惯例，客单价更高）；false = 默认单点。
 export const COMBO_DEFAULT_ON = true
