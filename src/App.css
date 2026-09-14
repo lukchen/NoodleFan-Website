@@ -237,6 +237,19 @@ body {
 
 .menu-card:hover .menu-card-image img { transform: scale(1.05); }
 
+/* 双人套餐:两张图各占一半。这里必须 cover 而不是 contain ——
+   半幅里放整张方图会缩得太小,看不清是什么菜。 */
+.menu-card-image--pair {
+  display: flex;
+  gap: 2px;
+}
+
+.menu-card-image--pair img {
+  width: 50%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .menu-card-placeholder {
   width: 100%;
   height: 100%;
