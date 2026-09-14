@@ -162,8 +162,8 @@ const menu = [
     images: ['/images/Jiangxi%20Garden%20Mushroom%20Rice%20Noodle%20Soup.png', '/images/Jiangxi%20Spicy%20Beef%20Rice%20Noodle%20Soup.png'],
     nameEn: 'Jiangxi Brothers Combo for Two',
     nameZh: '① 江西兄弟套餐',
-    descEn: 'For two: Garden Mushroom & Spicy Beef rice noodle soups, plus 2 drinks — $1.99 less than ordering separately.',
-    descZh: '双人份：江西三鲜泡粉 + 江西香辣牛肉泡粉，一清一辣，另配自选饮料两份，比单点省 $1.99。',
+    descEn: 'For two: Garden Mushroom & Spicy Beef rice noodle soups, plus 2 drinks — save $1.99.',
+    descZh: '双人份：江西三鲜泡粉 + 江西香辣牛肉泡粉，一清一辣，另配自选饮料两份，省 $1.99。',
   },
   {
     id: 202,
@@ -173,8 +173,8 @@ const menu = [
     images: ['/images/Taiwanese%20Braised%20Pork%20Rice%20Bowl.png', '/images/Taiwanese%20Beef%20Noodle.png'],
     nameEn: 'Taipei Sisters Combo for Two',
     nameZh: '② 台北姐妹花套餐',
-    descEn: 'For two: Braised Pork Rice Bowl & Taiwanese Beef Noodle, plus 2 drinks — $3.99 less than ordering separately.',
-    descZh: '双人份：台北夜市卤肉饭 + 台式牛肉面，一饭一面，另配自选饮料两份，比单点省 $3.99。',
+    descEn: 'For two: Braised Pork Rice Bowl & Taiwanese Beef Noodle, plus 2 drinks — save $3.99.',
+    descZh: '双人份：台北夜市卤肉饭 + 台式牛肉面，一饭一面，另配自选饮料两份，省 $3.99。',
   },
   {
     id: 203,
@@ -184,8 +184,8 @@ const menu = [
     images: ['/images/Authentic%20Jiangxi%20Fried%20Rice%20Noodle.png', '/images/Jiangxi%20Spicy%20Beef%20Rice%20Noodle%20Soup.png'],
     nameEn: 'Jiangxi Double Combo for Two',
     nameZh: '③ 赣味双拼套餐',
-    descEn: 'For two: Jiangxi Fried Rice Noodle & Spicy Beef Rice Noodle Soup, plus 2 drinks — $3.99 less than separately.',
-    descZh: '双人份：招牌江西炒粉 + 江西香辣牛肉泡粉，一炒一泡，另配自选饮料两份，比单点省 $3.99。',
+    descEn: 'For two: Jiangxi Fried Rice Noodle & Spicy Beef Rice Noodle Soup, plus 2 drinks — save $3.99.',
+    descZh: '双人份：招牌江西炒粉 + 江西香辣牛肉泡粉，一炒一泡，另配自选饮料两份，省 $3.99。',
   },
   {
     id: 204,
@@ -195,8 +195,8 @@ const menu = [
     images: ['/images/Authentic%20Jiangxi%20Fried%20Rice%20Noodle.png', '/images/Golden%20Curry%20Beef%20Noodle.png'],
     nameEn: 'Coast to Coast Combo for Two',
     nameZh: '④ 走南闯北套餐',
-    descEn: 'For two: Jiangxi Fried Rice Noodle & Golden Curry Beef Noodle, plus 2 drinks — $3.99 less than separately.',
-    descZh: '双人份：招牌江西炒粉 + 天津黄汤牛肉拉面，南炒北汤，另配自选饮料两份，比单点省 $3.99。',
+    descEn: 'For two: Jiangxi Fried Rice Noodle & Golden Curry Beef Noodle, plus 2 drinks — save $3.99.',
+    descZh: '双人份：招牌江西炒粉 + 天津黄汤牛肉拉面，南炒北汤，另配自选饮料两份，省 $3.99。',
   },
   {
     id: 205,
@@ -206,8 +206,8 @@ const menu = [
     images: ['/images/Taiwanese%20Beef%20Noodle.png', '/images/Jiangxi%20Spicy%20Beef%20Rice%20Noodle%20Soup.png'],
     nameEn: 'Twin Beef Combo for Two',
     nameZh: '⑤ 海峡双牛套餐',
-    descEn: 'For two: Taiwanese Beef Noodle & Jiangxi Spicy Beef Rice Noodle Soup, plus 2 drinks — $2.99 less.',
-    descZh: '双人份：台式牛肉面 + 江西香辣牛肉泡粉，两碗牛肉各有风味，另配自选饮料两份，比单点省 $2.99。',
+    descEn: 'For two: Taiwanese Beef Noodle & Jiangxi Spicy Beef Rice Noodle Soup, plus 2 drinks — save $2.99.',
+    descZh: '双人份：台式牛肉面 + 江西香辣牛肉泡粉，两碗牛肉各有风味，另配自选饮料两份，省 $2.99。',
   },
   {
     id: 206,
@@ -217,8 +217,8 @@ const menu = [
     images: ['/images/Jiangxi%20Spicy%20Beef%20Rice%20Noodle%20Soup.png', '/images/Golden%20Curry%20Beef%20Noodle.png'],
     nameEn: 'Beef Duo · Rice Noodle & Wheat Noodle',
     nameZh: '⑥ 粉面双牛套餐',
-    descEn: 'For two: Spicy Beef Rice Noodle Soup & Golden Curry Beef Noodle — one rice noodle, one wheat, plus 2 drinks.',
-    descZh: '双人份：江西香辣牛肉泡粉 + 天津黄汤牛肉拉面，一粉一面两碗牛肉，另配自选饮料两份，比单点省 $2.99。',
+    descEn: 'For two: Spicy Beef Rice Noodle Soup & Golden Curry Beef Noodle — one rice noodle, one wheat, plus 2 drinks — save $2.99.',
+    descZh: '双人份：江西香辣牛肉泡粉 + 天津黄汤牛肉拉面，一粉一面两碗牛肉，另配自选饮料两份，省 $2.99。',
   },
 ]
 
