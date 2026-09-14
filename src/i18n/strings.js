@@ -44,6 +44,7 @@ const strings = {
       dateOther: 'Other date',
       time: 'Pickup Time',
       timeHint: 'Select a time above',
+      preorderNote: (hrs) => `We're closed right now (open ${hrs}). This will be a pre-order — pick a pickup time below and we'll have it ready.`,
       note: 'Special Requests',
       notePlaceholder: 'Allergies, preferences...',
       subtotal: 'Subtotal',
@@ -84,6 +85,8 @@ const strings = {
     options: {
       pickAtLeastOne: ' — pick at least one',
       addToCart: 'Add to cart —',
+      saveChanges: 'Save changes —',
+      edit: 'Edit',
       alaCarte: 'À la carte',
       required: 'Required',
       optional: 'Optional',
@@ -159,6 +162,7 @@ const strings = {
       dateOther: '其他日期',
       time: '取餐时间',
       timeHint: '请选择时间',
+      preorderNote: (hrs) => `现在已打烊（营业时间 ${hrs}）。这将是一张预约单 —— 选好取餐时间，我们会按时备餐。`,
       note: '备注',
       notePlaceholder: '过敏、特殊要求...',
       subtotal: '小计',
@@ -199,6 +203,8 @@ const strings = {
     options: {
       pickAtLeastOne: '（至少选一项）',
       addToCart: '加入购物车 —',
+      saveChanges: '保存修改 —',
+      edit: '修改',
       alaCarte: '单点',
       required: '必选',
       optional: '可选',
