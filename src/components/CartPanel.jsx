@@ -4,7 +4,7 @@ import PickupSummary from './PickupSummary'
 // 桌面端常驻购物车 —— 贴在菜单右侧,客人随时看得到已选和总价,不用开抽屉。
 // 手机端由底部固定条 + 抽屉负责,这个面板在窄屏隐藏。
 export default function CartPanel({ t, lang }) {
-  const { items, removeItem, updateQty, totalPrice, setCartOpen } = useCart()
+  const { items, removeItem, updateQty, totalPrice, setCartOpen, startEdit } = useCart()
 
   return (
     <aside className="cart-panel">
@@ -27,6 +27,10 @@ export default function CartPanel({ t, lang }) {
                       <span className="cart-item-price">${(item.unitPrice * item.qty).toFixed(2)}</span>
                     </div>
                     {opts?.length > 0 && <p className="cart-item-opts">{opts.join(' · ')}</p>}
+                    {/* 加错了辣度不用删了重加 —— 点「修改」原地改配置 */}
+                    <button type="button" className="cart-item-edit" onClick={() => startEdit(item)}>
+                      {t.options.edit}
+                    </button>
                     <div className="cart-item-controls">
                       <button onClick={() => updateQty(item.key, item.qty - 1)}>−</button>
                       <span>{item.qty}</span>
