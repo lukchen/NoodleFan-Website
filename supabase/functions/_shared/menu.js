@@ -436,7 +436,7 @@ for (const dish of menu) {
   })
   if (m.combo) {
     groups.push({
-      id: 'drink1', type: 'single', default: 'coke',
+      id: 'drink1', type: 'single', required: true, default: 'coke',
       nameEn: 'Combo drink', nameZh: '套餐饮料',
       showWhen: { group: 'combo', not: COMBO_NONE.id },
       choices: COMBO_DRINK,
