@@ -107,7 +107,7 @@ export default function MenuSection({ t, lang, choosingPickup, onPickupChosen })
   // 不弹窗 —— 否则客人加完购物车才发现今天那个点不发车。
   if (choosingPickup) {
     return (
-      <section id="menu" className="menu-section">
+      <section id="menu" className="menu-section menu-section--choose">
         <PickupPicker t={t} lang={lang} inline onClose={onPickupChosen} />
       </section>
     )
