@@ -29,7 +29,7 @@ Deno.serve(async (req) => {
     const stripeKey = Deno.env.get('STRIPE_SECRET_KEY')
     if (!stripeKey) throw new Error('STRIPE_SECRET_KEY not set')
 
-    const { items, customer, pickupDate, pickupTime, note } = await req.json()
+    const { items, customer, pickupPoint, pickupDate, pickupTime, note } = await req.json()
     if (!Array.isArray(items) || items.length === 0 || items.length > 20) {
       throw new Error('invalid items')
     }
@@ -61,7 +61,12 @@ Deno.serve(async (req) => {
         customer_phone: customer.phone,
         pickup_date: pickupDate,
         pickup_time: pickupTime,
-        note: note ?? '',
+        // 取餐点必须落到订单上,否则 Allston 的团购单和到店自取单在后台无法区分。
+        // orders 表还没有 pickup_point 列,先写进 note 的开头(加了列之后改成独立字段)。
+        note: [
+          pickupPoint ? `【取餐点】${pickupPoint.nameZh ?? pickupPoint.id}` : null,
+          note || null,
+        ].filter(Boolean).join('\n'),
         items: enriched.map(({ unitCents: _drop, ...rest }) => rest),
         subtotal: subtotalCents / 100,
         tax: taxCents / 100,
