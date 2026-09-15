@@ -10,6 +10,8 @@ export default function PickupPicker({ t, lang, onClose, dismissable = true, inl
   const { pointId, setPointId, now, ordersSoFar, minOrders } = usePickup()
   const zh = lang === 'zh'
 
+  const getCurrent = () => PICKUP_POINTS.find(p => p.id === pointId)
+
   function choose(id) {
     setPointId(id)
     onClose?.()
@@ -88,6 +90,12 @@ export default function PickupPicker({ t, lang, onClose, dismissable = true, inl
         <h3 className="pickup-choose-title">{t.pickup.title}</h3>
         <p className="pickup-choose-sub">{t.pickup.subtitle}</p>
         {options}
+        {/* 从菜单点「更换」进来的,得能原样退回去 */}
+        {pointId && (
+          <button type="button" className="pickup-cancel" onClick={onClose}>
+            {t.pickup.keepCurrent(zh ? getCurrent()?.nameZh : getCurrent()?.nameEn)}
+          </button>
+        )}
         <p className="pickup-fineprint">{t.pickup.fineprint(MIN_ORDERS)}</p>
       </div>
     )
