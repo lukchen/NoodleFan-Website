@@ -1,11 +1,20 @@
 import { formatPickupAt, formatCutoffAt, timeToCutoff } from '../pickup'
 import { usePickup } from '../context/PickupContext'
+import { useCart } from '../context/CartContext'
 
 // 取餐方式摘要 —— 放在「我的订单」最上面。
 // 取餐点是这一单的前提(决定截单时间、备料份数、能不能成团),所以它属于订单本身,
 // 而不是一条飘在页面顶部的横幅。客人看购物车时一定会看到它。
 export default function PickupSummary({ t, lang }) {
   const { point, run, now, ordersSoFar, minOrders, startChange } = usePickup()
+  const { setCartOpen } = useCart()
+
+  // 从购物车抽屉里点「更换」时,抽屉得先收起来 —— 否则页面在底下换成了
+  // 选择界面,客人眼前还是那个抽屉,看上去就是「点了没反应」。
+  function change() {
+    setCartOpen(false)
+    startChange()
+  }
   if (!point) return null
 
   const zh = lang === 'zh'
@@ -56,7 +65,7 @@ export default function PickupSummary({ t, lang }) {
 
       {/* 整行实心按钮 —— 换取餐点是客人第二常用的动作(仅次于加菜),
           藏成标题行角落的小圆片既不好按也容易找不到。 */}
-      <button type="button" className="pickup-sum-change" onClick={startChange}>
+      <button type="button" className="pickup-sum-change" onClick={change}>
         {t.pickup.changeLong}
       </button>
     </div>
