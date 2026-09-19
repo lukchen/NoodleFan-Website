@@ -29,7 +29,13 @@ Deno.serve(async (req) => {
     const stripeKey = Deno.env.get('STRIPE_SECRET_KEY')
     if (!stripeKey) throw new Error('STRIPE_SECRET_KEY not set')
 
-    const { items, customer, pickupPoint, pickupDate, pickupTime, note } = await req.json()
+    const { items, customer, pickupPoint, pickupRunDate, pickupDate, pickupTime, note } = await req.json()
+
+    // 定点配送要凑满才发车 —— 所以下单只做「授权」(钱冻在客人卡上,没进我们账户),
+    // 成团后由 run-dispatch 扣款,未成团直接取消授权:客人零扣费,我们零手续费。
+    // 到店自取没有成团这回事,照旧立即扣款。
+    const isDropoff = pickupPoint?.kind === 'dropoff'
+    const captureMode = isDropoff ? 'manual' : 'automatic'
     if (!Array.isArray(items) || items.length === 0 || items.length > 20) {
       throw new Error('invalid items')
     }
@@ -61,12 +67,13 @@ Deno.serve(async (req) => {
         customer_phone: customer.phone,
         pickup_date: pickupDate,
         pickup_time: pickupTime,
-        // 取餐点必须落到订单上,否则 Allston 的团购单和到店自取单在后台无法区分。
-        // orders 表还没有 pickup_point 列,先写进 note 的开头(加了列之后改成独立字段)。
-        note: [
-          pickupPoint ? `【取餐点】${pickupPoint.nameZh ?? pickupPoint.id}` : null,
-          note || null,
-        ].filter(Boolean).join('\n'),
+        // 取餐点跟单走:少了它,Allston 的团购单和到店自取单在后台长得一模一样。
+        pickup_point: pickupPoint?.id ?? null,
+        pickup_point_name: pickupPoint?.nameZh ?? null,
+        // 哪一班车 —— 成团统计按「取餐点 + 发车日」分组
+        run_date: isDropoff ? (pickupRunDate ?? pickupDate) : null,
+        capture_mode: captureMode,
+        note: note ?? '',
         items: enriched.map(({ unitCents: _drop, ...rest }) => rest),
         subtotal: subtotalCents / 100,
         tax: taxCents / 100,
@@ -101,7 +108,14 @@ Deno.serve(async (req) => {
     params.set(`line_items[${taxIdx}][price_data][unit_amount]`, String(taxCents))
     params.set(`line_items[${taxIdx}][quantity]`, '1')
 
+    if (captureMode === 'manual') {
+      params.set('payment_intent_data[capture_method]', 'manual')
+      // 客人在 Stripe 页面上也要看到这不是立即扣款
+      params.set('payment_intent_data[description]',
+        `NoodleFan 定点配送 · ${pickupPoint?.nameZh ?? ''} · 满单发车后才扣款`)
+    }
     params.set('metadata[order_id]', draft.id)
+    params.set('metadata[capture_mode]', captureMode)
 
     const res = await fetch('https://api.stripe.com/v1/checkout/sessions', {
       method: 'POST',
