@@ -68,7 +68,7 @@ Deno.serve(async (req) => {
     if (!point || !runDate) {
       const { data, error } = await supabase
         .from('orders')
-        .select('pickup_point, pickup_point_name, run_date, total')
+        .select('pickup_point, pickup_point_name, run_date, total, authorized_at')
         .eq('status', 'authorized')
         .not('run_date', 'is', null)
       if (error) throw new Error(error.message)
@@ -82,9 +82,14 @@ Deno.serve(async (req) => {
           runDate: o.run_date,
           orders: 0,
           amount: 0,
+          oldestAuthorizedAt: null as string | null,
         }
         runs[k].orders += 1
         runs[k].amount += Number(o.total ?? 0)
+        // 授权最长只挂 7 天,过期自动失效 —— 最早那笔决定这一班还剩多少时间。
+        if (o.authorized_at && (!runs[k].oldestAuthorizedAt || o.authorized_at < runs[k].oldestAuthorizedAt)) {
+          runs[k].oldestAuthorizedAt = o.authorized_at
+        }
       }
       const list = Object.values(runs).map((r: any) => ({
         ...r,
