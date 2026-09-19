@@ -128,6 +128,10 @@ Deno.serve(async (req) => {
     const session = event.data.object
     const m = session.metadata ?? {}
     const paymentIntentId: string | null = session.payment_intent ?? null
+    // 定点配送是「先授权」:这一刻钱只是冻结,没进账户,所以不能标成 paid。
+    // 成团后由 run-dispatch 扣款才变 paid;未成团变 cancelled_no_run。
+    const manual = m.capture_mode === 'manual'
+    const newStatus = manual ? 'authorized' : 'paid'
 
     // 1. Mark the order paid right away — the kitchen must be alerted without waiting
     //    on Stripe's fee data, which isn't ready the instant this event fires. Fee/net
@@ -140,10 +144,11 @@ Deno.serve(async (req) => {
       const { data: updated, error } = await supabase
         .from('orders')
         .update({
-          status: 'paid',
+          status: newStatus,
           stripe_session_id: session.id,
           stripe_payment_intent: paymentIntentId,
           pickup_code: pickupCode,
+          ...(manual ? { authorized_at: new Date().toISOString() } : {}),
         })
         .eq('id', m.order_id)
         .eq('status', 'pending')
@@ -200,7 +205,9 @@ Deno.serve(async (req) => {
     // 3. Capture Stripe fee + net payout for financial reporting and write them back to
     //    the order. Retried (balance_transaction lags the event); non-fatal if it never
     //    settles — the order is already saved and fees can be backfilled later.
-    if (paymentIntentId) {
+    // 授权(未扣款)阶段 Stripe 还没有 charge,balance_transaction 不存在,
+    // 查手续费只会白跑 5 次重试。等 run-dispatch 扣款时再查。
+    if (paymentIntentId && !manual) {
       const stripeKey = Deno.env.get('STRIPE_SECRET_KEY')
       if (!stripeKey) {
         console.error('STRIPE_SECRET_KEY not set — cannot look up fee/net')
