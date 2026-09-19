@@ -12,6 +12,13 @@ function daysLeft(oldestAuthorizedAt) {
   return Math.floor((expire - Date.now()) / 86400000)
 }
 
+function fmtCutoff(iso) {
+  if (!iso) return ''
+  return new Date(iso).toLocaleString('zh-CN', {
+    month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true,
+  })
+}
+
 function fmtRunDate(d) {
   if (!d) return ''
   const [y, m, day] = d.split('-').map(Number)
@@ -94,6 +101,11 @@ export default function RunBoard({ password }) {
         </button>
       </div>
 
+      {/* 到点自动结算,这里的按钮是给「提前发车 / 提前取消」用的 */}
+      <p className="runboard-hint">
+        截单时刻自动结算:满 {minOrders} 单自动扣款,不满自动解除冻结。下面的按钮用来提前处理。
+      </p>
+
       {error && <p className="admin-error">{error}</p>}
 
       {result && (
@@ -137,6 +149,15 @@ export default function RunBoard({ password }) {
                 {run.ready ? `✅ 已成团 ${run.orders} 单` : `${run.orders}/${minOrders} 单 · 还差 ${left}`}
               </span>
             </div>
+
+            {run.cutoffAt && (
+              <p className="run-card-cutoff">
+                ⏳ {fmtCutoff(run.cutoffAt)} 截单 ·
+                {new Date(run.cutoffAt) > new Date()
+                  ? (run.ready ? ' 到点自动扣款' : ` 到点若不满 ${minOrders} 单自动解除冻结`)
+                  : ' 已过截单时刻,结算中…'}
+              </p>
+            )}
 
             {/* 授权过期 = 白送餐,所以剩 2 天以内就红字顶在按钮上面 */}
             {dl !== null && (
