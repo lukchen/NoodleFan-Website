@@ -134,7 +134,7 @@ export default function RunBoard({ password }) {
         return (
           <article key={key} className={`run-card${run.ready ? ' run-card--ready' : ''}`}>
             <div className="run-card-top">
-              <span className="run-card-name">📍 {run.pointName ?? run.point}</span>
+              <span className="run-card-name">{run.pointName ?? run.point}</span>
               <span className="run-card-date">{fmtRunDate(run.runDate)}</span>
               <span className="run-card-amount">${run.amount.toFixed(2)}</span>
             </div>
@@ -146,13 +146,13 @@ export default function RunBoard({ password }) {
                 ))}
               </span>
               <span className={`run-card-count${run.ready ? ' run-card-count--ready' : ''}`}>
-                {run.ready ? `✅ 已成团 ${run.orders} 单` : `${run.orders}/${minOrders} 单 · 还差 ${left}`}
+                {run.ready ? `已成团 ${run.orders} 单` : `${run.orders}/${minOrders} 单 · 还差 ${left}`}
               </span>
             </div>
 
             {run.cutoffAt && (
               <p className="run-card-cutoff">
-                ⏳ {fmtCutoff(run.cutoffAt)} 截单 ·
+                {fmtCutoff(run.cutoffAt)} 截单 ·
                 {new Date(run.cutoffAt) > new Date()
                   ? (run.ready ? ' 到点自动扣款' : ` 到点若不满 ${minOrders} 单自动解除冻结`)
                   : ' 已过截单时刻,结算中…'}
@@ -163,7 +163,7 @@ export default function RunBoard({ password }) {
             {dl !== null && (
               <p className={`run-card-expiry${expiring ? ' run-card-expiry--warn' : ''}`}>
                 {dl < 0
-                  ? '⚠️ 授权可能已过期,扣款会失败 —— 请立即处理'
+                  ? '授权可能已过期,扣款会失败 —— 请立即处理'
                   : `授权还剩 ${dl} 天(${AUTH_DAYS} 天后自动失效)`}
               </p>
             )}
