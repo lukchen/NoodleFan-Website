@@ -642,6 +642,16 @@ body {
 .checkout-form textarea:focus { border-color: var(--color-accent); }
 
 /* Date / time picker */
+.checkout-hold-note {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.55;
+  color: #1f5f2b;
+  background: #e8f5ea;
+  border-radius: 10px;
+  padding: 0.65rem 0.8rem;
+}
+
 .checkout-preorder {
   margin: 0;
   font-size: 0.84rem;
