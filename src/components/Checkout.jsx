@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import useScrollLock from '../useScrollLock'
 import { usePickup } from '../context/PickupContext'
-import { formatPickupAt, storeIsOpen, STORE_HOURS_TEXT } from '../pickup'
+import { formatPickupAt, storeIsOpen, STORE_HOURS_TEXT, MIN_ORDERS } from '../pickup'
 import { useCart } from '../context/CartContext'
 import { SUPABASE_URL, SUPABASE_ANON_KEY, CHECKOUT_ENABLED } from '../config'
 
@@ -122,6 +122,8 @@ export default function Checkout({ t, onClose }) {
           pickupPoint: point
             ? { id: point.id, kind: point.kind, nameZh: point.nameZh, nameEn: point.nameEn }
             : null,
+          // 哪一班车 —— 后台按「取餐点 + 发车日」统计成团进度并结算
+          pickupRunDate: fixedRun ? toLocalDateString(fixedRun.pickupAt) : null,
           pickupDate: form.date,
           pickupTime: form.time,
           note: form.note,
@@ -241,6 +243,10 @@ export default function Checkout({ t, onClose }) {
           </label>
 
           {error && <p className="checkout-error">{error}</p>}
+
+          {fixedRun && (
+            <p className="checkout-hold-note">{t.checkout.holdNote(MIN_ORDERS)}</p>
+          )}
 
           {!CHECKOUT_ENABLED && (
             <p className="checkout-disabled-note">{t.checkout.disabledNote}</p>
