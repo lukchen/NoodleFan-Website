@@ -138,3 +138,66 @@
 .run-btn--go { background: var(--color-accent); border-color: var(--color-accent); color: #fff; }
 .run-btn--go:disabled { opacity: 0.6; cursor: default; }
 .run-btn--stop { color: var(--color-accent); border-color: var(--color-accent); }
+
+/* ══ 后台:两条业务线分开 ══════════════════════════════════════════════
+   到店自取是实时单(钱已到账,马上备餐),团餐是预约单(钱冻着,按班次结算)。
+   放同一张列表里会互相干扰节奏,所以分成两个 tab。 */
+.admin-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.admin-tab {
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--color-border);
+  background: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.admin-tab--active { border-color: var(--color-accent); color: var(--color-accent); }
+
+.admin-tab-count {
+  min-width: 1.35rem;
+  padding: 0 0.35rem;
+  border-radius: 999px;
+  background: var(--color-border);
+  font-size: 0.76rem;
+  text-align: center;
+}
+
+.admin-tab--active .admin-tab-count { background: var(--color-accent); color: #fff; }
+
+.admin-run-group { margin-bottom: 1.4rem; }
+
+.admin-run-group-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  margin: 0 0 0.6rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.admin-run-group-count { color: var(--color-muted); font-size: 0.82rem; margin-left: auto; }
+
+/* 钱还没扣 / 已解除冻结 —— 代替备餐按钮的说明 */
+.admin-order-hold {
+  margin: 0.5rem 0 0;
+  padding: 0.45rem 0.6rem;
+  border-radius: 8px;
+  background: var(--color-surface);
+  font-size: 0.8rem;
+  color: var(--color-muted);
+}
+
+.admin-status-badge--authorized { background: #fdf0d5; color: #8a5a00; }
+.admin-status-badge--cancelled_no_run { background: #eee; color: #777; }
