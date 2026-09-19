@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
+import RunBoard from './RunBoard'
+import '../runboard.css'
 import { createClient } from '@supabase/supabase-js'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../config'
 
@@ -147,6 +149,9 @@ export default function Admin() {
           </button>
         </div>
       </header>
+
+      {/* 定点配送的钱卡在「已授权」上,不点扣款不会到账 —— 所以放在订单列表之前 */}
+      <RunBoard password={password} />
 
       {orders.length === 0 && <p className="admin-empty">暂无订单</p>}
 
