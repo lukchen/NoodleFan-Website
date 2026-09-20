@@ -1,0 +1,7 @@
+/* 取餐点地址 —— 下单时选过一次,取餐当天还得再看一次,所以常驻在「我的订单」里。 */
+.pickup-sum-addr {
+  margin: 0 0 0.5rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--color-muted);
+}
