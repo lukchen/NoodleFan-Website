@@ -1,6 +1,7 @@
 import { formatPickupAt, formatCutoffAt, timeToCutoff } from '../pickup'
 import { usePickup } from '../context/PickupContext'
 import { useCart } from '../context/CartContext'
+import '../pickup-sum.css'
 
 // 取餐方式摘要 —— 放在「我的订单」最上面。
 // 取餐点是这一单的前提(决定截单时间、备料份数、能不能成团),所以它属于订单本身,
@@ -31,6 +32,9 @@ export default function PickupSummary({ t, lang }) {
         <span className="pickup-sum-icon" aria-hidden="true">{isStore ? '🏪' : '📍'}</span>
         <span className="pickup-sum-name">{zh ? point.nameZh : point.nameEn}</span>
       </div>
+
+      {/* 地址 —— 客人到了取餐那天要照着它走,不能只在选择页出现一次 */}
+      <p className="pickup-sum-addr">{zh ? point.areaZh : point.areaEn}</p>
 
       {isStore ? (
         <div className="pickup-sum-rows">
