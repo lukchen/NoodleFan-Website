@@ -4,7 +4,7 @@
 // 每道菜当天限量 DAILY_LIMIT 份。客人先选取餐点再看菜单,因为取餐点决定了截单时间、
 // 剩余份数和是否成团。
 //
-// ⚠ 地址与班期为暂定值,确定后改这里即可,UI 会跟着变。
+// ⚠ 班期(days)与送达时间(pickupHour)仍为暂定值,确定后改这里即可,UI 会跟着变。
 
 export const MIN_ORDERS = 5        // 起送单数
 export const DAILY_LIMIT = 15      // 每道菜每天备料上限
@@ -45,8 +45,8 @@ export const PICKUP_POINTS = [
     kind: 'dropoff',
     nameZh: 'Allston 取餐点',
     nameEn: 'Allston Pickup Spot',
-    areaZh: '具体地点待定',
-    areaEn: 'Exact spot TBD',
+    areaZh: '1 Brighton Ave, Boston, MA 02134(Super 88 超市门口)',
+    areaEn: '1 Brighton Ave, Boston, MA 02134 (in front of Super 88)',
     days: [2, 5],          // 周二、周五
     pickupHour: 18,        // 18:00 送达
   },
@@ -55,8 +55,8 @@ export const PICKUP_POINTS = [
     kind: 'dropoff',
     nameZh: 'Malden 取餐点',
     nameEn: 'Malden Pickup Spot',
-    areaZh: '具体地点待定',
-    areaEn: 'Exact spot TBD',
+    areaZh: '300 Pleasant St, Malden, MA 02148(停车场)',
+    areaEn: '300 Pleasant St, Malden, MA 02148 (parking lot)',
     days: [3, 6],          // 周三、周六
     pickupHour: 18,
   },
