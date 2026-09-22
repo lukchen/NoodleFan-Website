@@ -21,6 +21,7 @@ const strings = {
       title: 'Our Menu',
       price: (p) => `$${p}`,
       add: 'Add',
+      spicy: 'Spicy by default — you can change the spice level when ordering',
     },
     cart: {
       title: 'Your Order',
@@ -146,6 +147,7 @@ const strings = {
       title: '我们的菜单',
       price: (p) => `$${p}`,
       add: '加入',
+      spicy: '默认辣 —— 下单时可改辣度',
     },
     cart: {
       title: '我的订单',
