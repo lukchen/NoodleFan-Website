@@ -32,8 +32,10 @@ function MenuCard({ item, t, lang, onCustomize, remaining }) {
 
   // 默认就是辣的(辣度默认项不是「不辣」)—— 卡片上标个辣椒,
   // 客人不用点开选项框才发现。不吃辣的可以在选项里改成不辣。
+  //
+  // 双人套餐不标:它只有一个辣度选项、两碗共用,标上去说不清是哪碗辣。
   const spiceGroup = (item.optionGroups ?? []).find(g => g.id === 'spice')
-  const spicy = !!spiceGroup && spiceGroup.default !== 'none'
+  const spicy = item.category !== 'combo2' && !!spiceGroup && spiceGroup.default !== 'none'
 
   const soldOut = remaining !== null && remaining <= 0
   const lowStock = remaining !== null && remaining > 0 && remaining <= 5
