@@ -5,6 +5,7 @@ import { usePickup } from '../context/PickupContext'
 import OptionsModal from './OptionsModal'
 import CartPanel from './CartPanel'
 import PickupPicker from './PickupPicker'
+import '../menu-spicy.css'
 import { ORDERING_ENABLED } from '../config'
 
 function MenuCard({ item, t, lang, onCustomize, remaining }) {
@@ -29,6 +30,11 @@ function MenuCard({ item, t, lang, onCustomize, remaining }) {
     ? Math.min(...comboGroup.choices.filter(c => c.delta).map(c => item.price + c.delta))
     : null
 
+  // 默认就是辣的(辣度默认项不是「不辣」)—— 卡片上标个辣椒,
+  // 客人不用点开选项框才发现。不吃辣的可以在选项里改成不辣。
+  const spiceGroup = (item.optionGroups ?? []).find(g => g.id === 'spice')
+  const spicy = !!spiceGroup && spiceGroup.default !== 'none'
+
   const soldOut = remaining !== null && remaining <= 0
   const lowStock = remaining !== null && remaining > 0 && remaining <= 5
 
@@ -42,7 +48,10 @@ function MenuCard({ item, t, lang, onCustomize, remaining }) {
             : <div className="menu-card-placeholder" />}
       </div>
       <div className="menu-card-body">
-        <h4 className="menu-card-name">{name}</h4>
+        <h4 className="menu-card-name">
+          {name}
+          {spicy && <span className="menu-card-spicy" title={t.menu.spicy} aria-label={t.menu.spicy}>🌶️</span>}
+        </h4>
         {altName && <p className="menu-card-subname">{altName}</p>}
         {desc && <p className="menu-card-desc">{desc}</p>}
         {lowStock && <p className="menu-card-stock">{t.pickup.onlyLeft(remaining)}</p>}
