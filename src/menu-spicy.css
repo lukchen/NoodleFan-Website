@@ -1,7 +1,8 @@
-/* 默认辣的菜在卡片上直接标出来 —— 不用点开选项框才发现。 */
+/* 默认辣的菜在卡片上直接标出来 —— 不用点开选项框才发现。
+   跟菜名一样大:小一号就成了装饰,客人扫菜单时会直接滑过去。 */
 .menu-card-spicy {
-  margin-left: 0.3rem;
-  font-size: 0.85em;
-  vertical-align: 0.05em;
+  margin-left: 0.35rem;
+  font-size: 1.05em;
+  vertical-align: -0.05em;
   cursor: help;
 }
