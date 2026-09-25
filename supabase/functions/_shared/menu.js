@@ -158,13 +158,27 @@ const menu = [
     id: 21,
     category: 'soup',
     price: 23.99,
-    image: '/images/Tianjin%20Lamb%20Offal%20Soup.png',
-    nameEn: 'Tianjin Lamb & Offal Soup',
-    nameZh: '天津羊杂汤',
+    image: '/images/Tianjin%20Lamb%20Offal%20Soup%20w_%20Chinese%20Flatbread.png',
+    nameEn: 'Tianjin Lamb & Offal Soup w/ Chinese Flatbread',
+    nameZh: '天津羊杂汤（含烧饼）',
     shortZh: '羊杂汤',
     shortEn: 'Lamb & Offal Soup',
-    descEn: 'Milky lamb bone broth with tender lamb and offal, finished with cilantro, scallion and white pepper.',
-    descZh: '天津街头老味羊杂汤，羊骨慢熬至奶白，羊肚、羊肝、羊肺切片入汤，撒葱和香菜、白胡椒，汤浓味厚，驱寒暖胃。',
+    descEn: 'Milky lamb bone broth with lamb and offal, finished with cilantro, scallion and white pepper. Served with a sesame flatbread.',
+    descZh: '天津街头老味羊杂汤，羊骨慢熬至奶白，羊肚、羊肝、羊肺切片入汤，撒葱和香菜、白胡椒，汤浓味厚，另配一个现烤芝麻烧饼。',
+  },
+
+  // ── 兰州牛肉拉面 ──
+  {
+    id: 22,
+    category: 'noodle',
+    price: 17.99,
+    image: '/images/Lanzhou%20Beef%20Noodle%20Soup.png',
+    nameEn: 'Lanzhou Beef Noodle Soup',
+    nameZh: '兰州牛肉拉面',
+    shortZh: '兰州拉面',
+    shortEn: 'Lanzhou Beef',
+    descEn: 'Hand-pulled noodles in clear beef bone broth with sliced beef, daikon, scallion, cilantro and chili oil.',
+    descZh: '兰州清汤牛肉面，牛骨慢熬的清亮汤头，配手拉面条、薄切牛肉、白萝卜、葱和香菜，淋一勺油泼辣子。',
   },
 
   // ── 双人套餐 Combo for Two ──
@@ -387,6 +401,7 @@ const MODIFIERS = {
   4: { spice: [['none', 'extra'], 'none'],                                       remove: ['scallion', 'cilantro', 'pickle', 'woodear', 'soybean', 'shiitake'], combo: ['tofu', 'balls', 'deluxe'], addon: ['riceNoodles', 'gardenMushroom', 'egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
   5: { spice: [['mild', 'regular', 'extra'], 'regular'],                         remove: ['scallion', 'cilantro', 'pickle'],                                  combo: ['tofu', 'balls', 'deluxe'], addon: ['riceNoodles', 'beefBrisket', 'egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
   6: {                                                                           remove: ['egg', 'cilantro'],                                                 combo: ['tofu'],                    addon: ['rice', 'braisedPork', 'egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
+  22:{ spice: [['none', 'extra'], 'none'],                     noodle: 'thick', remove: ['scallion', 'cilantro', 'pickle'],                                  combo: ['tofu', 'balls', 'deluxe'], addon: ['noodles', 'beefBrisket', 'egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
   21:{ spice: [['none', 'extra'], 'none'],                                       remove: ['scallion', 'cilantro'],                                            combo: ['tofu', 'balls', 'deluxe'], addon: ['egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
 }
 
