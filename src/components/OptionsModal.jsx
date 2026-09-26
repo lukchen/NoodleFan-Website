@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import useScrollLock from '../useScrollLock'
+import '../modal-viewport.css'
 import { resolveSelections } from '../data/menu'
 import { loadDraft, saveDraft, clearDraft } from '../draft'
 
@@ -143,16 +144,20 @@ export default function OptionsModal({ dish, t, lang, onAdd, onClose, initial = 
           </div>
         ))}
 
-        <button
-          className="btn-primary options-add-btn"
-          disabled={missingRequired}
-          onClick={() => {
-            onAdd(dish, selections)
-            if (!editing) clearDraft(dish)   // 已经进购物车了,下一份从默认开始
-            onClose()
-          }}>
-          {editing ? t.options.saveChanges : t.options.addToCart} {money(unitPrice)}
-        </button>
+        {/* 吸底条:选项多的菜(脊骨泡粉、香辣牛肉、台牛、兰牛)滚动区很长,
+            按钮跟着内容沉到最底下客人就看不见了 —— 价格也印在按钮上。 */}
+        <div className="options-add-bar">
+          <button
+            className="btn-primary options-add-btn"
+            disabled={missingRequired}
+            onClick={() => {
+              onAdd(dish, selections)
+              if (!editing) clearDraft(dish)   // 已经进购物车了,下一份从默认开始
+              onClose()
+            }}>
+            {editing ? t.options.saveChanges : t.options.addToCart} {money(unitPrice)}
+          </button>
+        </div>
       </div>
     </div>
   )
