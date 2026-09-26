@@ -1,0 +1,104 @@
+/* ── 微信群入口 ────────────────────────────────────────────────────────────
+   桌面左文右码,手机上下叠 —— 手机上码要够大,客人是拿另一台手机扫的。 */
+.wechat {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 1.5rem 4rem;
+}
+
+.wechat-card {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 1.8rem 2rem;
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+
+.wechat-text { flex: 1 1 auto; min-width: 0; }
+
+.wechat-eyebrow {
+  display: block;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.wechat-title {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 0.8rem;
+}
+
+.wechat-list {
+  margin: 0 0 0.9rem;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.wechat-list li {
+  position: relative;
+  padding-left: 1.1rem;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--color-text);
+}
+
+/* 自己画点,list-style 的圆点没法对齐到第一行的行高中线 */
+.wechat-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+.wechat-scan {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--color-muted);
+}
+
+.wechat-qr {
+  flex: 0 0 auto;
+  padding: 0.6rem;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  line-height: 0;
+}
+
+.wechat-qr img {
+  display: block;
+  width: 168px;
+  height: 168px;
+}
+
+@media (max-width: 700px) {
+  .wechat { padding: 0 1rem 3rem; }
+
+  .wechat-card {
+    flex-direction: column-reverse;   /* 手机上先看到码 */
+    align-items: stretch;
+    text-align: center;
+    gap: 1.2rem;
+    padding: 1.5rem 1.2rem;
+  }
+
+  .wechat-qr { align-self: center; }
+
+  /* 手机扫码用的是另一台手机,码太小对不上焦 */
+  .wechat-qr img { width: 208px; height: 208px; }
+
+  .wechat-list { text-align: left; max-width: 22rem; margin-inline: auto; }
+}
