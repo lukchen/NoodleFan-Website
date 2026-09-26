@@ -8,6 +8,7 @@
 // everywhere.
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2?target=deno'
 import menu, { resolveSelections } from '../_shared/menu.js'
+import { runTally } from '../_shared/tally.ts'
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -15,6 +16,7 @@ const CORS = {
 }
 
 const TAX_RATE = 0.07 // MA 6.25% + Boston local option 0.75%
+const DAILY_LIMIT = 15 // 每道菜每班备料上限(与前端 src/pickup.js 保持一致)
 const SITE_URL = 'https://noodlefanboston.com/'
 
 const supabase = createClient(
@@ -62,6 +64,23 @@ Deno.serve(async (req) => {
         optionsZh, optionsEn,
       }
     })
+
+    // 超卖拦截。前端已经把卖光的菜标成「今日已订满」,但那只是显示 ——
+    // 两个人同时下最后一份、或者有人开着旧页面不刷新,都会绕过它。
+    // 备料是实打实的:多卖一份就是取餐那天有人空手而归,只能退款道歉。
+    if (isDropoff) {
+      const runDate = pickupRunDate ?? pickupDate
+      const { dishes: sold } = await runTally(supabase, pickupPoint.id, runDate)
+      for (const it of enriched) {
+        const left = DAILY_LIMIT - (sold[it.id] ?? 0)
+        if (it.qty > left) {
+          throw new Error(left <= 0
+            ? `sold out: ${it.nameZh}`
+            : `only ${left} left: ${it.nameZh}`)
+        }
+      }
+    }
+
     const subtotalCents = enriched.reduce((s, e) => s + e.unitCents * e.qty, 0)
     const taxCents = Math.round(subtotalCents * TAX_RATE)
     const totalCents = subtotalCents + taxCents
