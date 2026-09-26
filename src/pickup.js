@@ -11,7 +11,7 @@
 export const MIN_ORDERS = 5        // 起送单数
 export const DAILY_LIMIT = 15      // 每道菜每天备料上限
 export const CUTOFF_HOUR = 12      // 取餐当天 12:00 截单
-export const OPEN_DAYS = 2         // 当天开放「明天」「后天」两个日期
+export const OPEN_DAYS = 2         // 当天开放两个日期(明天、后天)
 
 // 店铺营业时间 —— 显示文案和「现在是否营业」都从这两个数字来,避免两处各写一份走偏。
 export const STORE_OPEN_HOUR = 11   // 11:00 AM
@@ -96,7 +96,7 @@ export function upcomingRuns(point, now = new Date()) {
   return runs
 }
 
-// 默认班次 = 最近那一班(明天)。找不到指定日期时也回退到它。
+// 默认班次 = 最近那一班。找不到指定日期时也回退到它。
 export function nextRun(point, now = new Date()) {
   return upcomingRuns(point, now)[0] ?? null
 }
@@ -127,30 +127,23 @@ export function formatCutoffAt(run, lang) {
   return run ? stamp(run.cutoff, run.cutoff.getHours(), lang) : ''
 }
 
-// 「明天」「后天」比「周二」好认 —— 客人不用去想今天是周几。
+// 星期 + 日期,例:「周一 9/28」。
+// 不用「明天/后天」—— 客人常常隔天才回来看订单,那时候「明天」指的已经是另一天了;
+// 星期加日期是绝对的,写在哪儿、什么时候看都不会错。
 export function dayLabel(run, lang) {
   if (!run) return ''
-  const zh = lang === 'zh'
-  if (run.offset === 1) return zh ? '明天' : 'Tomorrow'
-  if (run.offset === 2) return zh ? '后天' : 'In 2 days'
-  const days = zh ? DAY_ZH : DAY_EN
-  return days[run.date.getDay()]
-}
-
-// 「明天 9/27 周日」/「Tomorrow 9/27 Sun」
-export function formatRunDate(run, lang) {
-  if (!run) return ''
   const days = lang === 'zh' ? DAY_ZH : DAY_EN
-  const md = `${run.date.getMonth() + 1}/${run.date.getDate()}`
-  return `${dayLabel(run, lang)} ${md} ${days[run.date.getDay()]}`
+  return `${days[run.date.getDay()]} ${run.date.getMonth() + 1}/${run.date.getDate()}`
 }
 
+export const formatRunDate = dayLabel
+
+// 「周一 9/28 6:00 PM」—— 吸顶条和购物车里的一行式写法
 export function formatRun(run, lang) {
   if (!run) return ''
   const h = run.pickupAt.getHours()
   const hour12 = h > 12 ? h - 12 : h
-  const time = `${hour12}:00 ${h >= 12 ? 'PM' : 'AM'}`
-  return `${dayLabel(run, lang)} ${time}`
+  return `${dayLabel(run, lang)} ${hour12}:00 ${h >= 12 ? 'PM' : 'AM'}`
 }
 
 // 距截单还剩多久 —— 返回 { hours, minutes, expired }
