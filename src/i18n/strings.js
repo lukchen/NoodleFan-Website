@@ -61,7 +61,8 @@ const strings = {
       done: 'Back to Menu',
     },
     wechat: {
-      eyebrow: 'WeChat Group',
+      navBtn: 'WeChat Group',
+      close: 'Close',
       title: 'Join the NoodleFan group chat',
       perks: [
         'Run reminders — we post before orders close each day',
@@ -198,7 +199,8 @@ const strings = {
       done: '返回菜单',
     },
     wechat: {
-      eyebrow: '微信群',
+      navBtn: '微信群',
+      close: '关闭',
       title: '加入粉面王波士顿客户群',
       perks: [
         '每天截单前群里提醒,不会错过当天发车',
