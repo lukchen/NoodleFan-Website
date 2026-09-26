@@ -53,7 +53,7 @@ export default function PickupSummary({ t, lang }) {
                 type="button"
                 className={`pickup-sum-day${runKey === r.key ? ' pickup-sum-day--active' : ''}`}
                 onClick={() => setRunKey(r.key)}>
-                {dayLabel(r, lang)} {r.date.getMonth() + 1}/{r.date.getDate()}
+                {dayLabel(r, lang)}
               </button>
             ))}
           </div>
