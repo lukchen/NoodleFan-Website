@@ -62,8 +62,8 @@ const strings = {
     },
     pickup: {
       title: 'How would you like to pick up?',
-      subtitle: 'Pick a spot first — it sets the order cutoff and what we can prep that day.',
-      cutoffAt: 'Orders close 3:00 PM',
+      subtitle: 'Pick a spot and a day — drop-off runs go out daily; each day is its own run.',
+      cutoffAt: 'Orders close 12:00 PM on pickup day',
       arrives: 'Arrives',
       ready: '✅ Minimum reached — we roll',
       needMore: (have, min, left) => `${have}/${min} orders · ${left} more to roll`,
@@ -188,8 +188,8 @@ const strings = {
     },
     pickup: {
       title: '选择取餐方式',
-      subtitle: '先选取餐点 —— 它决定当天的截单时间和备料份数。',
-      cutoffAt: '当天 3:00PM 截单',
+      subtitle: '先选取餐点和日期 —— 定点配送每天发车，每一天单独凑单、单独截单。',
+      cutoffAt: '取餐当天 12:00 PM 截单',
       arrives: '送达',
       ready: '✅ 已成团 · 发车',
       needMore: (have, min, left) => `已 ${have}/${min} 单 · 还差 ${left} 单发车`,
