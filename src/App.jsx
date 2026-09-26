@@ -9,6 +9,7 @@ import OptionsModal from './components/OptionsModal'
 import Cart from './components/Cart'
 import Checkout from './components/Checkout'
 import Footer from './components/Footer'
+import WechatGroup from './components/WechatGroup'
 import Admin from './components/Admin'
 import MobileCartBar from './components/MobileCartBar'
 import OrderStatus from './components/OrderStatus'
@@ -60,6 +61,8 @@ function AppInner({ t, lang, setLang }) {
           choosingPickup={ORDERING_ENABLED && (!point || changing)}
           onPickupChosen={endChange}
         />
+        {/* 群入口放菜单之后 —— 客人看完菜、有兴趣了才是进群的时机 */}
+        <WechatGroup t={t} />
       </main>
       <Footer t={t} />
       {ORDERING_ENABLED && <MobileCartBar t={t} lang={lang} />}
