@@ -1,4 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2?target=deno'
+import { sendEmail, tplConfirmed } from '../_shared/email.ts'
 
 // Verify Stripe webhook signature manually (HMAC-SHA256) — avoids the Stripe SDK,
 // which fails to make network connections in this Deno runtime.
@@ -187,6 +188,23 @@ Deno.serve(async (req) => {
         console.error('DB insert error:', error)
         return new Response(JSON.stringify({ error: error.message }), { status: 500 })
       }
+    }
+
+    // 1b. 下单确认邮件。客人手里唯一的凭证就是这封 —— 取餐码、地点、日期都在里面。
+    //     先授权的单还会写明「现在没扣钱」,免得客人看到卡上的 pending 去找银行 dispute。
+    //     发信失败不影响订单:钱已经在 Stripe 那边处理完了,这里抛错只会招来 webhook 重试。
+    try {
+      const { data: row } = await supabase
+        .from('orders')
+        .select('customer_email, customer_name, pickup_code, pickup_point_name, pickup_date, pickup_time, run_date, total, items, capture_mode')
+        .eq('stripe_session_id', session.id)
+        .single()
+      if (row) {
+        const { subject, html } = tplConfirmed(row)
+        await sendEmail(row.customer_email, subject, html)
+      }
+    } catch (e) {
+      console.error('confirm email failed (non-fatal):', e)
     }
 
     // 2. Broadcast a PII-free "new order" signal so the admin dashboard alerts instantly.

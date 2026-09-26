@@ -13,6 +13,7 @@
 // 等于把一班拆成两批;而且一旦扣了款再想取消就只能退款 —— 手续费拿不回来、客人要等
 // 5–10 个工作日。截单时刻订单量已经定死,这时候判断最干净。
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2?target=deno'
+import { sendEmail, tplCaptured, tplCancelled } from '../_shared/email.ts'
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -75,7 +76,7 @@ async function readFeeNet(paymentIntentId: string, key: string) {
 async function loadRunOrders(point: string, runDate: string) {
   const { data, error } = await supabase
     .from('orders')
-    .select('id, pickup_code, customer_name, customer_phone, total, status, stripe_payment_intent')
+    .select('id, pickup_code, customer_name, customer_phone, customer_email, total, status, stripe_payment_intent, pickup_point_name, pickup_date, pickup_time, run_date, items')
     .eq('pickup_point', point)
     .eq('run_date', runDate)
     .eq('status', 'authorized')
@@ -110,6 +111,19 @@ async function settle(orders: any[], action: 'capture' | 'cancel', stripeKey: st
     }
 
     const { error: upErr } = await supabase.from('orders').update(patch).eq('id', o.id)
+
+    // 结算结果必须通知到人:扣款发生在客人卡上,取消则意味着他今天别白跑一趟。
+    // 只在 DB 也写成功后才发 —— 否则会出现「邮件说已扣款,后台还显示待结算」。
+    // 发信失败只记日志:钱已经动过了,这里抛错会让整批结算中断,剩下的单卡在半路。
+    if (!upErr) {
+      try {
+        const { subject, html } = action === 'capture' ? tplCaptured(o) : tplCancelled(o)
+        await sendEmail(o.customer_email, subject, html)
+      } catch (e) {
+        console.error('settle email failed (non-fatal):', o.id, e)
+      }
+    }
+
     results.push({
       id: o.id, code: o.pickup_code, ok: !upErr,
       error: upErr?.message,
