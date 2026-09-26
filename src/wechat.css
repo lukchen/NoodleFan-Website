@@ -3,6 +3,9 @@
    一个要被点的入口,得看起来可点。用按钮标签所以不受那条隐藏规则影响。 */
 .wechat-nav-btn {
   flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   font-family: inherit;
   font-size: 0.82rem;
   font-weight: 700;
@@ -15,10 +18,32 @@
   white-space: nowrap;
 }
 
+/* 按钮里的小二维码。
+   图是微信导出的整张群名片(450×708,深色底 + 群名 + 码 + 有效期),整张缩到
+   20px 就是一坨黑 —— 所以用一个固定尺寸的窗口把码那一块「抠」出来。
+   下面这些数字是码在原图里的位置(x 13.1%~86.0%,y 35.6%~81.9%)换算来的;
+   微信导出的图版式一直是这个样子,换码不用动它。 */
+.wechat-nav-thumb {
+  flex: 0 0 auto;
+  display: block;
+  width: 20px;
+  height: 20px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: #fff;
+}
+
+.wechat-nav-thumb img {
+  display: block;
+  width: 27.4px;          /* 20 / 0.729,让码那一段正好占满窗口 */
+  height: auto;
+  margin: -15.3px 0 0 -3.6px;
+}
+
 .wechat-nav-btn:active { transform: translateY(1px); }
 
 @media (max-width: 600px) {
-  .wechat-nav-btn { font-size: 0.76rem; padding: 0.28rem 0.6rem; }
+  .wechat-nav-btn { font-size: 0.76rem; padding: 0.24rem 0.55rem 0.24rem 0.3rem; }
 }
 
 
@@ -104,3 +129,56 @@
   line-height: 1.5;
   color: var(--color-muted);
 }
+
+
+/* ── 结账页里的加群邀请 ────────────────────────────────────────────────────
+   紧挨着邮箱字段,因为说的是同一件事:「我们怎么通知你」。邮件是保底(不在群里的
+   客人照样能下单),群是更快的那条路 —— 所以这里是邀请,不是必填项,做得比表单
+   字段轻一档:浅底、无边框强调色。 */
+.checkout-wechat {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin: -0.2rem 0 0.2rem;
+  padding: 0.8rem 0.9rem;
+  border-radius: 10px;
+  background: #fdf6ec;
+  border: 1px solid var(--color-gold);
+}
+
+/* 点一下开大图 —— 88px 的码扫起来费劲,而且客人多半要长按保存 */
+.checkout-wechat-thumb {
+  flex: 0 0 auto;
+  padding: 0;
+  border: none;
+  background: none;
+  line-height: 0;
+  cursor: pointer;
+}
+
+.checkout-wechat-thumb img {
+  display: block;
+  width: 88px;
+  height: auto;
+  border-radius: 8px;
+}
+
+.checkout-wechat-thumb:active { transform: translateY(1px); }
+
+.checkout-wechat-text { min-width: 0; }
+
+.checkout-wechat-text strong {
+  display: block;
+  font-size: 0.88rem;
+  margin-bottom: 0.25rem;
+}
+
+.checkout-wechat-text p {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+
+/* 结账页弹的是「弹窗里的弹窗」,得盖住底下那层 .modal-overlay(z-index 300) */
+.wechat-overlay { z-index: 400; }
