@@ -60,6 +60,17 @@ const strings = {
       successMsg: 'Your order has been placed. We\'ll have it ready for pickup!',
       done: 'Back to Menu',
     },
+    wechat: {
+      eyebrow: 'WeChat Group',
+      title: 'Join the NoodleFan group chat',
+      perks: [
+        'Run reminders — we post before orders close each day',
+        'Member-only deals and new-dish tastings drop in the group first',
+        'Order updates — if a run is cancelled, you hear it here first',
+      ],
+      scan: 'WeChat → Discover → Scan. On a phone, press and hold the code to save it, then scan from your album.',
+      alt: 'WeChat group QR code for NoodleFan Boston',
+    },
     pickup: {
       title: 'How would you like to pick up?',
       subtitle: 'Pick a spot and a day — drop-off runs go out daily; each day is its own run.',
@@ -186,9 +197,20 @@ const strings = {
       successMsg: '您的订单已提交，我们将为您备餐！',
       done: '返回菜单',
     },
+    wechat: {
+      eyebrow: '微信群',
+      title: '加入粉面王波士顿客户群',
+      perks: [
+        '每天截单前群里提醒,不会错过当天发车',
+        '群友专属优惠、新菜试吃,都在群里先发',
+        '订单有变动 —— 当天如需取消,第一时间群里通知',
+      ],
+      scan: '微信 → 发现 → 扫一扫;用手机看的话,长按二维码保存到相册再扫。',
+      alt: '粉面王波士顿微信群二维码',
+    },
     pickup: {
       title: '选择取餐方式',
-      subtitle: '先选取餐点和日期 —— 定点配送每天发车，每一天单独凑单、单独截单。',
+      subtitle: '先选取餐点和日期 —— 定点配送每天发车，每一天单独截单、单独备料。',
       cutoffAt: '取餐当天 12:00 PM 截单',
       arrives: '送达',
       ready: '✅ 已成团 · 发车',
