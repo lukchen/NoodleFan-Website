@@ -1,54 +1,79 @@
-/* ── 微信群入口 ────────────────────────────────────────────────────────────
-   桌面左文右码,手机上下叠 —— 手机上码要够大,客人是拿另一台手机扫的。 */
-.wechat {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 0 1.5rem 4rem;
+/* ── 导航栏上的微信群按钮 ──────────────────────────────────────────────────
+   做成描边胶囊而不是纯文字链接:手机上 .navbar-links a 是被隐藏的,而且这是
+   一个要被点的入口,得看起来可点。用按钮标签所以不受那条隐藏规则影响。 */
+.wechat-nav-btn {
+  flex: 0 0 auto;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  background: #fff;
+  border: 1.5px solid var(--color-accent);
+  border-radius: 999px;
+  padding: 0.3rem 0.8rem;
+  cursor: pointer;
+  white-space: nowrap;
 }
 
-.wechat-card {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-  padding: 1.8rem 2rem;
+.wechat-nav-btn:active { transform: translateY(1px); }
+
+@media (max-width: 600px) {
+  .wechat-nav-btn { font-size: 0.76rem; padding: 0.28rem 0.6rem; }
+}
+
+
+/* ── 点开后的大图 ──────────────────────────────────────────────────────────
+   客人基本都在手机上看,没法拿同一台手机扫自己的屏幕 —— 所以图要够大够清楚,
+   方便长按保存到相册再用微信扫。用和菜品弹窗同一套 .modal-overlay /
+   .modal-frame 定位(见 modal-viewport.css),避开 iOS 地址栏和工具栏。 */
+.wechat-modal {
+  position: relative;
+  pointer-events: auto;
+  width: 100%;
+  max-width: 400px;
+  max-height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 1.5rem;
   border-radius: var(--radius);
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  text-align: center;
 }
 
-.wechat-text { flex: 1 1 auto; min-width: 0; }
-
-.wechat-eyebrow {
-  display: block;
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-accent);
-  font-weight: 700;
-  margin-bottom: 0.4rem;
+.wechat-close {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.8rem;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--color-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
-.wechat-title {
+.wechat-modal .wechat-title {
   font-family: var(--font-serif);
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: 600;
   margin: 0 0 0.8rem;
+  padding-right: 1.5rem;   /* 让开右上角的 ✕ */
 }
 
 .wechat-list {
-  margin: 0 0 0.9rem;
+  margin: 0 0 1.1rem;
   padding: 0;
   list-style: none;
   display: grid;
   gap: 0.35rem;
+  text-align: left;
 }
 
 .wechat-list li {
   position: relative;
   padding-left: 1.1rem;
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   line-height: 1.5;
-  color: var(--color-text);
 }
 
 /* 自己画点,list-style 的圆点没法对齐到第一行的行高中线 */
@@ -63,37 +88,19 @@
   background: var(--color-accent);
 }
 
-.wechat-scan {
-  margin: 0;
-  font-size: 0.82rem;
-  color: var(--color-muted);
-}
-
 /* 图是微信导出的整张群名片(深色底、自带群名和有效期),不再额外套白框 */
-.wechat-qr { flex: 0 0 auto; line-height: 0; }
-
-.wechat-qr img {
+.wechat-img {
   display: block;
-  width: 215px;
+  width: 100%;
+  max-width: 300px;
   height: auto;
+  margin: 0 auto 0.9rem;
   border-radius: 12px;
 }
 
-@media (max-width: 700px) {
-  .wechat { padding: 0 1rem 3rem; }
-
-  .wechat-card {
-    flex-direction: column-reverse;   /* 手机上先看到码 */
-    align-items: stretch;
-    text-align: center;
-    gap: 1.2rem;
-    padding: 1.5rem 1.2rem;
-  }
-
-  .wechat-qr { align-self: center; }
-
-  /* 手机扫码用的是另一台手机,码太小对不上焦 */
-  .wechat-qr img { width: 240px; }
-
-  .wechat-list { text-align: left; max-width: 22rem; margin-inline: auto; }
+.wechat-scan {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--color-muted);
 }
