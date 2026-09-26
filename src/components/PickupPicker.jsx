@@ -12,8 +12,6 @@ export default function PickupPicker({ t, lang, onClose, dismissable = true, inl
   const { pointId, choose: chooseRun, runKey, now, ordersSoFar, minOrders } = usePickup()
   const zh = lang === 'zh'
 
-  const getCurrent = () => PICKUP_POINTS.find(p => p.id === pointId)
-
   // 已经选过取餐点的,按 Esc 等于「不换了」—— 和弹窗一个习惯。
   // 没选过就没得退:菜单还锁着,退回去是一片空白。
   useEffect(() => {
@@ -112,8 +110,8 @@ export default function PickupPicker({ t, lang, onClose, dismissable = true, inl
   if (inline) {
     return (
       <div className="pickup-choose">
-        {/* 返回放在最上面 —— 底下那个「不换了」要翻过三张卡才看得见,
-            客人点进来发现选错了,第一反应是找左上角。 */}
+        {/* 返回放在最上面 —— 客人点进来发现选错了,第一反应是找左上角。
+            页面底部原来还有一个「不换了,继续用 X」,和这个重复,已删。 */}
         {pointId && (
           <button type="button" className="pickup-back" onClick={onClose}>
             <span aria-hidden="true">←</span> {t.pickup.backToMenu}
@@ -123,12 +121,6 @@ export default function PickupPicker({ t, lang, onClose, dismissable = true, inl
         <h3 className="pickup-choose-title">{t.pickup.title}</h3>
         <p className="pickup-choose-sub">{t.pickup.subtitle}</p>
         {options}
-        {/* 从菜单点「更换」进来的,得能原样退回去 */}
-        {pointId && (
-          <button type="button" className="pickup-cancel" onClick={onClose}>
-            {t.pickup.keepCurrent(zh ? getCurrent()?.nameZh : getCurrent()?.nameEn)}
-          </button>
-        )}
         <p className="pickup-fineprint">{t.pickup.fineprint(MIN_ORDERS)}</p>
       </div>
     )
