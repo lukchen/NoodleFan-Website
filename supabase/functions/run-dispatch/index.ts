@@ -25,7 +25,7 @@ const supabase = createClient(
 )
 
 const MIN_ORDERS  = Number(Deno.env.get('MIN_ORDERS') ?? '5')
-const CUTOFF_HOUR = Number(Deno.env.get('CUTOFF_HOUR') ?? '15')   // 发车当天 15:00 截单
+const CUTOFF_HOUR = Number(Deno.env.get('CUTOFF_HOUR') ?? '12')   // 取餐当天 12:00 截单
 const TZ = 'America/New_York'
 
 function json(body: unknown, status = 200) {
