@@ -1,9 +1,10 @@
 import { createContext, useContext, useState, useEffect, useMemo } from 'react'
-import { getPoint, nextRun, MIN_ORDERS, DAILY_LIMIT } from '../pickup'
+import { getPoint, upcomingRuns, findRun, MIN_ORDERS, DAILY_LIMIT } from '../pickup'
 
 const PickupContext = createContext(null)
 
 const STORAGE_KEY = 'nf-pickup-point'
+const RUN_KEY = 'nf-pickup-run'
 
 // 取餐方式的全局状态。客人选定后记住,下次进站不用再选。
 //
@@ -13,6 +14,11 @@ const STORAGE_KEY = 'nf-pickup-point'
 export function PickupProvider({ children }) {
   const [pointId, setPointId] = useState(() => {
     try { return localStorage.getItem(STORAGE_KEY) || null } catch { return null }
+  })
+  // 客人订的是哪一天(YYYY-MM-DD)。定点配送每天都跑,日期和取餐点一样是这一单的前提:
+  // 它决定截单时刻、当天备料份数和跟谁凑单。
+  const [runKey, setRunKey] = useState(() => {
+    try { return localStorage.getItem(RUN_KEY) || null } catch { return null }
   })
   // 每分钟走一次,让倒计时动起来
   const [now, setNow] = useState(() => new Date())
@@ -28,6 +34,13 @@ export function PickupProvider({ children }) {
     } catch { /* 隐私模式下写不进去,不影响使用 */ }
   }, [pointId])
 
+  useEffect(() => {
+    try {
+      if (runKey) localStorage.setItem(RUN_KEY, runKey)
+      else localStorage.removeItem(RUN_KEY)
+    } catch { /* 隐私模式 */ }
+  }, [runKey])
+
   // 客人点「更换」时置 true,菜单区会换回选择界面。放在 context 里是因为
   // 触发点(购物车面板、抽屉)和响应点(MenuSection)隔得很远。
   const [changing, setChanging] = useState(false)
@@ -40,10 +53,19 @@ export function PickupProvider({ children }) {
   }
 
   const point = getPoint(pointId)
-  const run = useMemo(() => nextRun(point, now), [point, now])
+  // 开放的两天。隔天自然往后滑 —— 存在 localStorage 里的旧日期会被 findRun 兜回最近一班,
+  // 客人昨天选的「明天」今天不会变成一个已经发过车的日期。
+  const runs = useMemo(() => upcomingRuns(point, now), [point, now])
+  const run = useMemo(() => (point?.kind === 'dropoff' ? findRun(point, runKey, now) : null), [point, runKey, now])
+
+  function choose(id, key = null) {
+    setPointId(id)
+    setRunKey(key)
+  }
 
   const value = {
-    pointId, setPointId,
+    pointId, setPointId, choose,
+    runs, runKey: run?.key ?? null, setRunKey,
     changing, startChange, endChange: () => setChanging(false),
     point, run, now,
     clearPoint: () => setPointId(null),
