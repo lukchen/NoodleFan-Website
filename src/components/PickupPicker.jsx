@@ -3,13 +3,15 @@ import { PICKUP_POINTS, upcomingRuns, formatPickupAt, formatCutoffAt, formatRunD
 import { usePickup } from '../context/PickupContext'
 import '../pickup-sum.css'
 
-// 取餐方式三选一 —— 看菜单之前的第一个决定,因为它决定截单时间、备料份数和是否成团。
-// 定点配送卡上的进度条是转化引擎:「还差 N 单发车」促使客人去群里喊人凑单。
+// 取餐方式三选一 —— 看菜单之前的第一个决定,因为它决定截单时间和备料份数。
+//
+// 不显示凑单进度:「还差 N 单」会让客人担心自己这单到底做不做,反而不敢下单。
+// 未成团我们在群里通知取消,不必让每个人盯着计数器。
 //
 // 两种形态:inline(首页上中下三个大按钮,菜单位置直接铺开,不弹窗)和 modal(保留,
 // 目前没人用)。默认 inline —— 弹窗会挡住页面,客人第一眼看到的应该是选择本身。
 export default function PickupPicker({ t, lang, onClose, dismissable = true, inline = false }) {
-  const { pointId, choose: chooseRun, runKey, now, ordersSoFar, minOrders } = usePickup()
+  const { pointId, choose: chooseRun, runKey, now } = usePickup()
   const zh = lang === 'zh'
 
   // 已经选过取餐点的,按 Esc 等于「不换了」—— 和弹窗一个习惯。
@@ -57,10 +59,8 @@ export default function PickupPicker({ t, lang, onClose, dismissable = true, inl
             }
 
             // 定点配送每天都跑,开放明天和后天 —— 日期直接摊在卡上让客人挑,
-            // 因为每一天是独立的一班:各自截单、各自凑单、各自备料。
+            // 因为每一天是独立的一班:各自截单、各自备料。
             const runs = upcomingRuns(p, now)
-            const left = Math.max(0, minOrders - ordersSoFar)
-            const filled = Math.min(ordersSoFar, minOrders)
             return (
               <div key={p.id} className={`pickup-option pickup-option--multi${active ? ' pickup-option--active' : ''}`}>
                 <span className="pickup-option-head">
@@ -85,17 +85,6 @@ export default function PickupPicker({ t, lang, onClose, dismissable = true, inl
                         <span className="pw-item pw-item--cutoff">
                           <span className="pw-label">{t.pickup.cutoffRow}</span>
                           <span className="pw-value">{formatCutoffAt(r, lang)}</span>
-                        </span>
-                      </span>
-                      <span className="pickup-progress">
-                        <span className="pickup-dots" aria-hidden="true">
-                          {Array.from({ length: minOrders }, (_, i) => (
-                            <i key={i} className={i < filled ? 'on' : ''} />
-                          ))}
-                        </span>
-                        <span className="pickup-progress-text">
-                          {left > 0 && <i className="live-dot" aria-hidden="true" />}
-                          {left === 0 ? t.pickup.ready : t.pickup.needMore(ordersSoFar, minOrders, left)}
                         </span>
                       </span>
                     </button>
