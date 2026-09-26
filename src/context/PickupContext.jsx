@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, useEffect, useMemo } from 'react'
-import { getPoint, upcomingRuns, findRun, MIN_ORDERS, DAILY_LIMIT } from '../pickup'
+import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react'
+import { getPoint, upcomingRuns, findRun, dateKey, MIN_ORDERS, DAILY_LIMIT } from '../pickup'
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../config'
 
 const PickupContext = createContext(null)
 
@@ -8,9 +9,9 @@ const RUN_KEY = 'nf-pickup-run'
 
 // 取餐方式的全局状态。客人选定后记住,下次进站不用再选。
 //
-// TODO(后端): ordersSoFar / soldByDish 现在恒为 0 —— 要显示真实的「已 3/5 单」和
-// 「仅剩 4 份」,需要一个按取餐点+日期聚合当日订单的 Edge Function。接上之前
-// 进度条显示 0/5,余量标签不显示(15 份都还在),都是真实值,不会误导客人。
+// 已售份数来自 run-stats(按取餐点 + 发车日聚合)。拿不到的时候一律当「还没卖」
+// 处理 —— 备料上限的真正防线在 create-checkout 里,那边下单时会再查一次并拒单。
+// 前端这份只负责别让客人白填一遍表。
 export function PickupProvider({ children }) {
   const [pointId, setPointId] = useState(() => {
     try { return localStorage.getItem(STORAGE_KEY) || null } catch { return null }
@@ -52,6 +53,11 @@ export function PickupProvider({ children }) {
     })
   }
 
+  // ── 这一班已经卖掉多少 ──────────────────────────────────────────────
+  // 每道菜每班只备 DAILY_LIMIT 份。不查的话第 16 个人照样能下单付钱,
+  // 到取餐那天才发现没货,只能退款道歉。
+  const [sold, setSold] = useState({})
+
   const point = getPoint(pointId)
   // 开放的两天。隔天自然往后滑 —— 存在 localStorage 里的旧日期会被 findRun 兜回最近一班,
   // 客人昨天选的「明天」今天不会变成一个已经发过车的日期。
@@ -63,17 +69,51 @@ export function PickupProvider({ children }) {
     setRunKey(key)
   }
 
+  // 换取餐点/换日期立刻重查;之后每分钟刷一次,让「仅剩 N 份」跟得上别人下单。
+  const runDate = run ? dateKey(run.date) : null
+  useEffect(() => {
+    if (point?.kind !== 'dropoff' || !runDate) { setSold({}); return }
+    let alive = true
+    async function load() {
+      try {
+        const res = await fetch(`${SUPABASE_URL}/functions/v1/run-stats`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({ pointId: point.id, runDate }),
+        })
+        if (!res.ok) throw new Error('run-stats failed')
+        const data = await res.json()
+        if (alive) setSold(data.dishes ?? {})
+      } catch {
+        // 查不到就当还没卖 —— 宁可让客人下到单被服务端拦下,也不要把在售的菜
+        // 误标成「已订满」把生意推走。
+        if (alive) setSold({})
+      }
+    }
+    load()
+    const id = setInterval(load, 60000)
+    return () => { alive = false; clearInterval(id) }
+  }, [point?.kind, point?.id, runDate])
+
+  // 这道菜这一班还能订几份。到店自取现做现卖,不限量。
+  const remainingFor = useCallback((dishId) => {
+    if (point?.kind !== 'dropoff') return DAILY_LIMIT
+    return Math.max(0, DAILY_LIMIT - (sold[dishId] ?? 0))
+  }, [point?.kind, sold])
+
   const value = {
     pointId, setPointId, choose,
     runs, runKey: run?.key ?? null, setRunKey,
     changing, startChange, endChange: () => setChanging(false),
     point, run, now,
     clearPoint: () => setPointId(null),
-    ordersSoFar: 0,
     minOrders: MIN_ORDERS,
     dailyLimit: DAILY_LIMIT,
-    soldByDish: {},
-    remainingFor: () => DAILY_LIMIT,
+    soldByDish: sold,
+    remainingFor,
   }
 
   return <PickupContext.Provider value={value}>{children}</PickupContext.Provider>
