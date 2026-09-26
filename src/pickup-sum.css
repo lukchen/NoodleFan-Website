@@ -76,14 +76,12 @@
 
 
 /* ── 菜单页顶部:取餐点状态条 ───────────────────────────────────────────────
-   条本身和分类切换一起吸顶。sticky 的 top 值跟着导航栏高度走 —— 两个数字对不上
-   就会露出一条缝或者盖住分类名,所以写在一处。 */
-.menu-sticky {
-  position: sticky;
-  top: 64px;                 /* 桌面导航栏高度 */
-  z-index: 30;
-  background: var(--color-bg);
-}
+   这一条不吸顶,跟着页面滚走。
+   吸顶过的版本会一直压在菜品卡上:桌面 45px、手机 99px,正好盖住卡片标题 ——
+   客人看到的是「一段描述 + 一个价格」,菜名不见了,像坏掉一样。
+   而且取餐点本来就有别处在提醒:手机底部的结算条、桌面右侧的「我的订单」都写着。
+   真正值得占住屏幕顶部的是分类切换(它是导航),那个仍然 sticky,见 App.css。 */
+/* wrapper 已经去掉(见 MenuSection):分类条得是 section 的直接子元素才粘得住。 */
 
 .pickup-strip {
   display: flex;
@@ -128,22 +126,7 @@
 .pickup-strip-change:active { transform: translateY(1px); }
 
 @media (max-width: 900px) {
-  /* 手机:整块吸在导航栏(56px)下面,分类条交出自己的 sticky 和负边距 */
-  .menu-sticky {
-    top: 56px;
-    margin: -0.5rem -1rem 1rem;
-    padding: 0.55rem 1rem 0;
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .cat-tabs {
-    position: static !important;
-    top: auto !important;
-    margin: 0 !important;
-    padding: 0 0 0.55rem !important;
-    border-bottom: none !important;
-  }
-
+  /* 分类条拿回自己的 sticky(App.css 里 top:56px),取餐条正常滚走 */
   .pickup-strip { font-size: 0.8rem; padding: 0.4rem 0.6rem; margin-bottom: 0.5rem; }
 }
 

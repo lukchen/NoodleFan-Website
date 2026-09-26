@@ -99,7 +99,8 @@ export default function MenuSection({ t, lang, choosingPickup, onPickupChosen })
         const visible = entries.filter(e => e.isIntersecting)
         if (visible.length > 0) setActiveCat(visible[0].target.dataset.cat)
       },
-      { rootMargin: '-160px 0px -70% 0px', threshold: 0 },   // 导航栏 + 取餐条 + 分类条
+      // 导航栏 + 分类条(取餐条不再吸顶):手机 56+39,桌面 64+0,留点余量取 110
+      { rootMargin: '-110px 0px -70% 0px', threshold: 0 },
     )
     Object.values(sectionRefs.current).forEach(el => el && obs.observe(el))
     return () => obs.disconnect()
@@ -108,7 +109,7 @@ export default function MenuSection({ t, lang, choosingPickup, onPickupChosen })
   function jumpTo(id) {
     const el = sectionRefs.current[id]
     if (!el) return
-    const y = el.getBoundingClientRect().top + window.scrollY - 150   // 同上,让开整个吸顶区
+    const y = el.getBoundingClientRect().top + window.scrollY - 110   // 同上,让开吸顶区
     window.scrollTo({ top: y, behavior: 'smooth' })
   }
 
@@ -127,24 +128,24 @@ export default function MenuSection({ t, lang, choosingPickup, onPickupChosen })
 
   return (
     <section id="menu" className="menu-section">
-      {/* 取餐点状态条 + 分类切换一起吸顶 —— 两个各自 sticky 会互相压在一起,
-          包一层让它们作为一个整体停在导航栏下面。 */}
-      <div className="menu-sticky">
-        <PickupStrip t={t} lang={lang} />
+      {/* 取餐点状态条:跟着页面滚走。吸顶过的版本会一直压在菜品卡上,盖掉菜名 ——
+          客人看到的是「一段描述 + 一个价格」,像坏掉一样。取餐点别处也在提醒
+          (手机底部结算条、桌面右侧「我的订单」),不值得长期占住屏幕顶部。 */}
+      <PickupStrip t={t} lang={lang} />
 
-        {/* Mobile: horizontally scrollable sticky chips */}
-        <nav className="cat-tabs" aria-label={t.menu.title}>
-          {sections.map(c => (
-            <button
-              key={c.id}
-              type="button"
-              className={`cat-tab${activeCat === c.id ? ' cat-tab--active' : ''}`}
-              onClick={() => jumpTo(c.id)}>
-              {lang === 'zh' ? c.nameZh : c.nameEn}
-            </button>
-          ))}
-        </nav>
-      </div>
+      {/* 分类切换是导航,值得吸顶(手机端;桌面用左侧 rail)。
+          它必须是 section 的直接子元素 —— 包在一个会滚走的 wrapper 里就粘不住了。 */}
+      <nav className="cat-tabs" aria-label={t.menu.title}>
+        {sections.map(c => (
+          <button
+            key={c.id}
+            type="button"
+            className={`cat-tab${activeCat === c.id ? ' cat-tab--active' : ''}`}
+            onClick={() => jumpTo(c.id)}>
+            {lang === 'zh' ? c.nameZh : c.nameEn}
+          </button>
+        ))}
+      </nav>
 
       <div className="menu-layout">
         {/* Desktop: sticky left rail */}

@@ -68,7 +68,7 @@ function layout(title: string, bodyHtml: string): string {
     ${bodyHtml}
   </td></tr>
   <tr><td style="padding:16px 24px;background:#f4ece0;color:#857a6b;font-size:12px;line-height:1.6;">
-    有问题直接回复这封邮件。<br>
+    如有疑问，直接回复本邮件即可。<br>
     Reply to this email if anything looks wrong.
   </td></tr>
 </table>
@@ -122,19 +122,20 @@ export function tplConfirmed(o: OrderForEmail) {
     ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"
          style="margin:16px 0;background:#fdf6ec;border:1px solid #d9b26a;border-radius:10px;">
          <tr><td style="padding:14px 16px;font-size:14px;line-height:1.6;">
-           <strong>现在还没扣款。</strong>你的卡上是一笔冻结,取餐当天中午 12 点截单:
-           满 5 单发车才真正扣款;不满则自动解除冻结,<strong>不收取任何费用</strong>。
-           两种情况我们都会再发一封邮件告诉你。
+           <strong>本次下单尚未实际扣款。</strong>该金额为您银行卡上的预授权冻结。
+           取餐当天中午 12:00 截单后：本班次成团则正式扣款；未能成团则冻结自动解除，
+           <strong>不收取任何费用</strong>。两种结果我们都会另行邮件通知您。
            <div style="color:#857a6b;font-size:13px;margin-top:8px;">
-             Your card is on hold, not charged. We charge only if the run fills by
-             noon on pickup day — otherwise the hold is released and you pay nothing.
+             This is an authorization hold, not a charge. After orders close at noon on
+             your pickup day, we charge only if the run is confirmed; otherwise the hold
+             is released automatically and you are not charged. We'll email you either way.
            </div>
          </td></tr></table>`
     : ''
   return {
     subject: `订单已确认 ${o.pickup_code ?? ''} · ${prettyWhen(o.run_date ?? o.pickup_date, o.pickup_time)}`,
     html: layout('订单已确认 Order confirmed', `
-      <p style="margin:0 0 4px;">${o.customer_name ?? ''}，感谢下单！</p>
+      <p style="margin:0 0 4px;">${o.customer_name ?? ''}，感谢您的订购。</p>
       ${pickupBlock(o)}
       ${holdNote}
       ${itemsTable(o)}
@@ -144,40 +145,40 @@ export function tplConfirmed(o: OrderForEmail) {
 
 export function tplCaptured(o: OrderForEmail) {
   return {
-    subject: `已成团，今天见 · 取餐码 ${o.pickup_code ?? ''}`,
+    subject: `本班次已成团 · 取餐码 ${o.pickup_code ?? ''}`,
     html: layout('已成团，今天发车 We roll today', `
-      <p style="margin:0 0 4px;">${o.customer_name ?? ''}，这一班凑够单了。</p>
-      <p style="margin:0 0 4px;">刚刚从你的卡上扣款 <strong>${money(o.total)}</strong>
-        （此前是冻结,现在正式收取）。</p>
+      <p style="margin:0 0 4px;">${o.customer_name ?? ''}，本班次已成团。</p>
+      <p style="margin:0 0 4px;">已从您的银行卡正式扣款 <strong>${money(o.total)}</strong>
+        （此前为预授权冻结，现已完成收取）。</p>
       <p style="margin:0 0 4px;color:#857a6b;font-size:13px;">
         The run filled — we've now charged the ${money(o.total)} that was on hold.</p>
       ${pickupBlock(o)}
-      <p style="margin:12px 0 0;font-size:14px;">到了报取餐码就行,不用出示这封邮件。</p>
+      <p style="margin:12px 0 0;font-size:14px;">到取餐点报取餐码即可，无需出示本邮件。</p>
     `),
   }
 }
 
 export function tplCancelled(o: OrderForEmail) {
   return {
-    subject: `今天未成团,订单已取消 · 未扣款`,
-    html: layout('今天未成团,订单已取消', `
-      <p style="margin:0 0 10px;">${o.customer_name ?? ''}，抱歉 ——
+    subject: `本班次未成团，订单已取消 · 未扣款`,
+    html: layout('本班次未成团，订单已取消', `
+      <p style="margin:0 0 10px;">${o.customer_name ?? ''}，很抱歉 ——
         ${o.pickup_point_name ?? ''} ${prettyWhen(o.run_date ?? o.pickup_date)}
-        这一班没凑够起送单数,今天不发车。</p>
+        本班次未能成团，今天不发车。</p>
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
         style="margin:4px 0 16px;background:#fff;border:1px solid #e8dcc8;border-radius:10px;">
         <tr><td style="padding:16px;font-size:15px;line-height:1.6;">
-          <strong>你没有被扣任何费用。</strong><br>
-          之前卡上那笔 ${money(o.total)} 的冻结已经解除 —— 银行那边通常 1–3 个工作日
-          消失,具体看发卡行。
+          <strong>您未被收取任何费用。</strong><br>
+          卡上那笔 ${money(o.total)} 的预授权冻结已解除，通常 1–3 个工作日内从账单上消失，
+          具体以发卡行为准。
           <div style="color:#857a6b;font-size:13px;margin-top:8px;">
             You were not charged. The ${money(o.total)} hold has been released and will
             drop off your statement within a few business days.
           </div>
         </td></tr></table>
       <p style="margin:0;font-size:14px;">
-        <strong>别白跑一趟</strong> —— 今天这一班不会有人在取餐点。
-        欢迎订下一班:<a href="https://noodlefanboston.com" style="color:#7a1f1f;">noodlefanboston.com</a>
+        <strong>今天请勿前往取餐点</strong> —— 本班次不会有人在现场。
+        欢迎预订下一班次：<a href="https://noodlefanboston.com" style="color:#7a1f1f;">noodlefanboston.com</a>
       </p>
     `),
   }
