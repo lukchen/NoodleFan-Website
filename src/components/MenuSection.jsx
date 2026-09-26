@@ -5,6 +5,7 @@ import { usePickup } from '../context/PickupContext'
 import OptionsModal from './OptionsModal'
 import CartPanel from './CartPanel'
 import PickupPicker from './PickupPicker'
+import PickupStrip from './PickupStrip'
 import '../menu-spicy.css'
 import { ORDERING_ENABLED } from '../config'
 
@@ -98,7 +99,7 @@ export default function MenuSection({ t, lang, choosingPickup, onPickupChosen })
         const visible = entries.filter(e => e.isIntersecting)
         if (visible.length > 0) setActiveCat(visible[0].target.dataset.cat)
       },
-      { rootMargin: '-120px 0px -70% 0px', threshold: 0 },
+      { rootMargin: '-160px 0px -70% 0px', threshold: 0 },   // 导航栏 + 取餐条 + 分类条
     )
     Object.values(sectionRefs.current).forEach(el => el && obs.observe(el))
     return () => obs.disconnect()
@@ -107,7 +108,7 @@ export default function MenuSection({ t, lang, choosingPickup, onPickupChosen })
   function jumpTo(id) {
     const el = sectionRefs.current[id]
     if (!el) return
-    const y = el.getBoundingClientRect().top + window.scrollY - 112
+    const y = el.getBoundingClientRect().top + window.scrollY - 150   // 同上,让开整个吸顶区
     window.scrollTo({ top: y, behavior: 'smooth' })
   }
 
@@ -126,18 +127,24 @@ export default function MenuSection({ t, lang, choosingPickup, onPickupChosen })
 
   return (
     <section id="menu" className="menu-section">
-      {/* Mobile: horizontally scrollable sticky chips */}
-      <nav className="cat-tabs" aria-label={t.menu.title}>
-        {sections.map(c => (
-          <button
-            key={c.id}
-            type="button"
-            className={`cat-tab${activeCat === c.id ? ' cat-tab--active' : ''}`}
-            onClick={() => jumpTo(c.id)}>
-            {lang === 'zh' ? c.nameZh : c.nameEn}
-          </button>
-        ))}
-      </nav>
+      {/* 取餐点状态条 + 分类切换一起吸顶 —— 两个各自 sticky 会互相压在一起,
+          包一层让它们作为一个整体停在导航栏下面。 */}
+      <div className="menu-sticky">
+        <PickupStrip t={t} lang={lang} />
+
+        {/* Mobile: horizontally scrollable sticky chips */}
+        <nav className="cat-tabs" aria-label={t.menu.title}>
+          {sections.map(c => (
+            <button
+              key={c.id}
+              type="button"
+              className={`cat-tab${activeCat === c.id ? ' cat-tab--active' : ''}`}
+              onClick={() => jumpTo(c.id)}>
+              {lang === 'zh' ? c.nameZh : c.nameEn}
+            </button>
+          ))}
+        </nav>
+      </div>
 
       <div className="menu-layout">
         {/* Desktop: sticky left rail */}
