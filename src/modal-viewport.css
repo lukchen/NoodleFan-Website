@@ -1,38 +1,41 @@
-/* ── 弹窗高度按「地址栏展开时」的可见高度算 ──────────────────────────────
-   iOS Safari 的地址栏会随滚动收起/展开,页面可见高度跟着变:
-     lvh = 地址栏收起时(最高)   svh = 地址栏展开时(最矮)   dvh = 当前这一刻
-   100vh 等于 lvh,所以用 90vh 的弹窗在地址栏展开的那一刻就超出屏幕,上下各被
-   切一块 —— 标题被地址栏压住,底部的「加入购物车」躲进工具栏。选项少的菜正好
-   塞得下所以没事;脊骨泡粉、香辣牛肉、台牛、兰牛这几道有 3 个套餐 + 辣度 +
-   忌口 + 7 个加料,必然超。
+/* ── 弹窗贴着「真正看得见的那块屏幕」 ──────────────────────────────────────
+   iOS Safari 的 position:fixed 是按 layout viewport 排版的,而 layout viewport
+   的顶端藏在地址栏底下、底端伸到工具栏底下。所以 inset:0 的弹窗层,上下各有一
+   截压根不在屏幕上 —— 顶对齐的弹窗标题就被地址栏吃掉,底下的「加入购物车」躲
+   进工具栏。换 100svh / 100dvh 只改高度,改不了「起点就在屏幕外」这件事,所以
+   前几版都没治本。
 
-   两条一起才成立:
-   1) 限高的是弹窗本身,不是那层半透明背景。背景必须始终铺满整屏 ——
-      给背景限高的话,地址栏收起时它只盖住上面一截,底下的菜单会露出来。
-   2) 弹窗顶对齐而不是垂直居中。iOS 的 fixed 元素是按 lvh 排版的,居中意味着
-      按 lvh 的中线走;地址栏一展开,可见区域从下方缩水,弹窗的下半截就被推出
-      屏幕。顶对齐后它永远从屏幕顶上一点点的位置开始长,两种状态都完整。
-
-   svh 而不是 dvh:dvh 随地址栏动画在变,iOS 更新它有延迟,展开那一瞬间还是会
-   闪一下。svh 取最矮的那个值,两种状态下都装得下。 */
+   现在分成两层:
+     .modal-overlay  —— 只负责压暗,保持 inset:0 铺满,任何状态下都不会露底。
+     .modal-frame    —— 用 visualViewport 量出来的可见区(见 useVisualViewport),
+                        弹窗在这一层里顶对齐,天然躲开地址栏和工具栏。
+   不支持 visualViewport 的浏览器用 var() 的兜底值,等同于原来的全屏行为。 */
 .modal-overlay {
-  /* 背景保持 inset:0 铺满,只改对齐方式 */
   align-items: flex-start;
   overflow: hidden;
+  padding: 0;                   /* 内边距移交给 .modal-frame */
 }
 
-.modal {
-  /* 顶对齐:留出 overlay 自带的 1rem 内边距即可 */
-  max-height: calc(100% - 2rem);
+.modal-frame {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: var(--vv-top, 0px);
+  height: var(--vv-h, 100%);
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;      /* 顶对齐:居中会把长弹窗的下半截顶出可见区 */
+  justify-content: center;
+  padding: 1rem;
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  pointer-events: none;         /* 点空白处仍然由 .modal-overlay 接住关闭 */
+}
+
+.modal-frame > .modal {
+  pointer-events: auto;
+  max-height: 100%;
   -webkit-overflow-scrolling: touch;   /* 老版本 iOS 的惯性滚动 */
   overscroll-behavior: contain;        /* 滑到底不要把底下的页面带着一起动 */
-}
-
-@supports (height: 100svh) {
-  /* 上下各留 1rem,底部再避开 iPhone 的手势横条 */
-  .modal {
-    max-height: calc(100svh - 2rem - env(safe-area-inset-bottom));
-  }
 }
 
 
