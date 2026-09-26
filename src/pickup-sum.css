@@ -5,3 +5,71 @@
   line-height: 1.45;
   color: var(--color-muted);
 }
+
+
+/* ── 日期选择 ─────────────────────────────────────────────────────────────
+   定点配送每天都跑,当天开放明天和后天。日期不是附属信息:每一天是独立的一班,
+   各自截单、各自凑单,所以在选择页和购物车里都要能直接看见、直接改。 */
+/* 整卡不再是按钮,卡角那个「→」会误导客人以为点卡片就能选 */
+.pickup-option--multi::after { display: none; }
+
+.pickup-option--multi {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  cursor: default;
+}
+
+.pickup-days {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.pickup-day {
+  flex: 1 1 180px;
+  font-family: inherit;
+  text-align: left;
+  padding: 0.6rem 0.7rem;
+  border-radius: 10px;
+  border: 1.5px solid var(--color-border);
+  background: #fff;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.pickup-day:hover { border-color: var(--color-gold); }
+
+.pickup-day--active {
+  border-color: var(--color-accent);
+  background: #fdf6ec;
+}
+
+.pickup-day-date { font-weight: 700; font-size: 0.95rem; }
+
+.pickup-sum-days {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.pickup-sum-day {
+  flex: 1;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.35rem 0.5rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--color-border);
+  background: #fff;
+  cursor: pointer;
+}
+
+.pickup-sum-day--active {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: #fff;
+}
