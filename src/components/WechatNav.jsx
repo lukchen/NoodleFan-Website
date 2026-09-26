@@ -18,6 +18,11 @@ export default function WechatNav({ t }) {
   return (
     <>
       <button className="wechat-nav-btn" onClick={() => setOpen(true)}>
+        {/* 带个小码缩略图 —— 光一个「微信群」文字按钮客人不知道点开是什么,
+            看见是二维码才会想到「哦,可以扫」。见 wechat.css 里的裁切说明。 */}
+        <span className="wechat-nav-thumb" aria-hidden="true">
+          <img src={`${import.meta.env.BASE_URL}${QR_SRC}`} alt="" />
+        </span>
         {t.wechat.navBtn}
       </button>
       {open && <WechatModal t={t} onClose={() => setOpen(false)} />}
@@ -25,7 +30,8 @@ export default function WechatNav({ t }) {
   )
 }
 
-function WechatModal({ t, onClose }) {
+// 结账页也用这个弹窗 —— 同一个群、同一套说明,没必要两处各写一遍。
+export function WechatModal({ t, onClose }) {
   useScrollLock()
   useVisualViewport()   // iOS 地址栏收放时把弹窗对回可见区
 
