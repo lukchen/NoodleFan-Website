@@ -1,13 +1,13 @@
-import { formatPickupAt, formatCutoffAt, timeToCutoff } from '../pickup'
+import { formatPickupAt, formatCutoffAt, timeToCutoff, dayLabel } from '../pickup'
 import { usePickup } from '../context/PickupContext'
 import { useCart } from '../context/CartContext'
 import '../pickup-sum.css'
 
 // 取餐方式摘要 —— 放在「我的订单」最上面。
-// 取餐点是这一单的前提(决定截单时间、备料份数、能不能成团),所以它属于订单本身,
+// 取餐点和日期是这一单的前提(决定截单时间、备料份数、能不能成团),所以它属于订单本身,
 // 而不是一条飘在页面顶部的横幅。客人看购物车时一定会看到它。
 export default function PickupSummary({ t, lang }) {
-  const { point, run, now, ordersSoFar, minOrders, startChange } = usePickup()
+  const { point, run, runs, runKey, setRunKey, now, ordersSoFar, minOrders, startChange } = usePickup()
   const { setCartOpen } = useCart()
 
   // 从购物车抽屉里点「更换」时,抽屉得先收起来 —— 否则页面在底下换成了
@@ -45,6 +45,19 @@ export default function PickupSummary({ t, lang }) {
         </div>
       ) : run ? (
         <>
+          {/* 订的是哪天 —— 每天一班,改天等于换一班车,所以放在最显眼的位置 */}
+          <div className="pickup-sum-days">
+            {runs.map(r => (
+              <button
+                key={r.key}
+                type="button"
+                className={`pickup-sum-day${runKey === r.key ? ' pickup-sum-day--active' : ''}`}
+                onClick={() => setRunKey(r.key)}>
+                {dayLabel(r, lang)} {r.date.getMonth() + 1}/{r.date.getDate()}
+              </button>
+            ))}
+          </div>
+
           <div className="pickup-sum-rows">
             <span className="pw-item">
               <span className="pw-label">{t.pickup.pickupAtRow}</span>
