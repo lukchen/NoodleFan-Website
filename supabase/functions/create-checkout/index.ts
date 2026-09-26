@@ -40,6 +40,13 @@ Deno.serve(async (req) => {
       throw new Error('invalid items')
     }
 
+    // 邮箱是订单状态的唯一送达渠道(未成团取消、备餐完成都要通知),所以必填。
+    // 前端已经用 type=email 拦过一道,这里再拦一次 —— 前端校验挡不住直接打接口的人。
+    const email = String(customer?.email ?? '').trim().toLowerCase()
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || email.length > 254) {
+      throw new Error('invalid email')
+    }
+
     // Price each line from the canonical menu + selected options (all money in cents).
     const enriched = items.map((it: { id: number; qty: number; selections?: Record<string, unknown> }) => {
       const dish = menu.find((d: { id: number }) => d.id === it.id)
@@ -65,6 +72,7 @@ Deno.serve(async (req) => {
       .insert({
         customer_name: customer.name,
         customer_phone: customer.phone,
+        customer_email: email,
         pickup_date: pickupDate,
         pickup_time: pickupTime,
         // 取餐点跟单走:少了它,Allston 的团购单和到店自取单在后台长得一模一样。
@@ -92,6 +100,8 @@ Deno.serve(async (req) => {
     // to look up this order (pickup code + live status).
     params.set('success_url', `${SITE_URL}?success=true&session_id={CHECKOUT_SESSION_ID}`)
     params.set('cancel_url', SITE_URL)
+    // 预填到 Stripe 结账页,客人不用再打一遍;Stripe 的收据也会发到这个地址。
+    params.set('customer_email', email)
 
     enriched.forEach((e, i) => {
       const desc = e.optionsEn.length ? `${e.nameEn} · ${e.optionsEn.join(', ')}` : e.nameEn
