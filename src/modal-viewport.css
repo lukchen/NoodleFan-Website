@@ -1,0 +1,51 @@
+/* ── 弹窗高度按「可见视口」算,不按 vh ────────────────────────────────────
+   iOS Safari 的 100vh 是地址栏收起后的高度,比实际看得见的区域大一截。
+   用 90vh 的弹窗在手机上会上下各被切掉一块:标题被地址栏压住,底部的
+   「加入购物车」躲在工具栏下面 —— 选项一多(脊骨泡粉、香辣牛肉、台牛、兰牛
+   这几道有 3 个套餐 + 辣度 + 6 个忌口 + 7 个加料)就必然够不着。
+   dvh 是随工具栏伸缩变化的动态视口高度,正好是看得见的那块。 */
+.modal-overlay {
+  height: 100%;
+  overflow: hidden;
+}
+
+.modal {
+  /* 留出 overlay 的 1rem 内边距,上下各一 */
+  max-height: calc(100% - 2rem);
+  -webkit-overflow-scrolling: touch;   /* 老版本 iOS 的惯性滚动 */
+  overscroll-behavior: contain;        /* 滑到底不要把底下的页面带着一起动 */
+}
+
+@supports (height: 100dvh) {
+  .modal-overlay { height: 100dvh; }
+}
+
+
+/* ── 「加入购物车」吸在弹窗底部 ────────────────────────────────────────────
+   选项一多,这个按钮被推到滚动区最底下,客人看不见就以为点不了 —— 价格也在
+   这个按钮上,滑不到底连「选完多少钱」都不知道。吸底后它始终在手指够得到的
+   地方,金额随选项实时变。
+   上面那道渐变让内容从按钮底下滑过时淡出,而不是被一条硬边切断。 */
+.options-add-bar {
+  position: sticky;
+  bottom: -1.5rem;              /* 抵消 .modal 的 padding,贴住底边 */
+  z-index: 2;
+  margin: 0 -1.5rem -1.5rem;    /* 撑满弹窗宽度 */
+  padding: 1.25rem 1.5rem 1.5rem;
+  background: linear-gradient(
+    to bottom,
+    rgba(253, 248, 240, 0) 0,
+    var(--color-surface) 1.1rem,
+    var(--color-surface) 100%
+  );
+}
+
+.options-add-bar .options-add-btn { margin-top: 0; }
+
+@media (max-width: 600px) {
+  .options-add-bar {
+    bottom: -1.2rem;
+    margin: 0 -1.2rem -1.2rem;
+    padding: 1.1rem 1.2rem 1.2rem;
+  }
+}
