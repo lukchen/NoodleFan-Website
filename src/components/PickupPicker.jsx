@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { PICKUP_POINTS, upcomingRuns, formatPickupAt, formatCutoffAt, formatRunDate, MIN_ORDERS } from '../pickup'
 import { usePickup } from '../context/PickupContext'
 import '../pickup-sum.css'
@@ -12,6 +13,15 @@ export default function PickupPicker({ t, lang, onClose, dismissable = true, inl
   const zh = lang === 'zh'
 
   const getCurrent = () => PICKUP_POINTS.find(p => p.id === pointId)
+
+  // 已经选过取餐点的,按 Esc 等于「不换了」—— 和弹窗一个习惯。
+  // 没选过就没得退:菜单还锁着,退回去是一片空白。
+  useEffect(() => {
+    if (!pointId || !onClose) return
+    function onKey(e) { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [pointId, onClose])
 
   function choose(id, key = null) {
     chooseRun(id, key)
@@ -102,6 +112,13 @@ export default function PickupPicker({ t, lang, onClose, dismissable = true, inl
   if (inline) {
     return (
       <div className="pickup-choose">
+        {/* 返回放在最上面 —— 底下那个「不换了」要翻过三张卡才看得见,
+            客人点进来发现选错了,第一反应是找左上角。 */}
+        {pointId && (
+          <button type="button" className="pickup-back" onClick={onClose}>
+            <span aria-hidden="true">←</span> {t.pickup.backToMenu}
+          </button>
+        )}
         <span className="pickup-choose-step">{t.pickup.step1}</span>
         <h3 className="pickup-choose-title">{t.pickup.title}</h3>
         <p className="pickup-choose-sub">{t.pickup.subtitle}</p>
