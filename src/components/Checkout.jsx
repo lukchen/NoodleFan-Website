@@ -3,6 +3,8 @@ import useScrollLock from '../useScrollLock'
 import { usePickup } from '../context/PickupContext'
 import { formatPickupAt, storeIsOpen, STORE_HOURS_TEXT, MIN_ORDERS } from '../pickup'
 import { useCart } from '../context/CartContext'
+import { QR_SRC, qrValid } from '../wechat-qr'
+import { WechatModal } from './WechatNav'
 import { SUPABASE_URL, SUPABASE_ANON_KEY, CHECKOUT_ENABLED } from '../config'
 
 const TAX_RATE = 0.07 // MA 6.25% + Boston 本地附加 0.75%（与 create-checkout 保持一致）
@@ -60,7 +62,7 @@ export default function Checkout({ t, onClose }) {
     })
   }
 
-  const [form, setForm] = useState({ name: '', phone: '', date: today, time: '', note: '' })
+  const [form, setForm] = useState({ name: '', phone: '', email: '', date: today, time: '', note: '' })
 
   // 今天已经没有可选时段(太晚了)就自动跳到明天,免得客人对着空列表发愣。
   useScrollLock()
@@ -81,10 +83,11 @@ export default function Checkout({ t, onClose }) {
       time: `${String(fixedRun.pickupAt.getHours()).padStart(2, '0')}:00`,
     }))
   }, [fixedRun])
+  const [wechatOpen, setWechatOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
 
-  const isDirty = form.name || form.phone || (form.date && form.date !== today) || form.time || form.note
+  const isDirty = form.name || form.phone || form.email || (form.date && form.date !== today) || form.time || form.note
 
   useEffect(() => {
     function onKey(e) { if (e.key === 'Escape' && !isDirty) onClose() }
@@ -117,7 +120,7 @@ export default function Checkout({ t, onClose }) {
           // Price/subtotal/tax/total are computed server-side from the canonical menu —
           // only the dish id, qty, and chosen options are sent.
           items: items.map(i => ({ id: i.id, qty: i.qty, selections: i.selections })),
-          customer: { name: form.name, phone: form.phone },
+          customer: { name: form.name, phone: form.phone, email: form.email },
           // 取餐点必须跟单走:少了它,Allston 的团购单和到店自取单在后台长得一模一样。
           pickupPoint: point
             ? { id: point.id, kind: point.kind, nameZh: point.nameZh, nameEn: point.nameEn }
@@ -182,6 +185,36 @@ export default function Checkout({ t, onClose }) {
             {t.checkout.phone}
             <input name="phone" type="tel" value={form.phone} onChange={handleChange} required placeholder={t.checkout.phonePlaceholder} />
           </label>
+          <label>
+            {t.checkout.email}
+            <input name="email" type="email" value={form.email} onChange={handleChange} required placeholder={t.checkout.emailPlaceholder} />
+            <span className="checkout-field-hint">{t.checkout.emailNote}</span>
+          </label>
+
+          {/* 邮件是保底,群是更快的那条路 —— 紧挨着邮箱放,说的是同一件事:
+              「我们怎么通知你」。不在群里的客人照样能下单,所以这里只是邀请。 */}
+          {qrValid() && (
+            <div className="checkout-wechat">
+              {/* 这里的码只有 88px,直接扫勉强 —— 点一下开大图才是正经的扫码路径 */}
+              <button
+                type="button"
+                className="checkout-wechat-thumb"
+                onClick={() => setWechatOpen(true)}
+                aria-label={t.checkout.wechatTitle}>
+                <img
+                  src={`${import.meta.env.BASE_URL}${QR_SRC}`}
+                  alt={t.wechat.alt}
+                  width="450"
+                  height="708"
+                  loading="lazy"
+                />
+              </button>
+              <div className="checkout-wechat-text">
+                <strong>{t.checkout.wechatTitle}</strong>
+                <p>{t.checkout.wechatBody}</p>
+              </div>
+            </div>
+          )}
 
 {fixedRun ? (
             <div className="checkout-fixed-run">
@@ -262,6 +295,7 @@ export default function Checkout({ t, onClose }) {
           </button>
         </form>
       </div>
+      {wechatOpen && <WechatModal t={t} onClose={() => setWechatOpen(false)} />}
     </div>
   )
 }
