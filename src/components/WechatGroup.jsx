@@ -22,7 +22,13 @@ export default function WechatGroup({ t }) {
           <p className="wechat-scan">{t.wechat.scan}</p>
         </div>
         <div className="wechat-qr">
-          <img src={QR_SRC} alt={t.wechat.alt} width="400" height="400" loading="lazy" />
+          <img
+            src={`${import.meta.env.BASE_URL}${QR_SRC}`}
+            alt={t.wechat.alt}
+            width="450"
+            height="708"
+            loading="lazy"
+          />
         </div>
       </div>
     </section>
