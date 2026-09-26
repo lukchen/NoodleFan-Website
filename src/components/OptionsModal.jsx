@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import useScrollLock from '../useScrollLock'
+import useVisualViewport from '../useVisualViewport'
 import '../modal-viewport.css'
 import { resolveSelections } from '../data/menu'
 import { loadDraft, saveDraft, clearDraft } from '../draft'
@@ -17,6 +18,8 @@ export default function OptionsModal({ dish, t, lang, onAdd, onClose, initial = 
 
   // 每改一下就存,所以点框外、按 Esc、甚至直接关标签页都不会丢。
   useScrollLock()
+  // 地址栏收放时把弹窗重新对到可见区(iOS Safari)
+  useVisualViewport()
 
   useEffect(() => { if (!editing) saveDraft(dish, selections) }, [dish, selections, editing])
 
@@ -106,6 +109,8 @@ export default function OptionsModal({ dish, t, lang, onAdd, onClose, initial = 
 
   return (
     <div className="modal-overlay" onClick={onClose}>
+      {/* .modal-frame = visualViewport 量出来的可见区,详见 modal-viewport.css */}
+      <div className="modal-frame">
       <div className="modal options-modal" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
           <h2>{name}</h2>
@@ -158,6 +163,7 @@ export default function OptionsModal({ dish, t, lang, onAdd, onClose, initial = 
             {editing ? t.options.saveChanges : t.options.addToCart} {money(unitPrice)}
           </button>
         </div>
+      </div>
       </div>
     </div>
   )
