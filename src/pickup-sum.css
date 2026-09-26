@@ -146,3 +146,39 @@
 
   .pickup-strip { font-size: 0.8rem; padding: 0.4rem 0.6rem; margin-bottom: 0.5rem; }
 }
+
+/* ── 选取餐点页左上角的返回 ────────────────────────────────────────────────
+   页面底部本来就有一个「不换了,继续用 X」,但它排在三张卡之后 —— 客人从菜单
+   点「更换」进来、发现不用换了,不会想到往下翻三屏去找。返回就该在左上角。
+   配合 PickupPicker 里的 Esc:两个都只在「已经选过取餐点」时出现,没选过的
+   新客人退回去只会看到一片锁着的菜单。 */
+.pickup-back {
+  /* .pickup-choose 是 text-align:center 的块容器,inline 元素会被居中。
+     width:fit-content + margin-right:auto 才能把它拽到左边。 */
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  width: fit-content;
+  margin: 0 auto 0.9rem 0;
+  padding: 0.4rem 0.8rem 0.4rem 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-muted);
+  font-family: inherit;
+  font-size: 0.86rem;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.pickup-back:hover {
+  color: var(--color-text);
+  border-color: var(--color-text);
+  background: var(--color-surface);
+}
+
+.pickup-back:active { transform: translateY(1px); }
+
+@media (max-width: 600px) {
+  .pickup-back { margin: 0 auto 0.7rem 0; }
+}
