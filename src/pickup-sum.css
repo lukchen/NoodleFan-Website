@@ -164,15 +164,15 @@
   border: 1px solid var(--color-border);
   border-radius: 999px;
   background: transparent;
-  color: var(--color-muted);
+  color: var(--color-text);
   font-family: inherit;
   font-size: 0.86rem;
+  font-weight: 600;
   cursor: pointer;
   transition: color 0.15s, border-color 0.15s, background 0.15s;
 }
 
 .pickup-back:hover {
-  color: var(--color-text);
   border-color: var(--color-text);
   background: var(--color-surface);
 }
@@ -182,3 +182,8 @@
 @media (max-width: 600px) {
   .pickup-back { margin: 0 auto 0.7rem 0; }
 }
+
+/* 副标题原来是灰色小字。它解释的是「每一天是独立的一班」—— 客人没看懂就会
+   以为随便哪天都行,是关键信息不是脚注,所以提到正文色。
+   加一层 .pickup-choose 提高优先级,免得依赖 App.css 和本文件的打包顺序。 */
+.pickup-choose .pickup-choose-sub { color: var(--color-text); }
