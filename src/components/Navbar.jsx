@@ -1,4 +1,5 @@
 import LangToggle from './LangToggle'
+import WechatNav from './WechatNav'
 import { useCart } from '../context/CartContext'
 import { usePickup } from '../context/PickupContext'
 import { ORDERING_ENABLED } from '../config'
@@ -31,6 +32,8 @@ export default function Navbar({ t, lang, onToggleLang }) {
       </div>
       <div className="navbar-links">
         <a href="#menu">{t.nav.menu}</a>
+        {/* 群入口常驻导航栏 —— 它是运营渠道,不该等客人滚到页面底部才看见 */}
+        <WechatNav t={t} />
         {ORDERING_ENABLED && (
           <button className="cart-btn" onClick={() => setCartOpen(true)}>
             🛒 {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
