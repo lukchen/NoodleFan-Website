@@ -6,14 +6,16 @@ import { useCart } from '../context/CartContext'
 import { QR_SRC, qrValid } from '../wechat-qr'
 import { WechatModal } from './WechatNav'
 import { SUPABASE_URL, SUPABASE_ANON_KEY, CHECKOUT_ENABLED } from '../config'
+import '../checkout.css'
 
 const TAX_RATE = 0.07 // MA 6.25% + Boston 本地附加 0.75%（与 create-checkout 保持一致）
 
 function buildSlots() {
   const slots = []
   for (let h = 11; h <= 20; h++) {
-    for (const m of [0, 30]) {
-      if (h === 20 && m === 30) break
+    // 15 分钟一档 —— 半小时太粗,客人下了班想卡着点来取,只能在两档之间将就。
+    for (const m of [0, 15, 30, 45]) {
+      if (h === 20 && m > 0) break   // 最后一档 8:00 PM,给厨房留出到打烊的收尾时间
       const hh = String(h).padStart(2, '0')
       const mm = String(m).padStart(2, '0')
       const value = `${hh}:${mm}`
@@ -35,16 +37,14 @@ function toLocalDateString(date) {
   return `${y}-${m}-${d}`
 }
 
+export const FORM_KEY = 'nf_checkout_form'
+
 export default function Checkout({ t, onClose }) {
   const { items, totalPrice } = useCart()
   const tax = totalPrice * TAX_RATE
   const grandTotal = totalPrice + tax
 
   const today = useMemo(() => toLocalDateString(new Date()), [])
-  const tomorrow = useMemo(() => {
-    const d = new Date(); d.setDate(d.getDate() + 1)
-    return toLocalDateString(d)
-  }, [])
 
   const { point, run } = usePickup()
   // 定点配送的取餐时刻是发车时间,不该让客人自己挑 —— 挑了也不作数。
@@ -53,26 +53,31 @@ export default function Checkout({ t, onClose }) {
   // 打烊时段不拦单,当预约单处理 —— 只把已经过去的时段过滤掉,并明确告诉客人这是预约。
   const now = useMemo(() => new Date(), [])
   const openNow = storeIsOpen(now)
-  const slotsFor = (dateStr) => {
-    if (dateStr !== today) return TIME_SLOTS
-    const cutoff = now.getHours() * 60 + now.getMinutes() + 20   // 留 20 分钟备餐
-    return TIME_SLOTS.filter(sl => {
-      const [h, m] = sl.value.split(':').map(Number)
-      return h * 60 + m >= cutoff
-    })
-  }
+  // 到店自取只做当天 —— 现做现取,隔天的单没法保证品质,也占不了明天的备料。
+  const cutoffMin = now.getHours() * 60 + now.getMinutes() + 20   // 留 20 分钟备餐
+  const todaySlots = TIME_SLOTS.filter(sl => {
+    const [h, m] = sl.value.split(':').map(Number)
+    return h * 60 + m >= cutoffMin
+  })
 
-  const [form, setForm] = useState({ name: '', phone: '', email: '', date: today, time: '', note: '' })
-
-  // 今天已经没有可选时段(太晚了)就自动跳到明天,免得客人对着空列表发愣。
-  useScrollLock()
+  // 表单也存本地 —— 从结账页退回菜单时这个组件会卸载,不存就等于客人白填一遍。
+  // 存的是他自己设备上的联系方式,方便下次再来直接下单;卡号一概不经过这里。
+  const [form, setForm] = useState(() => {
+    const blank = { name: '', phone: '', email: '', date: today, time: '', note: '' }
+    try {
+      const raw = localStorage.getItem(FORM_KEY)
+      if (!raw) return blank
+      const saved = JSON.parse(raw)
+      // 日期永远是今天;存的时段如果是昨天留下的就丢掉
+      return { ...blank, ...saved, date: today, time: saved.date === today ? (saved.time ?? '') : '' }
+    } catch { return blank }
+  })
 
   useEffect(() => {
-    if (fixedRun) return
-    if (form.date === today && slotsFor(today).length === 0) {
-      setForm(prev => ({ ...prev, date: tomorrow, time: '' }))
-    }
-  }, [fixedRun, form.date, today, tomorrow])
+    try { localStorage.setItem(FORM_KEY, JSON.stringify(form)) } catch { /* ignore */ }
+  }, [form])
+
+  useScrollLock()
 
   // 定点配送:把日期/时间锁成这一班的发车时刻,表单校验照常通过。
   useEffect(() => {
@@ -83,11 +88,12 @@ export default function Checkout({ t, onClose }) {
       time: `${String(fixedRun.pickupAt.getHours()).padStart(2, '0')}:00`,
     }))
   }, [fixedRun])
+
   const [wechatOpen, setWechatOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
 
-  const isDirty = form.name || form.phone || form.email || (form.date && form.date !== today) || form.time || form.note
+  const isDirty = form.name || form.phone || form.email || form.time || form.note
 
   useEffect(() => {
     function onKey(e) { if (e.key === 'Escape' && !isDirty) onClose() }
@@ -228,35 +234,21 @@ export default function Checkout({ t, onClose }) {
 
           <div className="checkout-field">
             <span className="checkout-field-label">{t.checkout.date}</span>
-            <div className="date-chips">
-              <button type="button"
-                className={`date-chip${form.date === today ? ' date-chip--active' : ''}`}
-                onClick={() => setForm(prev => ({ ...prev, date: today }))}>
-                {t.checkout.dateToday}
-              </button>
-              <button type="button"
-                className={`date-chip${form.date === tomorrow ? ' date-chip--active' : ''}`}
-                onClick={() => setForm(prev => ({ ...prev, date: tomorrow }))}>
-                {t.checkout.dateTomorrow}
-              </button>
-              <input
-                type="date"
-                name="date"
-                value={form.date}
-                min={today}
-                onChange={handleChange}
-                required
-                className="date-input-other"
-                title={t.checkout.dateOther}
-              />
-            </div>
+            <p className="checkout-today">
+              {t.checkout.dateToday} · {today}
+              <span className="checkout-today-note">{t.checkout.todayOnly}</span>
+            </p>
+            <input type="hidden" name="date" value={today} />
           </div>
 
           <div className="checkout-field">
             <span className="checkout-field-label">{t.checkout.time}</span>
             <input type="hidden" name="time" value={form.time} required />
+            {todaySlots.length === 0 && (
+              <p className="checkout-preorder">{t.checkout.noSlotsToday}</p>
+            )}
             <div className="time-slots">
-              {slotsFor(form.date).map(slot => (
+              {todaySlots.map(slot => (
                 <button
                   key={slot.value}
                   type="button"
