@@ -4,6 +4,7 @@ import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../config'
 import LangToggle from './LangToggle'
 import Footer from './Footer'
 import { useCart } from '../context/CartContext'
+import { FORM_KEY } from './Checkout'
 
 const FN_URL = `${SUPABASE_URL}/functions/v1/order-status`
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
@@ -37,6 +38,12 @@ export default function OrderStatus({ sessionId, t, lang, setLang }) {
     const params = new URLSearchParams(window.location.search)
     if (params.get('success') === 'true') {
       clearCart()
+      // 姓名/电话/邮箱留着,下次下单直接带出来;备注和时段必须清掉 ——
+      // 上一单的「不要香菜」跟到下一单就是直接发到厨房的错误信息。
+      try {
+        const saved = JSON.parse(localStorage.getItem(FORM_KEY) || '{}')
+        localStorage.setItem(FORM_KEY, JSON.stringify({ ...saved, note: '', time: '' }))
+      } catch { /* ignore */ }
       window.history.replaceState({}, '', `${window.location.pathname}?session_id=${sessionId}`)
     }
   }, [clearCart, sessionId])

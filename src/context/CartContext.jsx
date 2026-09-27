@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
 import menu, { resolveSelections } from '../data/menu'
 
 const CartContext = createContext(null)
@@ -10,9 +10,31 @@ function lineKey(dishId, normalized) {
   return `${dishId}|${JSON.stringify(normalized)}`
 }
 
+// 购物车存本地 —— 客人加了菜去别处看一眼再回来、或者手机切出去接个电话,
+// 回来东西还在。不存的话这一趟就白点了,多数人不会再点第二遍。
+// 只存购物车内容,不碰任何支付信息(卡号在 Stripe 托管页面,我们这边从来拿不到)。
+const CART_KEY = 'nf_cart'
+
+function loadCart() {
+  try {
+    const raw = localStorage.getItem(CART_KEY)
+    if (!raw) return []
+    const parsed = JSON.parse(raw)
+    // 存的是旧版本结构或者被人手改过就直接丢掉,宁可空购物车也不要渲染崩掉
+    return Array.isArray(parsed) ? parsed.filter(i => i && i.key && i.qty > 0) : []
+  } catch { return [] }
+}
+
 export function CartProvider({ children }) {
   // [{ key, id, nameEn, nameZh, unitPrice, qty, optionsZh, optionsEn, selections }]
-  const [items, setItems] = useState([])
+  const [items, setItems] = useState(loadCart)
+
+  useEffect(() => {
+    try {
+      if (items.length) localStorage.setItem(CART_KEY, JSON.stringify(items))
+      else localStorage.removeItem(CART_KEY)
+    } catch { /* 无痕模式/禁用存储 —— 功能照常,只是不记住 */ }
+  }, [items])
   const [cartOpen, setCartOpen] = useState(false)
   // 正在改配置的那一行(点购物车里的「修改」打开选项框)。放在 context 里是因为
   // 触发点有两个(桌面面板 / 手机抽屉),而选项框只渲染一个。
