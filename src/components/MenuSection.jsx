@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import menu, { categories } from '../data/menu'
 import { useCart } from '../context/CartContext'
 import { usePickup } from '../context/PickupContext'
+import useStickyReveal from '../useStickyReveal'
 import OptionsModal from './OptionsModal'
 import CartPanel from './CartPanel'
 import PickupPicker from './PickupPicker'
@@ -85,6 +86,8 @@ export default function MenuSection({ t, lang, choosingPickup, onPickupChosen })
   const { addItem } = useCart()
   const { point, remainingFor } = usePickup()
   const [customizing, setCustomizing] = useState(null)
+  // 往下滚(看菜)时让开,往上滚(找导航)时回来
+  const stickyHidden = useStickyReveal()
   const [activeCat, setActiveCat] = useState(null)
   const sectionRefs = useRef({})
 
@@ -99,7 +102,7 @@ export default function MenuSection({ t, lang, choosingPickup, onPickupChosen })
         const visible = entries.filter(e => e.isIntersecting)
         if (visible.length > 0) setActiveCat(visible[0].target.dataset.cat)
       },
-      // 导航栏 + 分类条(取餐条不再吸顶):手机 56+39,桌面 64+0,留点余量取 110
+      // 导航栏 + 吸顶区:手机 56+99,桌面 64+45。取个折中值,分类高亮差一点无所谓
       { rootMargin: '-110px 0px -70% 0px', threshold: 0 },
     )
     Object.values(sectionRefs.current).forEach(el => el && obs.observe(el))
@@ -128,24 +131,23 @@ export default function MenuSection({ t, lang, choosingPickup, onPickupChosen })
 
   return (
     <section id="menu" className="menu-section">
-      {/* 取餐点状态条:跟着页面滚走。吸顶过的版本会一直压在菜品卡上,盖掉菜名 ——
-          客人看到的是「一段描述 + 一个价格」,像坏掉一样。取餐点别处也在提醒
-          (手机底部结算条、桌面右侧「我的订单」),不值得长期占住屏幕顶部。 */}
-      <PickupStrip t={t} lang={lang} />
+      {/* 取餐条 + 分类切换一起吸顶,但往下滚时整块收起 —— 见 useStickyReveal。
+          一直吸着的话它会永久占住屏幕顶部那几十像素,菜品卡滑到那儿标题就被盖掉。 */}
+      <div className={`menu-sticky${stickyHidden ? ' menu-sticky--hidden' : ''}`}>
+        <PickupStrip t={t} lang={lang} />
 
-      {/* 分类切换是导航,值得吸顶(手机端;桌面用左侧 rail)。
-          它必须是 section 的直接子元素 —— 包在一个会滚走的 wrapper 里就粘不住了。 */}
-      <nav className="cat-tabs" aria-label={t.menu.title}>
-        {sections.map(c => (
-          <button
-            key={c.id}
-            type="button"
-            className={`cat-tab${activeCat === c.id ? ' cat-tab--active' : ''}`}
-            onClick={() => jumpTo(c.id)}>
-            {lang === 'zh' ? c.nameZh : c.nameEn}
-          </button>
-        ))}
-      </nav>
+        <nav className="cat-tabs" aria-label={t.menu.title}>
+          {sections.map(c => (
+            <button
+              key={c.id}
+              type="button"
+              className={`cat-tab${activeCat === c.id ? ' cat-tab--active' : ''}`}
+              onClick={() => jumpTo(c.id)}>
+              {lang === 'zh' ? c.nameZh : c.nameEn}
+            </button>
+          ))}
+        </nav>
+      </div>
 
       <div className="menu-layout">
         {/* Desktop: sticky left rail */}
