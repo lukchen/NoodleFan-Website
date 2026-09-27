@@ -101,6 +101,16 @@ const menu = [
     descZh: '现煎葱油煎蛋，边缘焦香、蛋心饱满，配面配饭都好吃。',
   },
   {
+    id: 23,
+    category: 'side',
+    price: 2.5,
+    image: '/images/flatbread2.png',
+    nameEn: 'Sesame Paste Flatbread',
+    nameZh: '麻酱烧饼',
+    descEn: 'Charcoal-style baked flatbread layered with sesame paste and crusted in toasted sesame — crisp outside, soft and layered inside.',
+    descZh: '现烤麻酱烧饼，层层刷满芝麻酱，表面一层白芝麻烤到焦香，外脆内软，配汤配面都合适。',
+  },
+  {
     id: 8,
     category: 'side',
     price: 2,
