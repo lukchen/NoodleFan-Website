@@ -20,6 +20,8 @@ export type OrderForEmail = {
   pickup_date?: string | null
   pickup_time?: string | null
   run_date?: string | null
+  subtotal?: number | null
+  tax?: number | null
   total?: number | null
   items?: { nameZh: string; nameEn: string; qty: number; price: number;
             optionsZh?: string[]; optionsEn?: string[] }[] | null
@@ -88,10 +90,20 @@ function itemsTable(o: OrderForEmail): string {
         ${money(it.price * it.qty)}
       </td></tr>`
   }).join('')
+  // 小计/税分开列 —— 客人对账、报销都要看得到税。
+  // 老订单没存这两列,那就只显示合计,不要凭总额倒算出一个可能不对的数。
+  const hasBreakdown = o.subtotal != null && o.tax != null
+  const breakdown = hasBreakdown
+    ? `<tr><td style="padding:8px 0 2px;color:#857a6b;">小计 Subtotal</td>
+           <td style="padding:8px 0 2px;text-align:right;color:#857a6b;">${money(o.subtotal)}</td></tr>
+       <tr><td style="padding:2px 0;color:#857a6b;">销售税 Sales tax (7%)</td>
+           <td style="padding:2px 0;text-align:right;color:#857a6b;">${money(o.tax)}</td></tr>`
+    : ''
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0;font-size:14px;">
     ${rows}
-    <tr><td style="padding:10px 0;font-weight:700;">合计 Total</td>
-        <td style="padding:10px 0;text-align:right;font-weight:700;">${money(o.total)}</td></tr>
+    ${breakdown}
+    <tr><td style="padding:10px 0;font-weight:700;border-top:1px solid #e8dcc8;">合计 Total</td>
+        <td style="padding:10px 0;text-align:right;font-weight:700;border-top:1px solid #e8dcc8;">${money(o.total)}</td></tr>
   </table>`
 }
 
@@ -132,13 +144,41 @@ export function tplConfirmed(o: OrderForEmail) {
            </div>
          </td></tr></table>`
     : ''
+  // 到店自取是下单即扣款,这封邮件就是客人唯一的收据 —— 把「已完成付款」写明,
+  // 并留一句收据声明,免得他为了对账再来问一次。
+  const paidNote = isHold
+    ? ''
+    : `<p style="margin:0 0 4px;">已完成付款 <strong>${money(o.total)}</strong>。本邮件即为您的收据。</p>
+       <p style="margin:0 0 4px;color:#857a6b;font-size:13px;">
+         Payment of ${money(o.total)} completed. This email is your receipt.</p>`
   return {
-    subject: `订单已确认 ${o.pickup_code ?? ''} · ${prettyWhen(o.run_date ?? o.pickup_date, o.pickup_time)}`,
-    html: layout('订单已确认 Order confirmed', `
+    subject: isHold
+      ? `订单已确认 ${o.pickup_code ?? ''} · ${prettyWhen(o.run_date ?? o.pickup_date, o.pickup_time)}`
+      : `收据 Receipt ${o.pickup_code ?? ''} · ${money(o.total)}`,
+    html: layout(isHold ? '订单已确认 Order confirmed' : '付款成功 · 收据 Payment receipt', `
       <p style="margin:0 0 4px;">${o.customer_name ?? ''}，感谢您的订购。</p>
+      ${paidNote}
       ${pickupBlock(o)}
       ${holdNote}
       ${itemsTable(o)}
+      ${isHold ? '' : `<p style="margin:12px 0 0;font-size:14px;">
+        我们开始备餐后会再发一封邮件通知您「可以来取」，约 20 分钟。到店报取餐码即可。</p>`}
+    `),
+  }
+}
+
+// 到店自取:后台把状态改成「待取餐」时发这封。
+// 客人付完款那个页面会实时变状态,但他一关浏览器就什么都看不到了 —— 邮件是唯一能追到他的路。
+export function tplReady(o: OrderForEmail) {
+  return {
+    subject: `餐已做好，请来取餐 · 取餐码 ${o.pickup_code ?? ''}`,
+    html: layout('餐已做好，请来取餐 Your order is ready', `
+      <p style="margin:0 0 4px;">${o.customer_name ?? ''}，您的餐已做好，随时可以来取。</p>
+      <p style="margin:0 0 4px;color:#857a6b;font-size:13px;">
+        Your order is ready for pickup.</p>
+      ${pickupBlock(o)}
+      <p style="margin:12px 0 0;font-size:14px;">到店报取餐码即可，无需出示本邮件。
+        趁热吃口感最好，建议尽快取餐。</p>
     `),
   }
 }

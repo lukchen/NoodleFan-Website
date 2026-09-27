@@ -105,6 +105,41 @@ export default function Admin() {
     return () => clearInterval(id)
   }, [authed, password, fetchOrders])
 
+  // 新单响铃 —— 厨房忙起来没人盯屏幕,只有横幅是会漏单的。
+  // 不用音频文件:图片/音频推不进这个仓库的部署流程,而且 WebAudio 合成的「叮咚」
+  // 不用等下载、离线也响。浏览器要求先有用户手势才能出声 —— 店员是点「登录」进来的,
+  // 那一下就是手势,AudioContext 能正常启动。
+  useEffect(() => {
+    if (!alerting) return
+    let ctx
+    try {
+      ctx = new (window.AudioContext || window.webkitAudioContext)()
+    } catch { return }
+
+    function ding() {
+      if (ctx.state === 'suspended') ctx.resume()
+      // 两声一高一低,比单音更容易从厨房噪音里分辨出来
+      ;[[880, 0], [1320, 0.18]].forEach(([freq, delay]) => {
+        const osc = ctx.createOscillator()
+        const gain = ctx.createGain()
+        osc.type = 'sine'
+        osc.frequency.value = freq
+        const t0 = ctx.currentTime + delay
+        gain.gain.setValueAtTime(0.0001, t0)
+        gain.gain.exponentialRampToValueAtTime(0.35, t0 + 0.02)
+        gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.35)
+        osc.connect(gain).connect(ctx.destination)
+        osc.start(t0)
+        osc.stop(t0 + 0.4)
+      })
+    }
+
+    ding()
+    // 一直响到店员点「知道了」—— 响一次就停的话,离开两分钟回来照样不知道有新单
+    const id = setInterval(ding, 3000)
+    return () => { clearInterval(id); ctx.close().catch(() => {}) }
+  }, [alerting])
+
   function acknowledge() {
     setAlerting(false)
   }
