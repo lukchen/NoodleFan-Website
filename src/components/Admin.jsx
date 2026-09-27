@@ -51,9 +51,16 @@ export default function Admin() {
     setLoading(true)
     setError('')
     try {
+      // apikey / Authorization 必须带 —— Supabase 网关对所有 Edge Function 调用都要求
+      // 带 anon key,哪怕函数自己 verify_jwt 是关的。漏了就是网关层 401,
+      // 和「密码错」长得一模一样,查起来很费劲(就吃过这个亏)。
       const res = await fetch(FN_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        },
         body: JSON.stringify({ password: pw }),
       })
       if (res.status === 401) { setError('密码错误'); setAuthed(false); return }
@@ -145,12 +152,27 @@ export default function Admin() {
   }
 
   async function updateStatus(id, status) {
-    setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o))
-    await fetch(FN_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password, id, status }),
-    })
+    // 先乐观更新,点下去立刻有反馈 —— 但请求失败必须回滚。
+    // 不回滚的话:界面写着「待取餐」,库里还是「备餐中」,客人那边也没收到邮件,
+    // 而你以为已经通知过了。
+    const prev = orders.find(o => o.id === id)?.status
+    setOrders(list => list.map(o => o.id === id ? { ...o, status } : o))
+    try {
+      const res = await fetch(FN_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({ password, id, status }),
+      })
+      if (!res.ok) throw new Error(res.status === 401 ? '密码错误' : `改状态失败 (${res.status})`)
+      setError('')
+    } catch (e) {
+      if (prev) setOrders(list => list.map(o => o.id === id ? { ...o, status: prev } : o))
+      setError(e.message || '改状态失败,请重试')
+    }
   }
 
   if (!authed) {
