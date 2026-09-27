@@ -7,7 +7,7 @@
 //
 // 为什么只开两班:再往后客人记不住自己订了哪天,备料也没法提前那么久定量。
 //
-// ⚠ 送达时间(pickupHour)仍为暂定值,确定后改这里即可,UI 会跟着变。
+// 送达时间(pickupHour)两个点都是 18:00。改这里即可,UI 会跟着变。
 
 export const MIN_ORDERS = 5        // 起送单数
 export const DAILY_LIMIT = 15      // 每道菜每天备料上限
