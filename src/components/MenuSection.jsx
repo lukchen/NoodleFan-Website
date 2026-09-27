@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react'
 import menu, { categories } from '../data/menu'
 import { useCart } from '../context/CartContext'
 import { usePickup } from '../context/PickupContext'
-import useStickyReveal from '../useStickyReveal'
 import OptionsModal from './OptionsModal'
 import CartPanel from './CartPanel'
 import PickupPicker from './PickupPicker'
@@ -86,8 +85,6 @@ export default function MenuSection({ t, lang, choosingPickup, onPickupChosen })
   const { addItem } = useCart()
   const { point, remainingFor } = usePickup()
   const [customizing, setCustomizing] = useState(null)
-  // 往下滚(看菜)时让开,往上滚(找导航)时回来
-  const stickyHidden = useStickyReveal()
   const [activeCat, setActiveCat] = useState(null)
   const sectionRefs = useRef({})
 
@@ -102,7 +99,7 @@ export default function MenuSection({ t, lang, choosingPickup, onPickupChosen })
         const visible = entries.filter(e => e.isIntersecting)
         if (visible.length > 0) setActiveCat(visible[0].target.dataset.cat)
       },
-      // 导航栏 + 吸顶区:手机 56+99,桌面 64+45。取个折中值,分类高亮差一点无所谓
+      // 导航栏 + 分类条:手机 56+46,桌面 64+0。取个折中值,分类高亮差一点无所谓
       { rootMargin: '-110px 0px -70% 0px', threshold: 0 },
     )
     Object.values(sectionRefs.current).forEach(el => el && obs.observe(el))
@@ -131,11 +128,9 @@ export default function MenuSection({ t, lang, choosingPickup, onPickupChosen })
 
   return (
     <section id="menu" className="menu-section">
-      {/* 取餐条 + 分类切换一起吸顶,但往下滚时整块收起 —— 见 useStickyReveal。
-          一直吸着的话它会永久占住屏幕顶部那几十像素,菜品卡滑到那儿标题就被盖掉。 */}
-      <div className={`menu-sticky${stickyHidden ? ' menu-sticky--hidden' : ''}`}>
-        <PickupStrip t={t} lang={lang} />
-
+      {/* 只剩分类切换吸顶。取餐条挪进了左侧分类栏(桌面)和底部结算条(手机)——
+          放在菜单栏之外,才能既一直看得见、又一行内容都不挡。 */}
+      <div className="menu-sticky">
         <nav className="cat-tabs" aria-label={t.menu.title}>
           {sections.map(c => (
             <button
@@ -152,6 +147,10 @@ export default function MenuSection({ t, lang, choosingPickup, onPickupChosen })
       <div className="menu-layout">
         {/* Desktop: sticky left rail */}
         <aside className="cat-rail" aria-label={t.menu.title}>
+          {/* 取餐条放这一列的顶上 —— 这列本来就大片留白,跟着 rail 一起吸顶,
+              客人滚到第 20 道菜也照样看得见,而菜单那一列一个像素都没被占。 */}
+          <PickupStrip t={t} lang={lang} />
+
           {sections.map(c => (
             <button
               key={c.id}
