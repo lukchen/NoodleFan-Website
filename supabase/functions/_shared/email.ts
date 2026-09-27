@@ -32,6 +32,8 @@ export type OrderForEmail = {
 const ADDRESSES: Record<string, string> = {
   'Allston 取餐点': '1 Brighton Ave, Boston, MA 02134（Super 88 超市门口）',
   'Malden 取餐点': '300 Pleasant St, Malden, MA 02148（停车场）',
+  '当日到店自取': '94 Shirley St, Boston, MA 02119',
+  // 改名前下的单在库里存的还是旧名字,这一行留着,否则那些订单的邮件里地址会空掉
   '到店自取': '94 Shirley St, Boston, MA 02119',
 }
 
