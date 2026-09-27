@@ -2,18 +2,30 @@
    单独一个文件而不是塞进 App.css —— 那份已经 50KB,改一行就得整份重写,
    通过 GitHub API 推送时代价很大。结账相关的样式往后都加在这里。 */
 
-/* 标题栏吸顶 —— 结账表单比一屏长,往下填的时候关闭按钮会滚出视野,
-   客人想退出只能靠点背景(而表单填了一半时点背景是不关的,防误触)。
-   .modal 自己是滚动容器,所以 sticky 贴的是它的内边缘;用负 margin 把标题栏
-   撑到左右两边,再把 .modal 的 padding 在这里补回来,否则内容会从缝里透出来。 */
+/* 标题栏常驻 —— 结账表单比一屏长,往下填的时候关闭按钮会滚出视野,
+   而表单填了一半时点背景是不关闭的(防误触),客人等于被困在结账页里。
+   这里不用 position:sticky:.modal 自己是滚动容器且带 1.5rem 内边距,
+   sticky 贴的是内边距框的上沿,标题栏上方会一直留着那条缝,内容正好从缝里滚过去。
+   改成 flex 两段式 —— 标题栏根本不在滚动区里,自然不会动,也没有缝。 */
+.checkout-modal {
+  display: flex;
+  flex-direction: column;
+  padding: 0;          /* 内边距下放给两段各自管 */
+  overflow: hidden;    /* 滚动交给 .checkout-body */
+}
 .checkout-modal .modal-header {
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  margin: -1.5rem -1.5rem 1.2rem;
-  padding: 1.1rem 1.5rem 0.8rem;
-  background: var(--color-surface);
+  flex: none;
+  margin: 0;
+  padding: 1.1rem 1.5rem 0.9rem;
   border-bottom: 1px solid var(--color-border);
+}
+.checkout-body {
+  overflow-y: auto;
+  padding: 1.2rem 1.5rem 1.5rem;
+}
+@media (max-width: 600px) {
+  .checkout-modal .modal-header { padding: 1rem 1.2rem 0.8rem; }
+  .checkout-body { padding: 1rem 1.2rem 1.2rem; }
 }
 
 /* 到店自取只做当天 —— 日期不再是选项,用一行说明代替原来的日期按钮组 */
