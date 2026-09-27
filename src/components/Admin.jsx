@@ -43,7 +43,7 @@ export default function Admin() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [alerting, setAlerting] = useState(false)
-  const [tab, setTab] = useState('store')   // store = 到店自取 | group = 团餐预约
+  const [tab, setTab] = useState('store')   // store = 当日自取 | group = 团餐预约
 
   const prevCount = useRef(0)
 
@@ -198,7 +198,7 @@ export default function Admin() {
     )
   }
 
-  // 两条完全不同的业务线:到店自取是实时单(钱已到账,马上备餐),
+  // 两条完全不同的业务线:当日自取是实时单(钱已到账,马上备餐),
   // 团餐是预约单(钱还冻着,按班次成团后才结算)。混在一张列表里看不清楚,所以分开。
   const storeOrders = orders.filter(o => !o.run_date)
   const groupOrders = orders.filter(o => !!o.run_date)
@@ -319,7 +319,7 @@ export default function Admin() {
         <button
           className={`admin-tab${tab === 'store' ? ' admin-tab--active' : ''}`}
           onClick={() => setTab('store')}>
-          到店自取 <span className="admin-tab-count">{storeTodo}</span>
+          当日自取 <span className="admin-tab-count">{storeTodo}</span>
         </button>
         <button
           className={`admin-tab${tab === 'group' ? ' admin-tab--active' : ''}`}
@@ -331,7 +331,7 @@ export default function Admin() {
       {tab === 'store' && (
         <div className="admin-orders">
           {storeOrders.length === 0
-            ? <p className="admin-empty">暂无到店自取订单</p>
+            ? <p className="admin-empty">暂无当日自取订单</p>
             : sortActive(storeOrders).map(renderOrder)}
         </div>
       )}
