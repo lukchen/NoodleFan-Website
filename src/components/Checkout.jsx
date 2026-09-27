@@ -155,6 +155,7 @@ export default function Checkout({ t, onClose }) {
           <button className="cart-close" onClick={onClose}>✕</button>
         </div>
 
+        <div className="checkout-body">
         <div className="checkout-summary">
           {items.map(item => {
             const opts = t.lang === 'zh' ? item.optionsZh : item.optionsEn
@@ -283,6 +284,7 @@ export default function Checkout({ t, onClose }) {
               : submitting ? t.checkout.processing : `${t.checkout.pay} $${grandTotal.toFixed(2)}`}
           </button>
         </form>
+        </div>
       </div>
       {wechatOpen && <WechatModal t={t} onClose={() => setWechatOpen(false)} />}
     </div>
