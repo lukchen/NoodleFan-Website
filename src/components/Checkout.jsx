@@ -149,7 +149,7 @@ export default function Checkout({ t, onClose }) {
 
   return (
     <div className="modal-overlay" onClick={handleBackdrop}>
-      <div className="modal" onClick={e => e.stopPropagation()}>
+      <div className="modal checkout-modal" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
           <h2>{t.checkout.title}</h2>
           <button className="cart-close" onClick={onClose}>✕</button>
@@ -234,10 +234,7 @@ export default function Checkout({ t, onClose }) {
 
           <div className="checkout-field">
             <span className="checkout-field-label">{t.checkout.date}</span>
-            <p className="checkout-today">
-              {t.checkout.dateToday} · {today}
-              <span className="checkout-today-note">{t.checkout.todayOnly}</span>
-            </p>
+            <p className="checkout-today">{t.checkout.dateToday} · {today}</p>
             <input type="hidden" name="date" value={today} />
           </div>
 
