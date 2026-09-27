@@ -68,7 +68,7 @@ const strings = {
     wechat: {
       navBtn: 'WeChat Group',
       close: 'Close',
-      title: 'Join the NoodleFan group chat',
+      title: 'Join the NoodleFan regulars group',
       perks: [
         'Run reminders — we post before orders close each day',
         'Member-only deals and new-dish tastings drop in the group first',
@@ -211,7 +211,7 @@ const strings = {
     wechat: {
       navBtn: '微信群',
       close: '关闭',
-      title: '加入粉面王波士顿客户群',
+      title: '加入粉面王老吃家群',
       perks: [
         '每天截单前群里提醒,不会错过当天发车',
         '群友专属优惠、新菜试吃,都在群里先发',
