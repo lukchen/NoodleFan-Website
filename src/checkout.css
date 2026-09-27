@@ -1,0 +1,18 @@
+/* 结账页专用样式。
+   单独一个文件而不是塞进 App.css —— 那份已经 50KB,改一行就得整份重写,
+   通过 GitHub API 推送时代价很大。结账相关的样式往后都加在这里。 */
+
+/* 到店自取只做当天 —— 日期不再是选项,用一行说明代替原来的日期按钮组 */
+.checkout-today {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+.checkout-today-note {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--color-text-soft, #857a6b);
+}
