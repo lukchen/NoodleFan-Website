@@ -159,11 +159,12 @@
    加一层 .pickup-choose 提高优先级,免得依赖 App.css 和本文件的打包顺序。 */
 .pickup-choose .pickup-choose-sub { color: var(--color-text); }
 
-/* ── 菜单页顶部:只剩分类切换吸顶 ──────────────────────────────────────────
-   取餐条不在这儿了。常驻在顶部的条一定会压住内容 —— 它不透明,页面从它底下滑过,
-   屏幕顶上那几十像素就是被占住的,菜品卡滑到那儿标题就被盖掉。
-   所以取餐条挪到了菜单栏之外:桌面在左侧分类栏顶部,手机在底部结算条。
-   那两处都有现成的空位,既一直看得见,又一行内容都不挡。 */
+/* ── 菜单页吸顶区:分类切换 + 取餐条 ───────────────────────────────────────
+   手机端两条一起吸顶、一起出现:上面是分类切换(导航),紧贴着下面是取餐条
+   (这单是哪天、去哪儿拿)。客人翻到第 20 道菜也不用回想自己选的是哪个点。
+
+   桌面不放取餐条 —— 右侧「我的订单」面板本来就常驻显示取餐点、地址、日期和
+   「更换」按钮,再挂一条是同一件事说两遍,还白占菜单宽度。 */
 .menu-sticky {
   position: sticky;
   top: 64px;                 /* 桌面导航栏高度 */
@@ -171,25 +172,14 @@
   background: var(--color-bg);
 }
 
-/* ── 桌面:取餐条在左侧分类栏顶部,跟着 rail 一起吸顶 ────────────────────── */
-.cat-rail .pickup-strip {
-  margin-bottom: 0.9rem;
-  padding: 0.55rem 0.7rem;
-  font-size: 0.8rem;
-  flex-wrap: wrap;
-  line-height: 1.4;
-}
-
-/* 这一列窄,取餐点和时间各占一行才不会被挤成省略号 */
-.cat-rail .pickup-strip-name { white-space: normal; }
-.cat-rail .pickup-strip-when { white-space: normal; overflow: visible; flex: 1 1 100%; }
-.cat-rail .pickup-strip-change { margin-top: 0.3rem; }
+/* 桌面:这条不出现(信息在右侧面板里) */
+.menu-sticky .pickup-strip { display: none; }
 
 @media (max-width: 900px) {
   .menu-sticky {
     top: 56px;               /* 手机导航栏矮一些 */
     margin: -0.5rem -1rem 1rem;
-    padding: 0 1rem;
+    padding: 0 1rem 0.5rem;
     border-bottom: 1px solid var(--color-border);
   }
 
@@ -198,25 +188,21 @@
     position: static !important;
     top: auto !important;
     margin: 0 !important;
-    padding: 0.5rem 0 0.45rem !important;
+    padding: 0.5rem 0 0 !important;
     border-bottom: none !important;
   }
-}
 
-/* ── 手机底部条:购物车为空时当取餐条用 ────────────────────────────────── */
-.mobile-cart-bar-when { font-weight: 400; opacity: 0.85; }
+  /* 紧贴在分类条下面。做薄一档:这块吸顶区越高,菜品卡被盖掉的就越多。
+     地址不重复(「我的订单」和确认邮件里都有),这里只留取餐点 + 时间。 */
+  .menu-sticky .pickup-strip {
+    display: flex;
+    margin: 0.45rem 0 0;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.78rem;
+  }
 
-/* 空车时它不是「去结算」而是一条状态提示,弱化一档免得像个催单按钮。
-   选择器写两遍类名提高优先级 —— App.css 里的基础样式和这里同级,
-   打包顺序不保证谁在后面。 */
-.mobile-cart-bar.mobile-cart-bar--info {
-  background: var(--color-surface);
-  color: var(--color-text);
-  border-top: 1px solid var(--color-gold);
-}
-
-.mobile-cart-bar.mobile-cart-bar--info .mobile-cart-bar-cta {
-  background: transparent;
-  border: 1.5px solid var(--color-accent);
-  color: var(--color-accent);
+  .menu-sticky .pickup-strip-change {
+    padding: 0.15rem 0.6rem;
+    font-size: 0.72rem;
+  }
 }
