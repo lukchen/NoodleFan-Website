@@ -9,7 +9,7 @@
 
 /* ── 日期选择 ─────────────────────────────────────────────────────────────
    定点配送每天都跑,当天开放两个日期。日期不是附属信息:每一天是独立的一班,
-   各自截单、各自凑单,所以在选择页和购物车里都要能直接看见、直接改。 */
+   各自截单、各自备料,所以在选择页和购物车里都要能直接看见、直接改。 */
 /* 整卡不再是按钮,卡角那个「→」会误导客人以为点卡片就能选 */
 .pickup-option--multi::after { display: none; }
 
@@ -75,14 +75,6 @@
 }
 
 
-/* ── 菜单页顶部:取餐点状态条 ───────────────────────────────────────────────
-   这一条不吸顶,跟着页面滚走。
-   吸顶过的版本会一直压在菜品卡上:桌面 45px、手机 99px,正好盖住卡片标题 ——
-   客人看到的是「一段描述 + 一个价格」,菜名不见了,像坏掉一样。
-   而且取餐点本来就有别处在提醒:手机底部的结算条、桌面右侧的「我的订单」都写着。
-   真正值得占住屏幕顶部的是分类切换(它是导航),那个仍然 sticky,见 App.css。 */
-/* wrapper 已经去掉(见 MenuSection):分类条得是 section 的直接子元素才粘得住。 */
-
 .pickup-strip {
   display: flex;
   align-items: center;
@@ -125,10 +117,6 @@
 
 .pickup-strip-change:active { transform: translateY(1px); }
 
-@media (max-width: 900px) {
-  /* 分类条拿回自己的 sticky(App.css 里 top:56px),取餐条正常滚走 */
-  .pickup-strip { font-size: 0.8rem; padding: 0.4rem 0.6rem; margin-bottom: 0.5rem; }
-}
 
 /* ── 选取餐点页左上角的返回 ────────────────────────────────────────────────
    页面底部本来就有一个「不换了,继续用 X」,但它排在三张卡之后 —— 客人从菜单
@@ -170,3 +158,46 @@
    以为随便哪天都行,是关键信息不是脚注,所以提到正文色。
    加一层 .pickup-choose 提高优先级,免得依赖 App.css 和本文件的打包顺序。 */
 .pickup-choose .pickup-choose-sub { color: var(--color-text); }
+
+/* ── 菜单页顶部:取餐条 + 分类切换一起吸顶 ─────────────────────────────────
+   两个都值得随手可得:取餐条告诉客人「这单是哪天、去哪儿拿」,分类切换是导航。
+   但吸顶条是不透明的,内容从它底下滑过 —— 等于屏幕顶部那几十像素永远被占住,
+   菜品卡滑到那儿标题就被盖掉,客人只看到「一段描述 + 一个价格」。
+
+   所以:往下滚(看菜)时整块收起,往上滚(找导航)时立刻回来。逻辑在
+   useStickyReveal.js 里 —— 这两个滚动方向背后的意图本来就不一样。
+
+   收起用 translateY 而不是 display:none:后者会让布局跳一下,而且没有过渡动画。
+   导航栏 z-index 100 比这里高,所以滑上去正好藏在它背后。 */
+.menu-sticky {
+  position: sticky;
+  top: 64px;                 /* 桌面导航栏高度 */
+  z-index: 30;
+  background: var(--color-bg);
+  transition: transform 0.22s ease;
+}
+
+.menu-sticky--hidden { transform: translateY(-100%); }
+
+@media (max-width: 900px) {
+  .menu-sticky {
+    top: 56px;               /* 手机导航栏矮一些 */
+    margin: -0.5rem -1rem 1rem;
+    padding: 0.55rem 1rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  /* 分类条交出自己的 sticky —— 现在由外层统一吸顶,两个各自粘会互相压 */
+  .cat-tabs {
+    position: static !important;
+    top: auto !important;
+    margin: 0 !important;
+    padding: 0 0 0.55rem !important;
+    border-bottom: none !important;
+  }
+
+  .pickup-strip { font-size: 0.8rem; padding: 0.4rem 0.6rem; margin-bottom: 0.5rem; }
+
+  /* 收起时连同自己的负边距一起滑走,不然会露出一条边框 */
+  .menu-sticky--hidden { transform: translateY(calc(-100% - 0.5rem)); }
+}
