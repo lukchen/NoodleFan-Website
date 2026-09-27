@@ -173,8 +173,8 @@ const menu = [
     nameZh: '天津羊杂汤（含烧饼）',
     shortZh: '羊杂汤',
     shortEn: 'Lamb & Offal Soup',
-    descEn: 'Milky lamb bone broth with lamb and offal, finished with cilantro, scallion and white pepper. Served with a sesame flatbread.',
-    descZh: '天津街头老味羊杂汤，羊骨慢熬至奶白，羊肚、羊肝、羊肺切片入汤，撒葱和香菜、白胡椒，汤浓味厚，另配一个现烤芝麻烧饼。',
+    descEn: 'Milky lamb bone broth with lamb and offal, finished with cilantro, scallion and white pepper. Served with a sesame paste flatbread.',
+    descZh: '天津街头老味羊杂汤，羊骨慢熬至奶白，羊肚、羊肝、羊肺切片入汤，撒葱和香菜、白胡椒，汤浓味厚，另配一个现烤麻酱烧饼。',
   },
 
   // ── 兰州牛肉拉面 ──
