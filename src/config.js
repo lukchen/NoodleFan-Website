@@ -11,7 +11,7 @@ export const ORDERING_ENABLED = true
 // 结账页的付款按钮就禁用并显示"即将上线"——用于在 Edge Function 部署好之前
 // 先把完整点餐体验放出来预览，不会有任何请求打到 Stripe。
 // create-checkout 部署完成后改成 true 即可正式收单。
-export const CHECKOUT_ENABLED = false
+export const CHECKOUT_ENABLED = true
 
 // 外卖平台链接。目前只上线了 Uber Eats;饭团/DoorDash/Grubhub 开通后
 // 在这里补上对应 URL,Hero 上的按钮会自动多出来。
