@@ -99,8 +99,8 @@ export default function MenuSection({ t, lang, choosingPickup, onPickupChosen })
         const visible = entries.filter(e => e.isIntersecting)
         if (visible.length > 0) setActiveCat(visible[0].target.dataset.cat)
       },
-      // 导航栏 + 分类条:手机 56+46,桌面 64+0。取个折中值,分类高亮差一点无所谓
-      { rootMargin: '-110px 0px -70% 0px', threshold: 0 },
+      // 导航栏 + 吸顶区:手机 56+88,桌面 64+0。取个折中值,分类高亮差一点无所谓
+      { rootMargin: '-120px 0px -70% 0px', threshold: 0 },
     )
     Object.values(sectionRefs.current).forEach(el => el && obs.observe(el))
     return () => obs.disconnect()
@@ -109,7 +109,7 @@ export default function MenuSection({ t, lang, choosingPickup, onPickupChosen })
   function jumpTo(id) {
     const el = sectionRefs.current[id]
     if (!el) return
-    const y = el.getBoundingClientRect().top + window.scrollY - 110   // 同上,让开吸顶区
+    const y = el.getBoundingClientRect().top + window.scrollY - 120   // 同上,让开吸顶区
     window.scrollTo({ top: y, behavior: 'smooth' })
   }
 
@@ -128,8 +128,9 @@ export default function MenuSection({ t, lang, choosingPickup, onPickupChosen })
 
   return (
     <section id="menu" className="menu-section">
-      {/* 只剩分类切换吸顶。取餐条挪进了左侧分类栏(桌面)和底部结算条(手机)——
-          放在菜单栏之外,才能既一直看得见、又一行内容都不挡。 */}
+      {/* 手机端吸顶区:分类切换 + 紧贴在它下面的取餐条,一起吸顶、一起出现。
+          桌面不显示取餐条 —— 右侧「我的订单」面板本来就常驻着同样的信息,
+          再放一份是重复,还白占菜单的宽度。 */}
       <div className="menu-sticky">
         <nav className="cat-tabs" aria-label={t.menu.title}>
           {sections.map(c => (
@@ -142,15 +143,13 @@ export default function MenuSection({ t, lang, choosingPickup, onPickupChosen })
             </button>
           ))}
         </nav>
+
+        <PickupStrip t={t} lang={lang} />
       </div>
 
       <div className="menu-layout">
         {/* Desktop: sticky left rail */}
         <aside className="cat-rail" aria-label={t.menu.title}>
-          {/* 取餐条放这一列的顶上 —— 这列本来就大片留白,跟着 rail 一起吸顶,
-              客人滚到第 20 道菜也照样看得见,而菜单那一列一个像素都没被占。 */}
-          <PickupStrip t={t} lang={lang} />
-
           {sections.map(c => (
             <button
               key={c.id}
