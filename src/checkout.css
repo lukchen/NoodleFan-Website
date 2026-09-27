@@ -2,6 +2,20 @@
    单独一个文件而不是塞进 App.css —— 那份已经 50KB,改一行就得整份重写,
    通过 GitHub API 推送时代价很大。结账相关的样式往后都加在这里。 */
 
+/* 标题栏吸顶 —— 结账表单比一屏长,往下填的时候关闭按钮会滚出视野,
+   客人想退出只能靠点背景(而表单填了一半时点背景是不关的,防误触)。
+   .modal 自己是滚动容器,所以 sticky 贴的是它的内边缘;用负 margin 把标题栏
+   撑到左右两边,再把 .modal 的 padding 在这里补回来,否则内容会从缝里透出来。 */
+.checkout-modal .modal-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  margin: -1.5rem -1.5rem 1.2rem;
+  padding: 1.1rem 1.5rem 0.8rem;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
 /* 到店自取只做当天 —— 日期不再是选项,用一行说明代替原来的日期按钮组 */
 .checkout-today {
   margin: 0;
