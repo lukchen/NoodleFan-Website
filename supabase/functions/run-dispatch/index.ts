@@ -13,7 +13,7 @@
 // 等于把一班拆成两批;而且一旦扣了款再想取消就只能退款 —— 手续费拿不回来、客人要等
 // 5–10 个工作日。截单时刻订单量已经定死,这时候判断最干净。
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2?target=deno'
-import { sendEmail, tplCaptured, tplCancelled } from '../_shared/email.ts'
+import { sendEmail, tplCaptured, tplCancelled, tplRunSummary, OPS_EMAIL } from '../_shared/email.ts'
 import { corsHeaders, timingSafeEqual, authDelay } from '../_shared/cors.ts'
 
 
@@ -133,6 +133,21 @@ async function settle(orders: any[], action: 'capture' | 'cancel', stripeKey: st
   return results
 }
 
+// 结算完给自己发一封汇总 —— 截单是 cron 在中午 12:00 自动跑的,没人盯着。
+// 扣了款就得把餐做出来,取消了就别让人白跑;这封信里是「照着做就行」的那份东西。
+// 和客人邮件一样:发信失败只记日志,钱已经动过了,抛错会招来重试即重复扣款。
+async function notifyOps(
+  pointName: string, runDate: string,
+  action: 'capture' | 'cancel', orders: any[], results: any[],
+) {
+  try {
+    const { subject, html } = tplRunSummary({ pointName, runDate, action, orders, results })
+    await sendEmail(OPS_EMAIL, subject, html)
+  } catch (e) {
+    console.error('ops summary email failed (non-fatal):', pointName, runDate, e)
+  }
+}
+
 // 客人的订单状态页和后台都在听这个频道
 async function broadcast() {
   try {
@@ -186,6 +201,7 @@ Deno.serve(async (req) => {
         if (orders.length === 0) continue
         const act: 'capture' | 'cancel' = orders.length >= MIN_ORDERS ? 'capture' : 'cancel'
         const results = await settle(orders, act, stripeKey)
+        await notifyOps(r.name, r.runDate, act, orders, results)
         const okCount = results.filter(x => x.ok).length
         done.push({
           point: r.point, pointName: r.name, runDate: r.runDate,
@@ -252,6 +268,7 @@ Deno.serve(async (req) => {
 
     // ── 3. 手动结算(提前发车 / 提前取消)────────────────────────────────
     const results = await settle(orders, action, stripeKey)
+    await notifyOps(orders[0]?.pickup_point_name ?? point, runDate, action, orders, results)
     await broadcast()
 
     const okCount = results.filter(r => r.ok).length

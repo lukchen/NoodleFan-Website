@@ -239,6 +239,105 @@ export function tplCancelled(o: OrderForEmail) {
   }
 }
 
+// ── 运营汇总(发给自己,不发客人)─────────────────────────────────────────
+// 结算是这一整班的分水岭:扣了款就得把餐做出来送到,取消了就别有人白跑。
+// 这两件事发生在 cron 里(取餐日中午 12:00 自动跑),没人盯着 —— 所以必须有一封
+// 落到运营信箱的信,里面是「照着做就行」的那份东西:备料汇总 + 逐单清单。
+// 失败单放最上面:扣款失败意味着钱没收到,这单不计入备料和逐单清单,得打电话。
+//
+// 收件人可配置。默认收在 noodlefanboston@gmail.com —— 店里的运营信箱,手机上能直接看。
+// 注意不能发到 order@noodlefanboston.com:那个域在 Resend 里 Receiving 是关的
+// (没有 MX 记录),只能发不能收,往它发信会退回。哪天 order@ 真能收信了,
+// `supabase secrets set OPS_EMAIL=order@noodlefanboston.com` 即可,代码不用动。
+export const OPS_EMAIL = Deno.env.get('OPS_EMAIL') ?? 'noodlefanboston@gmail.com'
+
+type SettleResult = { id: string; code?: string | null; ok: boolean; error?: string | null }
+
+export function tplRunSummary(r: {
+  pointName: string
+  runDate: string
+  action: 'capture' | 'cancel'
+  orders: any[]
+  results: SettleResult[]
+}) {
+  const byId = new Map(r.results.map(x => [x.id, x]))
+  const okOrders = r.orders.filter((o: any) => byId.get(o.id)?.ok)
+  const bad = r.results.filter(x => !x.ok)
+  const money2 = (n: number) => `$${n.toFixed(2)}`
+  const sum = okOrders.reduce((s, o) => s + Number(o.total ?? 0), 0)
+  const when = prettyWhen(r.runDate)
+  const isCap = r.action === 'capture'
+
+  // 备料汇总 —— 取消的班次不用做饭,这一块就没意义
+  let prep = ''
+  if (isCap && okOrders.length) {
+    const tally = new Map<string, number>()
+    for (const o of okOrders) {
+      for (const it of o.items ?? []) {
+        const k = (it.optionsZh ?? []).length ? `${it.nameZh}（${it.optionsZh!.join('、')}）` : it.nameZh
+        tally.set(k, (tally.get(k) ?? 0) + it.qty)
+      }
+    }
+    const rows = [...tally.entries()].sort((a, b) => b[1] - a[1]).map(([k, q]) =>
+      `<tr><td style="padding:5px 0;border-bottom:1px solid #e8dcc8;">${esc(k)}</td>
+           <td style="padding:5px 0;border-bottom:1px solid #e8dcc8;text-align:right;font-weight:700;">${q}</td></tr>`).join('')
+    prep = `<h2 style="font-size:15px;margin:22px 0 6px;">备料汇总 —— 这一班要做的量</h2>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;">${rows}</table>`
+  }
+
+  // 逐单清单 —— 装袋和现场核对取餐码用
+  const list = okOrders.map((o: any) => {
+    const items = (o.items ?? []).map((it: any) => {
+      const opt = (it.optionsZh ?? []).length ? `（${it.optionsZh.join('、')}）` : ''
+      return `${esc(it.nameZh)}${esc(opt)} × ${it.qty}`
+    }).join('<br>')
+    return `<tr>
+      <td style="padding:8px 0;border-bottom:1px solid #e8dcc8;vertical-align:top;">
+        <strong style="font-size:16px;letter-spacing:1px;">${o.pickup_code ?? '—'}</strong>
+        <span style="color:#857a6b;"> · ${esc(o.customer_name)}</span>
+        ${o.customer_phone ? `<span style="color:#857a6b;"> · ${esc(o.customer_phone)}</span>` : ''}
+        ${o.pickup_time ? `<span style="color:#857a6b;"> · ${esc(o.pickup_time)}</span>` : ''}
+        <div style="font-size:13px;margin-top:2px;">${items}</div>
+      </td>
+      <td style="padding:8px 0;border-bottom:1px solid #e8dcc8;text-align:right;vertical-align:top;white-space:nowrap;">
+        ${money2(Number(o.total ?? 0))}
+      </td></tr>`
+  }).join('')
+
+  // 失败单 —— 唯一需要你立刻动手的部分,所以放在最前面
+  const failBlock = bad.length ? `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+      style="margin:0 0 18px;background:#fdecec;border:1px solid #c94a4a;border-radius:10px;">
+      <tr><td style="padding:14px 16px;font-size:14px;line-height:1.6;">
+        <strong>${bad.length} 单${isCap ? '扣款' : '取消'}失败,需要手动处理。</strong>
+        ${isCap ? '钱没收到,所以这几单<strong>没算进下面的备料</strong>,也没进逐单清单 —— 先打电话问清楚,要做再另外加。' : '这几笔冻结没解掉,客人卡上还挂着钱 —— 去 Stripe 后台手动 cancel,否则要挂到 7 天后才自动失效。'}
+        <div style="margin-top:8px;">
+          ${bad.map(b => `· ${esc(b.code ?? b.id)} —— ${esc(b.error ?? '未知错误')}`).join('<br>')}
+        </div>
+      </td></tr></table>` : ''
+
+  const head = isCap
+    ? `<p style="margin:0 0 4px;font-size:16px;"><strong>${esc(r.pointName)} · ${when} 发车。</strong></p>
+       <p style="margin:0 0 4px;">已扣款 <strong>${okOrders.length}</strong> 单，合计 <strong>${money2(sum)}</strong>。
+          客人已收到扣款通知，按下面的量备料。</p>`
+    : `<p style="margin:0 0 4px;font-size:16px;"><strong>${esc(r.pointName)} · ${when} 不发车。</strong></p>
+       <p style="margin:0 0 4px;">${okOrders.length} 单已取消，冻结已解除，未收取任何费用（合计 ${money2(sum)}）。
+          客人已收到取消通知，今天不会有人来取餐。</p>`
+
+  return {
+    subject: isCap
+      ? `【发车】${r.pointName} ${when} · ${okOrders.length} 单 · ${money2(sum)}${bad.length ? ` · ${bad.length} 单失败` : ''}`
+      : `【不发车】${r.pointName} ${when} · ${okOrders.length} 单已取消${bad.length ? ` · ${bad.length} 单失败` : ''}`,
+    html: layout(isCap ? '已发车 · 备料清单' : '未成团 · 已取消', `
+      ${failBlock}
+      ${head}
+      ${prep}
+      ${okOrders.length ? `<h2 style="font-size:15px;margin:22px 0 6px;">逐单清单${isCap ? ' —— 装袋 / 现场核对取餐码' : ''}</h2>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;">${list}</table>` : ''}
+    `),
+  }
+}
+
 // ── 发送 ─────────────────────────────────────────────────────────────────
 export async function sendEmail(to: string | null | undefined, subject: string, html: string) {
   if (!to) { console.log('email skipped: no address'); return false }
