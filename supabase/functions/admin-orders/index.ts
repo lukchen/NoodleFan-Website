@@ -6,11 +6,7 @@
 // 团餐(run_date 不为空)不发 —— 那条线的通知点是截单后的成团/取消,备餐进度对客人没意义。
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2?target=deno'
 import { sendEmail, tplReady } from '../_shared/email.ts'
-
-const CORS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { corsHeaders, timingSafeEqual, authDelay } from '../_shared/cors.ts'
 
 const supabase = createClient(
   Deno.env.get('SUPABASE_URL')!,
@@ -18,12 +14,15 @@ const supabase = createClient(
 )
 
 Deno.serve(async (req) => {
+  const CORS = corsHeaders(req)
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS })
 
   try {
     const { password, id, status } = await req.json()
 
-    if (password !== Deno.env.get('ADMIN_PASSWORD')) {
+    // 恒定时间比对 + 失败后延时 1 秒,见 _shared/cors.ts 里的说明。
+    if (!timingSafeEqual(String(password ?? ''), Deno.env.get('ADMIN_PASSWORD') ?? '')) {
+      await authDelay()
       return new Response(JSON.stringify({ error: 'unauthorized' }), {
         status: 401,
         headers: { ...CORS, 'Content-Type': 'application/json' },
