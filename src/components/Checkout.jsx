@@ -45,6 +45,10 @@ export default function Checkout({ t, onClose }) {
   const grandTotal = totalPrice + tax
 
   const today = useMemo(() => toLocalDateString(new Date()), [])
+  const tomorrow = useMemo(() => {
+    const d = new Date(); d.setDate(d.getDate() + 1)
+    return toLocalDateString(d)
+  }, [])
 
   const { point, run } = usePickup()
   // 定点配送的取餐时刻是发车时间,不该让客人自己挑 —— 挑了也不作数。
@@ -53,12 +57,21 @@ export default function Checkout({ t, onClose }) {
   // 打烊时段不拦单,当预约单处理 —— 只把已经过去的时段过滤掉,并明确告诉客人这是预约。
   const now = useMemo(() => new Date(), [])
   const openNow = storeIsOpen(now)
-  // 到店自取只做当天 —— 现做现取,隔天的单没法保证品质,也占不了明天的备料。
-  const cutoffMin = now.getHours() * 60 + now.getMinutes() + 20   // 留 20 分钟备餐
+  // 今天还剩哪些时段 —— 已经过去的、以及 20 分钟备餐来不及的,都去掉。
+  const cutoffMin = now.getHours() * 60 + now.getMinutes() + 20
   const todaySlots = TIME_SLOTS.filter(sl => {
     const [h, m] = sl.value.split(':').map(Number)
     return h * 60 + m >= cutoffMin
   })
+
+  // 今天的时段全过了(打烊、或者离最后一档不足 20 分钟)就顺延到明天,整天的时段都放开。
+  // 不这么做的话,晚上来的客人看到一句「今天没时段了」就直接走了 —— 他本来是愿意
+  // 订明天的。自取依然是「一天做一天的」,只是下单窗口提前到了前一晚。
+  const rollToTomorrow = todaySlots.length === 0
+  const orderDate = rollToTomorrow ? tomorrow : today
+  const slots = rollToTomorrow ? TIME_SLOTS : todaySlots
+  // 不是现做现取的单,都要明说这是预约:打烊时段下的单,以及顺延到明天的单。
+  const isPreorder = rollToTomorrow || !openNow
 
   // 表单也存本地 —— 从结账页退回菜单时这个组件会卸载,不存就等于客人白填一遍。
   // 存的是他自己设备上的联系方式,方便下次再来直接下单;卡号一概不经过这里。
@@ -68,7 +81,7 @@ export default function Checkout({ t, onClose }) {
       const raw = localStorage.getItem(FORM_KEY)
       if (!raw) return blank
       const saved = JSON.parse(raw)
-      // 日期永远是今天;存的时段如果是昨天留下的就丢掉
+      // 存下来的时段只有在同一天才还作数,否则丢掉重选
       return { ...blank, ...saved, date: today, time: saved.date === today ? (saved.time ?? '') : '' }
     } catch { return blank }
   })
@@ -78,6 +91,16 @@ export default function Checkout({ t, onClose }) {
   }, [form])
 
   useScrollLock()
+
+  // 到店自取:日期跟着 orderDate 走。跨过最后一档的那一刻会从今天翻到明天,
+  // 这时候已经选好的时段可能已经不在列表里了(比如选了 7:45 PM 然后拖到 8 点),
+  // 一并清掉,免得提交一个下拉里根本没有的时间。
+  useEffect(() => {
+    if (fixedRun) return
+    setForm(prev => prev.date === orderDate
+      ? prev
+      : { ...prev, date: orderDate, time: '' })
+  }, [fixedRun, orderDate])
 
   // 定点配送:把日期/时间锁成这一班的发车时刻,表单校验照常通过。
   useEffect(() => {
@@ -234,24 +257,23 @@ export default function Checkout({ t, onClose }) {
               <strong>{t.lang === 'zh' ? point.nameZh : point.nameEn} · {formatPickupAt(run, t.lang)}</strong>
             </div>
           ) : (<>
-          {!openNow && (
+          {isPreorder && (
             <p className="checkout-preorder">{t.checkout.preorderNote(STORE_HOURS_TEXT)}</p>
           )}
 
           <div className="checkout-field">
             <span className="checkout-field-label">{t.checkout.date}</span>
-            <p className="checkout-today">{t.checkout.dateToday} · {today}</p>
-            <input type="hidden" name="date" value={today} />
+            <p className="checkout-today">
+              {rollToTomorrow ? t.checkout.dateTomorrow : t.checkout.dateToday} · {orderDate}
+            </p>
+            <input type="hidden" name="date" value={orderDate} />
           </div>
 
           <div className="checkout-field">
             <span className="checkout-field-label">{t.checkout.time}</span>
             <input type="hidden" name="time" value={form.time} required />
-            {todaySlots.length === 0 && (
-              <p className="checkout-preorder">{t.checkout.noSlotsToday}</p>
-            )}
             <div className="time-slots">
-              {todaySlots.map(slot => (
+              {slots.map(slot => (
                 <button
                   key={slot.value}
                   type="button"
