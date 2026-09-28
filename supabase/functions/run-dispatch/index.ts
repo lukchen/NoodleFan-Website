@@ -14,11 +14,8 @@
 // 5–10 个工作日。截单时刻订单量已经定死,这时候判断最干净。
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2?target=deno'
 import { sendEmail, tplCaptured, tplCancelled } from '../_shared/email.ts'
+import { corsHeaders, timingSafeEqual, authDelay } from '../_shared/cors.ts'
 
-const CORS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
 
 const supabase = createClient(
   Deno.env.get('SUPABASE_URL')!,
@@ -29,11 +26,14 @@ const MIN_ORDERS  = Number(Deno.env.get('MIN_ORDERS') ?? '5')
 const CUTOFF_HOUR = Number(Deno.env.get('CUTOFF_HOUR') ?? '12')   // 取餐当天 12:00 截单
 const TZ = 'America/New_York'
 
-function json(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { ...CORS, 'Content-Type': 'application/json' },
-  })
+// CORS 头要按请求的 Origin 逐个算,所以这里做成工厂:
+// 处理函数里 `const json = jsonWith(CORS)` 之后,下面所有 json(...) 调用不用改。
+function jsonWith(cors: Record<string, string>) {
+  return (body: unknown, status = 200) =>
+    new Response(JSON.stringify(body), {
+      status,
+      headers: { ...cors, 'Content-Type': 'application/json' },
+    })
 }
 
 // run_date 是「哪天发车」,截单时刻是那天波士顿时间的 CUTOFF_HOUR。
@@ -145,11 +145,17 @@ async function broadcast() {
 }
 
 Deno.serve(async (req) => {
+  const CORS = corsHeaders(req)
+  const json = jsonWith(CORS)
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS })
 
   try {
     const { password, point, runDate, action } = await req.json()
-    if (password !== Deno.env.get('ADMIN_PASSWORD')) return json({ error: 'unauthorized' }, 401)
+    // 恒定时间比对 + 失败后延时 —— 这个口能扣款和取消授权,比看订单更敏感。
+    if (!timingSafeEqual(String(password ?? ''), Deno.env.get('ADMIN_PASSWORD') ?? '')) {
+      await authDelay()
+      return json({ error: 'unauthorized' }, 401)
+    }
 
     const stripeKey = Deno.env.get('STRIPE_SECRET_KEY')
     if (!stripeKey) throw new Error('STRIPE_SECRET_KEY not set')
