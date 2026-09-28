@@ -145,8 +145,7 @@ const strings = {
       copied: 'Copied',
       helpTitle: 'Questions about your order?',
       helpWechat: 'Ask in the WeChat group',
-      helpEmail: 'Reply to your receipt email',
-      mailSubject: 'Order',
+      helpEmail: 'Or just reply to the receipt email we sent you — it reaches us directly.',
       orderAgain: 'Order again',
     },
     footer: {
@@ -294,8 +293,7 @@ const strings = {
       copied: '已复制',
       helpTitle: '订单有任何需求？',
       helpWechat: '微信群里联系客服',
-      helpEmail: '回复收据邮件',
-      mailSubject: '订单',
+      helpEmail: '或直接回复我们发给您的收据邮件，我们会收到。',
       orderAgain: '再来一单',
     },
     footer: {
