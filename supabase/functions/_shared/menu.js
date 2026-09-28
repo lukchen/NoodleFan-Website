@@ -281,11 +281,13 @@ export const categories = [
   },
   {
     id: 'combo2', nameZh: '双人套餐', nameEn: 'Combo for Two',
-    taglineZh: '两份主食+两份饮料，两个人刚刚好', taglineEn: 'Two mains and two drinks — just right for two',
+    taglineZh: '两份主食 + 两份饮料', taglineEn: 'Two mains and two drinks',
   },
   {
+    // 小菜不写导语 —— 菜名本身已经说清楚了,再加一句是凑字数。
+    // tagline 留空,MenuSection 会整行不渲染。
     id: 'side', nameZh: '小菜', nameEn: 'Sides',
-    taglineZh: '卤香小食，配面配饭', taglineEn: 'Small bites to round out the bowl',
+    taglineZh: '', taglineEn: '',
   },
   {
     id: 'drink', nameZh: '饮料', nameEn: 'Drinks',
