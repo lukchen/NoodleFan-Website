@@ -36,14 +36,14 @@ export const PICKUP_POINTS = [
   {
     id: 'store',
     kind: 'store',
-    nameZh: '当日到店自取',
-    nameEn: 'Same-Day Store Pickup',
+    nameZh: '到店自取',
+    nameEn: 'Store Pickup',
     areaZh: '94 Shirley St, Boston, MA 02119',
     areaEn: '94 Shirley St, Boston, MA 02119',
     hoursZh: STORE_HOURS_TEXT,
     hoursEn: STORE_HOURS_TEXT,
-    noteZh: '仅限当天 · 营业时间内随时下单 · 约 20 分钟出餐',
-    noteEn: 'Same-day only · order anytime during open hours · ready in ~20 min',
+    noteZh: '现做现取 · 约 20 分钟出餐 · 打烊后可预订次日',
+    noteEn: 'Made to order · ready in ~20 min · pre-order for tomorrow after hours',
   },
   {
     id: 'allston',

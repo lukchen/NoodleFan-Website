@@ -49,3 +49,9 @@
   font-size: 0.82rem;
   color: var(--color-text-soft, #857a6b);
 }
+
+/* 顺延到明天时,日期那一行要一眼看出来不是今天 —— 客人最怕的误会
+   就是以为今晚能取,到店扑空。 */
+.checkout-today--tomorrow {
+  color: #7a1f1f;
+}
