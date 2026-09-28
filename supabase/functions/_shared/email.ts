@@ -177,7 +177,7 @@ export function tplConfirmed(o: OrderForEmail) {
       ${holdNote}
       ${itemsTable(o)}
       ${isHold ? '' : `<p style="margin:12px 0 0;font-size:14px;">
-        我们开始备餐后会再发一封邮件通知您「可以来取」，约 20 分钟。到店报取餐码即可。</p>`}
+        我们开始备餐后会再发一封邮件通知您「可以来取」，约 20 分钟。到店请出示取餐码。</p>`}
     `),
   }
 }
@@ -192,7 +192,7 @@ export function tplReady(o: OrderForEmail) {
       <p style="margin:0 0 4px;color:#857a6b;font-size:13px;">
         Your order is ready for pickup.</p>
       ${pickupBlock(o)}
-      <p style="margin:12px 0 0;font-size:14px;">到店报取餐码即可，无需出示本邮件。
+      <p style="margin:12px 0 0;font-size:14px;">到店请出示取餐码。
         趁热吃口感最好，建议尽快取餐。</p>
     `),
   }
@@ -208,7 +208,7 @@ export function tplCaptured(o: OrderForEmail) {
       <p style="margin:0 0 4px;color:#857a6b;font-size:13px;">
         The run filled — we've now charged the ${money(o.total)} that was on hold.</p>
       ${pickupBlock(o)}
-      <p style="margin:12px 0 0;font-size:14px;">到取餐点报取餐码即可，无需出示本邮件。</p>
+      <p style="margin:12px 0 0;font-size:14px;">到取餐点请出示取餐码。</p>
     `),
   }
 }
