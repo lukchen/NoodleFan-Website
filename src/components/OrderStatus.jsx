@@ -6,7 +6,7 @@ import Footer from './Footer'
 import { useCart } from '../context/CartContext'
 import { FORM_KEY } from './Checkout'
 import { WechatModal } from './WechatNav'
-import { qrValid } from '../wechat-qr'
+import { QR_SRC, qrValid } from '../wechat-qr'
 import '../orderstatus.css'
 
 const FN_URL = `${SUPABASE_URL}/functions/v1/order-status`
@@ -189,6 +189,11 @@ export default function OrderStatus({ sessionId, t, lang, setLang }) {
               {qrValid() && (
                 <div className="os-help-actions">
                   <button className="os-help-btn" onClick={() => setWechatOpen(true)}>
+                    {/* 带个小码缩略图 —— 跟导航栏那个入口同一套裁切(见 wechat.css),
+                        客人看见是二维码才会想到「哦,这个能扫」。 */}
+                    <span className="wechat-nav-thumb" aria-hidden="true">
+                      <img src={`${import.meta.env.BASE_URL}${QR_SRC}`} alt="" />
+                    </span>
                     {s.helpWechat}
                   </button>
                 </div>
