@@ -70,8 +70,6 @@ export default function Checkout({ t, onClose }) {
   const rollToTomorrow = todaySlots.length === 0
   const orderDate = rollToTomorrow ? tomorrow : today
   const slots = rollToTomorrow ? TIME_SLOTS : todaySlots
-  // 不是现做现取的单,都要明说这是预约:打烊时段下的单,以及顺延到明天的单。
-  const isPreorder = rollToTomorrow || !openNow
 
   // 表单也存本地 —— 从结账页退回菜单时这个组件会卸载,不存就等于客人白填一遍。
   // 存的是他自己设备上的联系方式,方便下次再来直接下单;卡号一概不经过这里。
@@ -257,13 +255,18 @@ export default function Checkout({ t, onClose }) {
               <strong>{t.lang === 'zh' ? point.nameZh : point.nameEn} · {formatPickupAt(run, t.lang)}</strong>
             </div>
           ) : (<>
-          {isPreorder && (
-            <p className="checkout-preorder">{t.checkout.preorderNote(STORE_HOURS_TEXT)}</p>
-          )}
+          {/* 两种预约情形话不一样:
+              顺延到明天 —— 必须点明「这是明天的单」,客人最怕的是以为今晚能取;
+              只是打烊(时段还在今天) —— 说清现在没在营业、按时段备餐就够了。 */}
+          {rollToTomorrow
+            ? <p className="checkout-preorder">{t.checkout.preorderTomorrow}</p>
+            : !openNow && (
+              <p className="checkout-preorder">{t.checkout.preorderNote(STORE_HOURS_TEXT)}</p>
+            )}
 
           <div className="checkout-field">
             <span className="checkout-field-label">{t.checkout.date}</span>
-            <p className="checkout-today">
+            <p className={`checkout-today${rollToTomorrow ? ' checkout-today--tomorrow' : ''}`}>
               {rollToTomorrow ? t.checkout.dateTomorrow : t.checkout.dateToday} · {orderDate}
             </p>
             <input type="hidden" name="date" value={orderDate} />
