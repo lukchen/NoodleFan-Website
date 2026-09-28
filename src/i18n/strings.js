@@ -80,7 +80,9 @@ const strings = {
     },
     pickup: {
       title: 'How would you like to pick up?',
-      subtitle: 'Pick a spot and a day — drop-off runs go out daily; each day is its own run.',
+      // 起送量和「不成团不收费」必须在客人选取餐点之前就说清楚 —— 原来这两句
+      // 分在卡片上下两处,客人做完决定才看到保证,顺序是反的。
+      subtitle: (min) => `Choose a pickup spot and day. Drop-off runs go out daily and each day is its own run, with its own cutoff and prep. A run needs ${min} orders to go — if it doesn't fill, your order is cancelled and you are not charged.`,
       cutoffAt: 'Orders close 12:00 PM on pickup day',
       arrives: 'Arrives',
       ready: '✅ Minimum reached — we roll',
@@ -89,11 +91,9 @@ const strings = {
       noRun: 'No run scheduled — check back soon',
       change: 'Change',
       changeLong: '🔄 Change pickup spot',
-      fineprint: (min) => `Drop-off runs need ${min} orders. If we don't reach it, your order is cancelled and you are not charged.`,
       onlyLeft: (n) => `Only ${n} left today`,
       soldOut: 'Sold out for today',
       pickupAtLabel: 'Pickup spot',
-      step1: 'Step 1 of 2',
       gateTitle: 'Choose a pickup spot to see the menu',
       gateNote: 'What we can prep — and when orders close — depends on the spot.',
       gateBtn: 'Choose pickup spot',
@@ -224,7 +224,7 @@ const strings = {
     },
     pickup: {
       title: '选择取餐方式',
-      subtitle: '先选取餐点和日期 —— 定点配送每天发车，每一天单独截单、单独备料。',
+      subtitle: (min) => `先选取餐点与日期。定点配送每日发车，每一班次单独截单、单独备料；每班满 ${min} 单方可发车，未达起送量则订单自动取消，不收取任何费用。`,
       cutoffAt: '取餐当天 12:00 PM 截单',
       arrives: '送达',
       ready: '✅ 已成团 · 发车',
@@ -233,11 +233,9 @@ const strings = {
       noRun: '暂无班次,请稍后再看',
       change: '更换',
       changeLong: '🔄 更换取餐方式',
-      fineprint: (min) => `定点配送满 ${min} 单发车。未成团则订单取消,不收取任何费用。`,
       onlyLeft: (n) => `仅剩 ${n} 份`,
       soldOut: '今日已订满',
       pickupAtLabel: '取餐点',
-      step1: '第 1 步 / 共 2 步',
       gateTitle: '先选取餐方式,再看菜单',
       gateNote: '不同取餐点的截单时间和当天备料份数不一样。',
       gateBtn: '选择取餐方式',
