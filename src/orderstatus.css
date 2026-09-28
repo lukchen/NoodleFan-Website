@@ -50,6 +50,12 @@
 
 .os-help { margin: 0 0 1rem; text-align: center; }
 .os-help-title { font-size: 0.85rem; color: var(--color-muted); margin: 0 0 0.5rem; }
+.os-help-email {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+  line-height: 1.5;
+  margin: 0.55rem 0 0;
+}
 .os-help-actions {
   display: flex;
   gap: 0.5rem;

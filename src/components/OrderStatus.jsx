@@ -186,19 +186,14 @@ export default function OrderStatus({ sessionId, t, lang, setLang }) {
 
             <div className="os-help">
               <p className="os-help-title">{s.helpTitle}</p>
-              <div className="os-help-actions">
-                {qrValid() && (
+              {qrValid() && (
+                <div className="os-help-actions">
                   <button className="os-help-btn" onClick={() => setWechatOpen(true)}>
                     {s.helpWechat}
                   </button>
-                )}
-                <a
-                  className="os-help-btn"
-                  href={`mailto:order@noodlefanboston.com?subject=${encodeURIComponent(`${s.mailSubject} ${order.pickup_code}`)}`}
-                >
-                  {s.helpEmail}
-                </a>
-              </div>
+                </div>
+              )}
+              <p className="os-help-email">{s.helpEmail}</p>
             </div>
 
             <a className="btn-primary os-again" href={window.location.pathname}>{s.orderAgain}</a>
