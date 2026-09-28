@@ -42,3 +42,10 @@
   font-weight: 400;
   color: var(--color-text-soft, #857a6b);
 }
+
+/* 「可选」标记 —— 和字段名同一行,弱化显示 */
+.checkout-optional {
+  font-weight: 400;
+  font-size: 0.82rem;
+  color: var(--color-text-soft, #857a6b);
+}
