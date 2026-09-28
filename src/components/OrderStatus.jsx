@@ -5,6 +5,9 @@ import LangToggle from './LangToggle'
 import Footer from './Footer'
 import { useCart } from '../context/CartContext'
 import { FORM_KEY } from './Checkout'
+import { WechatModal } from './WechatNav'
+import { qrValid } from '../wechat-qr'
+import '../orderstatus.css'
 
 const FN_URL = `${SUPABASE_URL}/functions/v1/order-status`
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
@@ -17,7 +20,25 @@ export default function OrderStatus({ sessionId, t, lang, setLang }) {
   const [order, setOrder] = useState(null)
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const [wechatOpen, setWechatOpen] = useState(false)
   const s = t.orderStatus
+
+  // 这个页面就是客人的小票 —— session_id 是查单的唯一钥匙,客人一关浏览器就找不回来了。
+  // 所以给一条能复制的完整链接,让他发给自己存着。
+  const orderUrl = `${window.location.origin}${window.location.pathname}?session_id=${sessionId}`
+
+  async function copyLink() {
+    try {
+      await navigator.clipboard.writeText(orderUrl)
+    } catch {
+      // clipboard API 在部分内置浏览器(微信、Instagram)里不可用,退回选中输入框再 copy
+      const el = document.getElementById('os-link-input')
+      if (el) { el.select(); try { document.execCommand('copy') } catch { /* 最后只能让他手动长按复制 */ } }
+    }
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
   const fetchOrder = useCallback(async () => {
     try {
@@ -143,13 +164,50 @@ export default function OrderStatus({ sessionId, t, lang, setLang }) {
 
             {order.note && <p className="os-note">{order.note}</p>}
 
-            <p className="os-bookmark">{s.bookmarkHint}</p>
+            <div className="os-save">
+              <strong className="os-save-title">{s.saveTitle}</strong>
+              <p className="os-save-hint">{s.saveHint}</p>
+              <div className="os-link-row">
+                <input
+                  id="os-link-input"
+                  className="os-link"
+                  value={orderUrl}
+                  readOnly
+                  onFocus={e => e.target.select()}
+                />
+                <button
+                  className={`os-copy${copied ? ' os-copy--done' : ''}`}
+                  onClick={copyLink}
+                >
+                  {copied ? s.copied : s.copy}
+                </button>
+              </div>
+            </div>
+
+            <div className="os-help">
+              <p className="os-help-title">{s.helpTitle}</p>
+              <div className="os-help-actions">
+                {qrValid() && (
+                  <button className="os-help-btn" onClick={() => setWechatOpen(true)}>
+                    {s.helpWechat}
+                  </button>
+                )}
+                <a
+                  className="os-help-btn"
+                  href={`mailto:order@noodlefanboston.com?subject=${encodeURIComponent(`${s.mailSubject} ${order.pickup_code}`)}`}
+                >
+                  {s.helpEmail}
+                </a>
+              </div>
+            </div>
+
             <a className="btn-primary os-again" href={window.location.pathname}>{s.orderAgain}</a>
           </div>
         )}
       </main>
 
       <Footer t={t} />
+      {wechatOpen && <WechatModal t={t} onClose={() => setWechatOpen(false)} />}
     </>
   )
 }
