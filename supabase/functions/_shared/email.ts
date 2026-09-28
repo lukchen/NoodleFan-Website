@@ -39,6 +39,19 @@ const ADDRESSES: Record<string, string> = {
 
 const money = (n: number | null | undefined) => `$${Number(n ?? 0).toFixed(2)}`
 
+// 客人自己填的内容(姓名)会被拼进邮件正文的 HTML —— 不转义的话,
+// 他填一段 <a href="...">点这里领券</a> 就变成了一封从我们域名发出、
+// 带着我们品牌的钓鱼邮件。收件人虽然是他自己,但这封信可以被转发、截图,
+// 看上去完全像是我们发的。菜名和选项来自后端菜单,不用管;姓名必须转义。
+function esc(v: unknown): string {
+  return String(v ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 // 「2026-09-29」+「18:00」→「周二 9/29 6:00 PM」
 const DAY_ZH = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
 export function prettyWhen(dateStr?: string | null, timeStr?: string | null): string {
@@ -85,8 +98,8 @@ function itemsTable(o: OrderForEmail): string {
     const opts = (it.optionsZh ?? []).join('、')
     return `<tr>
       <td style="padding:6px 0;border-bottom:1px solid #e8dcc8;">
-        ${it.nameZh} × ${it.qty}
-        ${opts ? `<br><span style="color:#857a6b;font-size:13px;">${opts}</span>` : ''}
+        ${esc(it.nameZh)} × ${it.qty}
+        ${opts ? `<br><span style="color:#857a6b;font-size:13px;">${esc(opts)}</span>` : ''}
       </td>
       <td style="padding:6px 0;border-bottom:1px solid #e8dcc8;text-align:right;white-space:nowrap;">
         ${money(it.price * it.qty)}
@@ -111,7 +124,7 @@ function itemsTable(o: OrderForEmail): string {
 
 // 取餐码做大 —— 客人到了现场要一眼报得出来
 function pickupBlock(o: OrderForEmail): string {
-  const addr = ADDRESSES[o.pickup_point_name ?? ''] ?? o.pickup_point_name ?? ''
+  const addr = esc(ADDRESSES[o.pickup_point_name ?? ''] ?? o.pickup_point_name ?? '')
   const when = prettyWhen(o.run_date ?? o.pickup_date, o.pickup_time)
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0"
     style="margin:16px 0;background:#fff;border:1px solid #e8dcc8;border-radius:10px;">
@@ -121,7 +134,7 @@ function pickupBlock(o: OrderForEmail): string {
       <div style="color:#857a6b;font-size:12px;">取餐时间 When</div>
       <div style="font-weight:700;margin-bottom:10px;">${when}</div>
       <div style="color:#857a6b;font-size:12px;">取餐地点 Where</div>
-      <div style="font-weight:700;">${o.pickup_point_name ?? ''}</div>
+      <div style="font-weight:700;">${esc(o.pickup_point_name)}</div>
       <div style="color:#5c5245;font-size:13px;">${addr}</div>
     </td></tr></table>`
 }
@@ -158,7 +171,7 @@ export function tplConfirmed(o: OrderForEmail) {
       ? `订单已确认 ${o.pickup_code ?? ''} · ${prettyWhen(o.run_date ?? o.pickup_date, o.pickup_time)}`
       : `收据 Receipt ${o.pickup_code ?? ''} · ${money(o.total)}`,
     html: layout(isHold ? '订单已确认 Order confirmed' : '付款成功 · 收据 Payment receipt', `
-      <p style="margin:0 0 4px;">${o.customer_name ?? ''}，感谢您的订购。</p>
+      <p style="margin:0 0 4px;">${esc(o.customer_name)}，感谢您的订购。</p>
       ${paidNote}
       ${pickupBlock(o)}
       ${holdNote}
@@ -175,7 +188,7 @@ export function tplReady(o: OrderForEmail) {
   return {
     subject: `餐已做好，请来取餐 · 取餐码 ${o.pickup_code ?? ''}`,
     html: layout('餐已做好，请来取餐 Your order is ready', `
-      <p style="margin:0 0 4px;">${o.customer_name ?? ''}，您的餐已做好，随时可以来取。</p>
+      <p style="margin:0 0 4px;">${esc(o.customer_name)}，您的餐已做好，随时可以来取。</p>
       <p style="margin:0 0 4px;color:#857a6b;font-size:13px;">
         Your order is ready for pickup.</p>
       ${pickupBlock(o)}
@@ -189,7 +202,7 @@ export function tplCaptured(o: OrderForEmail) {
   return {
     subject: `本班次已成团 · 取餐码 ${o.pickup_code ?? ''}`,
     html: layout('已成团，今天发车 We roll today', `
-      <p style="margin:0 0 4px;">${o.customer_name ?? ''}，本班次已成团。</p>
+      <p style="margin:0 0 4px;">${esc(o.customer_name)}，本班次已成团。</p>
       <p style="margin:0 0 4px;">已从您的银行卡正式扣款 <strong>${money(o.total)}</strong>
         （此前为预授权冻结，现已完成收取）。</p>
       <p style="margin:0 0 4px;color:#857a6b;font-size:13px;">
@@ -204,8 +217,8 @@ export function tplCancelled(o: OrderForEmail) {
   return {
     subject: `本班次未成团，订单已取消 · 未扣款`,
     html: layout('本班次未成团，订单已取消', `
-      <p style="margin:0 0 10px;">${o.customer_name ?? ''}，很抱歉 ——
-        ${o.pickup_point_name ?? ''} ${prettyWhen(o.run_date ?? o.pickup_date)}
+      <p style="margin:0 0 10px;">${esc(o.customer_name)}，很抱歉 ——
+        ${esc(o.pickup_point_name)} ${prettyWhen(o.run_date ?? o.pickup_date)}
         本班次未能成团，今天不发车。</p>
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
         style="margin:4px 0 16px;background:#fff;border:1px solid #e8dcc8;border-radius:10px;">
