@@ -188,9 +188,14 @@ export default function Checkout({ t, onClose }) {
             {t.checkout.name}
             <input name="name" value={form.name} onChange={handleChange} required placeholder={t.checkout.namePlaceholder} />
           </label>
+          {/* 手机号可选 —— 通知走邮件,电话只是万一出餐有问题时的备用联系方式。
+              强制填会让一部分客人卡在这一步直接走掉。
+              「可选」二字借用 t.options.optional(中「可选」/英「Optional」),
+              免得为两个字再动一遍 12KB 的文案文件。 */}
           <label>
             {t.checkout.phone}
-            <input name="phone" type="tel" value={form.phone} onChange={handleChange} required placeholder={t.checkout.phonePlaceholder} />
+            <span className="checkout-optional"> · {t.options.optional}</span>
+            <input name="phone" type="tel" value={form.phone} onChange={handleChange} placeholder={t.checkout.phonePlaceholder} />
           </label>
           <label>
             {t.checkout.email}
