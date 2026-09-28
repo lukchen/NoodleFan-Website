@@ -106,11 +106,9 @@ export default function PickupPicker({ t, lang, onClose, dismissable = true, inl
             <span aria-hidden="true">←</span> {t.pickup.backToMenu}
           </button>
         )}
-        <span className="pickup-choose-step">{t.pickup.step1}</span>
         <h3 className="pickup-choose-title">{t.pickup.title}</h3>
-        <p className="pickup-choose-sub">{t.pickup.subtitle}</p>
+        <p className="pickup-choose-sub">{t.pickup.subtitle(MIN_ORDERS)}</p>
         {options}
-        <p className="pickup-fineprint">{t.pickup.fineprint(MIN_ORDERS)}</p>
       </div>
     )
   }
@@ -122,9 +120,8 @@ export default function PickupPicker({ t, lang, onClose, dismissable = true, inl
           <h2>{t.pickup.title}</h2>
           {dismissable && <button className="cart-close" onClick={onClose}>✕</button>}
         </div>
-        <p className="pickup-sub">{t.pickup.subtitle}</p>
+        <p className="pickup-sub">{t.pickup.subtitle(MIN_ORDERS)}</p>
         {options}
-        <p className="pickup-fineprint">{t.pickup.fineprint(MIN_ORDERS)}</p>
       </div>
     </div>
   )
