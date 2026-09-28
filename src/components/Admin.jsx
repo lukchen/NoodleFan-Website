@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import RunBoard from './RunBoard'
 import '../runboard.css'
+import '../admin.css'
 import { createClient } from '@supabase/supabase-js'
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../config'
 
@@ -17,6 +18,21 @@ const STATUS_LABELS = {
   ready: '可取餐',
   completed: '已完成',
   cancelled_no_run: '未成团 · 已取消',
+}
+
+// 哪些状态要二次确认,以及确认框里说什么。
+// 只拦有外部后果的两步 —— 一个会发邮件,一个是收尾。
+const NEEDS_CONFIRM = {
+  ready: {
+    title: '确认通知客人来取餐？',
+    warn: <>点确认会<strong>立刻给客人发一封「餐已做好」邮件</strong>。邮件发出去就收不回来了,客人会直接过来。</>,
+    ok: '确认,通知客人',
+  },
+  completed: {
+    title: '确认这单已经交到客人手上？',
+    warn: <>点确认这单就从待处理里移走,不再提醒你。<strong>确认前请先核对取餐码</strong> —— 标错了就没人盯着这份餐了。</>,
+    ok: '确认,已交付',
+  },
 }
 
 // 团餐订单在截单结算前钱还没到账,这时候按「备餐中」没有意义,
@@ -44,6 +60,12 @@ export default function Admin() {
   const [error, setError] = useState('')
   const [alerting, setAlerting] = useState(false)
   const [tab, setTab] = useState('store')   // store = 当日自取 | group = 团餐预约
+  // 两个按钮要二次确认:
+  //   待取餐 —— 会立刻给客人发邮件,发出去收不回来,客人会直接过来
+  //   已完成 —— 收尾动作,点了这单就从待处理里消失,漏发的餐没人再盯着
+  // 备餐中不拦:点错了改回来就行,而且厨房忙起来每步弹窗很烦。
+  // 存 { order, status },null 表示没有待确认的。
+  const [confirming, setConfirming] = useState(null)
 
   const prevCount = useRef(0)
 
@@ -285,7 +307,9 @@ export default function Admin() {
               <button
                 key={st}
                 className={`admin-status-btn${order.status === st ? ' admin-status-btn--active' : ''}`}
-                onClick={() => updateStatus(order.id, st)}>
+                onClick={() => NEEDS_CONFIRM[st]
+                  ? setConfirming({ order, status: st })
+                  : updateStatus(order.id, st)}>
                 {STATUS_LABELS[st]}
               </button>
             ))}
@@ -333,6 +357,32 @@ export default function Admin() {
           {storeOrders.length === 0
             ? <p className="admin-empty">暂无当日自取订单</p>
             : sortActive(storeOrders).map(renderOrder)}
+        </div>
+      )}
+
+      {confirming && (
+        <div className="admin-confirm-overlay" onClick={() => setConfirming(null)}>
+          <div className="admin-confirm" onClick={e => e.stopPropagation()}>
+            <h3>{NEEDS_CONFIRM[confirming.status].title}</h3>
+            <p className="admin-confirm-who">
+              {confirming.order.customer_name}
+              {confirming.order.pickup_code && <span> · 取餐码 {confirming.order.pickup_code}</span>}
+            </p>
+            <p className="admin-confirm-warn">{NEEDS_CONFIRM[confirming.status].warn}</p>
+            <div className="admin-confirm-actions">
+              <button className="admin-confirm-cancel" onClick={() => setConfirming(null)}>
+                取消
+              </button>
+              <button
+                className="admin-confirm-ok"
+                onClick={() => {
+                  updateStatus(confirming.order.id, confirming.status)
+                  setConfirming(null)
+                }}>
+                {NEEDS_CONFIRM[confirming.status].ok}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
