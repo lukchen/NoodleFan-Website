@@ -172,7 +172,9 @@ export default function MenuSection({ t, lang, choosingPickup, onPickupChosen })
               <div className="cat-header">
                 <span className="cat-eyebrow">{lang === 'zh' ? c.nameEn : c.nameZh}</span>
                 <h3 className="cat-name">{lang === 'zh' ? c.nameZh : c.nameEn}</h3>
-                <p className="cat-tagline">{lang === 'zh' ? c.taglineZh : c.taglineEn}</p>
+                {(lang === 'zh' ? c.taglineZh : c.taglineEn) && (
+                  <p className="cat-tagline">{lang === 'zh' ? c.taglineZh : c.taglineEn}</p>
+                )}
                 <span className="cat-rule" aria-hidden="true" />
               </div>
               <div className="menu-grid">
