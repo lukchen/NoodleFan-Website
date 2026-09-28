@@ -1,0 +1,68 @@
+/* 订单状态页(客人的小票)专属样式。
+ *
+ * 单独成文件而不是塞进 App.css:App.css 已经 50KB,每次只为这几条规则改动
+ * 整个文件,既不好 review 也容易冲突。这一页的样式全部 .os- 前缀,自成一块。
+ *
+ * 注意:App.css 里还留着一条已经没人用的 .os-bookmark —— 下次动 App.css 时顺手删掉。
+ */
+
+/* 保存链接 —— 客人一关浏览器,这个 session_id 就再也找不回来了。
+   所以这块不是提示语,是个能真正复制走的东西。 */
+.os-save {
+  background: var(--color-bg);
+  border-radius: 8px;
+  padding: 0.85rem 0.9rem;
+  margin: 0 0 0.9rem;
+}
+.os-save-title { display: block; font-size: 0.92rem; margin-bottom: 0.15rem; }
+.os-save-hint {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+  line-height: 1.5;
+  margin: 0 0 0.6rem;
+}
+.os-link-row { display: flex; gap: 0.5rem; }
+.os-link {
+  flex: 1;
+  min-width: 0;               /* 不加这条 flex 子项不会收缩,长 URL 会把按钮挤出去 */
+  font-size: 0.78rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--color-muted);
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 0.45rem 0.55rem;
+  text-overflow: ellipsis;
+}
+.os-copy {
+  flex: none;
+  border: none;
+  border-radius: 6px;
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.45rem 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.os-copy--done { background: #3f7a4a; }
+
+.os-help { margin: 0 0 1rem; text-align: center; }
+.os-help-title { font-size: 0.85rem; color: var(--color-muted); margin: 0 0 0.5rem; }
+.os-help-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.os-help-btn {
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: #fff;
+  color: inherit;
+  text-decoration: none;
+  font-size: 0.82rem;
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+}
