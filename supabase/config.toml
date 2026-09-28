@@ -1,0 +1,21 @@
+# Supabase CLI 配置。
+#
+# 这个文件存在的唯一原因:`supabase functions deploy` 在没有配置时,
+# 默认把每个函数的 verify_jwt 设成 true —— 也就是要求调用方带 Supabase 的
+# anon key。对前端调用的函数没问题(我们自己会带),但对 Stripe webhook 是致命的:
+# Stripe 发过来的请求不可能带我们的 key,于是每一次都在网关层被 401 挡掉,
+# 函数根本不会执行。表现是:客人付了钱,订单却永远停在 pending,后台也看不到单。
+#
+# 把这两个钉死在这里,以后无论谁 deploy 都不会再被默认值改回去。
+project_id = "noodlefan-website"
+
+# Stripe 的 webhook —— 必须 false。
+# 安全性不靠 JWT,靠 Stripe 的签名校验(STRIPE_WEBHOOK_SECRET),
+# 函数里第一件事就是验签,签名不对直接 400。
+[functions.stripe-webhook]
+verify_jwt = false
+
+# 客人查订单状态的页面 —— 付款跳回来时还没有登录态,
+# 只凭 session_id 查自己那一单,所以也不要求 JWT。
+[functions.order-status]
+verify_jwt = false
