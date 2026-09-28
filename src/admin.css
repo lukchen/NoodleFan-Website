@@ -1,0 +1,63 @@
+/* 接单后台专用样式。
+   独立文件,不塞进 50KB 的 App.css —— 改一行就得整份重传。 */
+
+/* 二次确认框 —— 只拦有外部后果的两步:
+   「可取餐」会立刻给客人发邮件,发出去收不回来;
+   「已完成」是收尾,点了这单就从待处理里消失。
+   「备餐中」不拦:点错改回来就行。 */
+.admin-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 500;
+}
+.admin-confirm {
+  background: var(--color-surface, #fdf8f0);
+  border-radius: 12px;
+  padding: 1.4rem;
+  max-width: 380px;
+  width: 100%;
+}
+.admin-confirm h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+.admin-confirm-who {
+  margin: 0 0 0.6rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.admin-confirm-warn {
+  margin: 0 0 1.1rem;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--color-text-soft, #857a6b);
+}
+.admin-confirm-actions {
+  display: flex;
+  gap: 0.6rem;
+}
+.admin-confirm-actions button {
+  flex: 1;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+/* 取消放左边、做成低调样式 —— 手滑时最可能碰到的是这一侧 */
+.admin-confirm-cancel {
+  background: transparent;
+  border: 1px solid var(--color-border, #e8dcc8);
+  color: var(--color-text, #2b2420);
+}
+.admin-confirm-ok {
+  background: #7a1f1f;
+  border: 1px solid #7a1f1f;
+  color: #fff;
+}
