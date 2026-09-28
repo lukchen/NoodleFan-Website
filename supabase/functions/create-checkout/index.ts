@@ -9,11 +9,8 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2?target=deno'
 import menu, { resolveSelections } from '../_shared/menu.js'
 import { runTally } from '../_shared/tally.ts'
-
-const CORS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { resolvePoint } from '../_shared/points.ts'
+import { corsHeaders } from '../_shared/cors.ts'
 
 const TAX_RATE = 0.07 // MA 6.25% + Boston local option 0.75%
 const DAILY_LIMIT = 15 // 每道菜每班备料上限(与前端 src/pickup.js 保持一致)
@@ -25,6 +22,7 @@ const supabase = createClient(
 )
 
 Deno.serve(async (req) => {
+  const CORS = corsHeaders(req)
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS })
 
   try {
@@ -36,7 +34,10 @@ Deno.serve(async (req) => {
     // 定点配送要凑满才发车 —— 所以下单只做「授权」(钱冻在客人卡上,没进我们账户),
     // 成团后由 run-dispatch 扣款,未成团直接取消授权:客人零扣费,我们零手续费。
     // 到店自取没有成团这回事,照旧立即扣款。
-    const isDropoff = pickupPoint?.kind === 'dropoff'
+    // 只认 id —— kind 和名字由服务端查表得出。见 _shared/points.ts 里的说明:
+    // 信前端传的 kind 等于把「扣不扣款」和「查不查备料上限」交给调用方决定。
+    const point = resolvePoint(pickupPoint?.id)
+    const isDropoff = point.kind === 'dropoff'
     const captureMode = isDropoff ? 'manual' : 'automatic'
     if (!Array.isArray(items) || items.length === 0 || items.length > 20) {
       throw new Error('invalid items')
@@ -48,6 +49,15 @@ Deno.serve(async (req) => {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || email.length > 254) {
       throw new Error('invalid email')
     }
+
+    // 文本字段限长。不限的话,一次请求就能往库里塞几 MB 的字符串,
+    // 而这些内容还要进邮件和后台页面。截断而不是报错 —— 正常客人永远碰不到上限,
+    // 没必要因为名字长了两个字就让他重填一遍。
+    const clip = (v: unknown, max: number) => String(v ?? '').trim().slice(0, max)
+    const name = clip(customer?.name, 80)
+    if (!name) throw new Error('invalid name')
+    const phone = clip(customer?.phone, 40)      // 选填
+    const noteText = clip(note, 500)
 
     // Price each line from the canonical menu + selected options (all money in cents).
     const enriched = items.map((it: { id: number; qty: number; selections?: Record<string, unknown> }) => {
@@ -70,7 +80,7 @@ Deno.serve(async (req) => {
     // 备料是实打实的:多卖一份就是取餐那天有人空手而归,只能退款道歉。
     if (isDropoff) {
       const runDate = pickupRunDate ?? pickupDate
-      const { dishes: sold } = await runTally(supabase, pickupPoint.id, runDate)
+      const { dishes: sold } = await runTally(supabase, point.id, runDate)
       for (const it of enriched) {
         const left = DAILY_LIMIT - (sold[it.id] ?? 0)
         if (it.qty > left) {
@@ -89,18 +99,18 @@ Deno.serve(async (req) => {
     const { data: draft, error: draftErr } = await supabase
       .from('orders')
       .insert({
-        customer_name: customer.name,
-        customer_phone: customer.phone,
+        customer_name: name,
+        customer_phone: phone,
         customer_email: email,
         pickup_date: pickupDate,
         pickup_time: pickupTime,
         // 取餐点跟单走:少了它,Allston 的团购单和到店自取单在后台长得一模一样。
-        pickup_point: pickupPoint?.id ?? null,
-        pickup_point_name: pickupPoint?.nameZh ?? null,
+        pickup_point: point.id,
+        pickup_point_name: point.nameZh,
         // 哪一班车 —— 成团统计按「取餐点 + 发车日」分组
         run_date: isDropoff ? (pickupRunDate ?? pickupDate) : null,
         capture_mode: captureMode,
-        note: note ?? '',
+        note: noteText,
         items: enriched.map(({ unitCents: _drop, ...rest }) => rest),
         subtotal: subtotalCents / 100,
         tax: taxCents / 100,
@@ -141,7 +151,7 @@ Deno.serve(async (req) => {
       params.set('payment_intent_data[capture_method]', 'manual')
       // 客人在 Stripe 页面上也要看到这不是立即扣款
       params.set('payment_intent_data[description]',
-        `NoodleFan 定点配送 · ${pickupPoint?.nameZh ?? ''} · 满单发车后才扣款`)
+        `NoodleFan 定点配送 · ${point.nameZh} · 满单发车后才扣款`)
     }
     params.set('metadata[order_id]', draft.id)
     params.set('metadata[capture_mode]', captureMode)
