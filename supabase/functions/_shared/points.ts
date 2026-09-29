@@ -16,16 +16,20 @@ export type PickupPoint = {
   nameEn: string
 }
 
-const POINTS: Record<string, PickupPoint> = {
-  store:   { id: 'store',   kind: 'store',   nameZh: '到店自取',       nameEn: 'Store Pickup' },
-  allston: { id: 'allston', kind: 'dropoff', nameZh: 'Allston 取餐点', nameEn: 'Allston Pickup Spot' },
-  malden:  { id: 'malden',  kind: 'dropoff', nameZh: 'Malden 取餐点',  nameEn: 'Malden Pickup Spot' },
-}
+// 用 Map 而不是对象字面量 —— 对象会顺着原型链查:POINTS['constructor'] 返回的是
+// Object.prototype.constructor,一个真值。那样 resolvePoint('constructor') 不抛错,
+// 返回一个 kind 为 undefined 的东西,isDropoff 变成 false,每道菜 15 份的备料上限
+// 就被绕开了。Map 只看自己存进去的键,没有这条路。
+const POINTS = new Map<string, PickupPoint>([
+  ['store',   { id: 'store',   kind: 'store',   nameZh: '到店自取',       nameEn: 'Store Pickup' }],
+  ['allston', { id: 'allston', kind: 'dropoff', nameZh: 'Allston 取餐点', nameEn: 'Allston Pickup Spot' }],
+  ['malden',  { id: 'malden',  kind: 'dropoff', nameZh: 'Malden 取餐点',  nameEn: 'Malden Pickup Spot' }],
+])
 
 // 认不出的 id 一律拒单 —— 宁可让这一单失败,也不要产生一张取餐点不明的订单:
 // 那种单在后台既不属于自取也不属于任何班次,备餐时没人认领。
 export function resolvePoint(id: unknown): PickupPoint {
-  const point = typeof id === 'string' ? POINTS[id] : undefined
+  const point = typeof id === 'string' ? POINTS.get(id) : undefined
   if (!point) throw new Error('invalid pickup point')
   return point
 }
