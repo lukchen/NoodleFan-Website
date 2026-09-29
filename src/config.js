@@ -10,8 +10,12 @@ export const ORDERING_ENABLED = true
 // 结账开关。ORDERING_ENABLED 打开后菜单、选配、购物车都可用，但只要这里是 false，
 // 结账页的付款按钮就禁用并显示"即将上线"——用于在 Edge Function 部署好之前
 // 先把完整点餐体验放出来预览，不会有任何请求打到 Stripe。
-// create-checkout 部署完成后改成 true 即可正式收单。
-export const CHECKOUT_ENABLED = true
+//
+// 2026-09-29 暂时关掉:Stripe 商户审核还没过,后端连的仍是 sandbox 测试密钥。
+// 这时候真客人下单会走到 Stripe 付款页然后被拒(测试模式不收真卡),
+// 他只看到一句失败,而库里会留下一张永远不会变成 paid 的 pending 残单。
+// 审核通过 + `supabase secrets set STRIPE_SECRET_KEY=sk_live_...` 之后改回 true。
+export const CHECKOUT_ENABLED = false
 
 // 外卖平台链接。目前只上线了 Uber Eats;饭团/DoorDash/Grubhub 开通后
 // 在这里补上对应 URL,Hero 上的按钮会自动多出来。
