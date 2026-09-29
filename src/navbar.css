@@ -1,0 +1,29 @@
+/* 导航栏的收缩规则。
+ *
+ * 修的是这个:英文文案比中文长得多(hero 那句标语英文 1100px、中文 580px),
+ * 在 1181–1700px 这一段宽度里,标语把整行撑开,把右边的购物车和语言切换
+ * 顶出了屏幕 —— 客人看得见菜单却找不到购物车。中文下宽度刚好塞得下,
+ * 所以以前一直没暴露;默认语言改成跟随浏览器之后,英文客人就撞上了。
+ *
+ * 根因是 flex 子项默认不会缩到内容宽度以下(min-width: auto),
+ * 所以 .navbar-tagline 上那句 text-overflow: ellipsis 从来没机会生效。
+ */
+.navbar-brand {
+  /* 允许收缩,并给 ellipsis 让路 */
+  min-width: 0;
+  flex: 0 1 auto;
+}
+
+/* 品牌本身(logo + 店名)不参与收缩 —— 要缩也是缩标语 */
+.navbar-logo { flex: none; }
+.navbar-brand > span:not(.navbar-tagline) { flex: none; }
+
+.navbar-tagline {
+  min-width: 0;
+  flex: 0 1 auto;
+}
+
+/* 右边这一组是功能入口,任何情况下都不许被挤走或挤没 */
+.navbar-links {
+  flex: none;
+}

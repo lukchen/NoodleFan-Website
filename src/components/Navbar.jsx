@@ -3,6 +3,7 @@ import WechatNav from './WechatNav'
 import { useCart } from '../context/CartContext'
 import { usePickup } from '../context/PickupContext'
 import { ORDERING_ENABLED } from '../config'
+import '../navbar.css'
 
 export default function Navbar({ t, lang, onToggleLang }) {
   const { totalItems, setCartOpen } = useCart()
