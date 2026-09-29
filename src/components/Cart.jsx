@@ -10,7 +10,13 @@ export default function Cart({ t, lang, onCheckout }) {
 
   useEffect(() => {
     if (!cartOpen) return
-    function onKey(e) { if (e.key === 'Escape') setCartOpen(false) }
+    function onKey(e) {
+      if (e.key !== 'Escape') return
+      // 抽屉上面还压着弹窗(结账、选配)时,这一下 Esc 是给最上层的 ——
+      // 不让路的话客人按一下关掉的是背后的抽屉,最上面那个反而还在,要按两下才干净。
+      if (document.querySelector('.modal-overlay')) return
+      setCartOpen(false)
+    }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [cartOpen, setCartOpen])
