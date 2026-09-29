@@ -84,17 +84,19 @@ function AppInner({ t, lang, setLang }) {
 
 // 语言记在本地 —— 英文客人切一次就该一直是英文。不记的话,他每刷新一次、
 // 每点开一次自己的小票链接,页面又变回中文,得再找一遍那个切换按钮。
+//
+// 但默认一律中文,不跟浏览器语言走:客群就是波士顿的中国人,其中不少人的
+// 手机和电脑本身是英文系统。按浏览器语言判断会把他们默认送进英文站,
+// 反而要多点一次。英文客人点一下切换,之后就一直记着了。
 const LANG_KEY = 'nf_lang'
+const DEFAULT_LANG = 'zh'
 
 function initialLang() {
   try {
     const saved = localStorage.getItem(LANG_KEY)
     if (saved === 'en' || saved === 'zh') return saved
-    // 没存过就看浏览器语言:中文环境给中文,其余一律英文
-    return /^zh\b/i.test(navigator.language || '') ? 'zh' : 'en'
-  } catch {
-    return 'zh'   // 隐私模式下读不到 localStorage,按主力客群给中文
-  }
+  } catch { /* 隐私模式下读不到 localStorage,走默认 */ }
+  return DEFAULT_LANG
 }
 
 export default function App() {
