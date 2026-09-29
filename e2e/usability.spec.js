@@ -2,6 +2,12 @@
 // Esc 关不掉弹窗、点遮罩关不掉、回车提交不了表单、滚动穿透到背后的菜单。
 import { test, expect } from '@playwright/test'
 import { stubBackend, choosePickup, addFirstDish, openCart, openCheckout } from './fixtures.js'
+import { CHECKOUT_ENABLED } from '../src/config.js'
+
+// 结账开关关着时(等 Stripe 审核、或者后端还没部署),下单按钮是恒定禁用的 ——
+// 下面三条验的是「填齐了才放行」,那时候没有意义,跳过而不是红。
+// 单独有一条用例盯着「关着的时候必须禁用」,见文件末尾。
+const needsCheckout = () => test.skip(!CHECKOUT_ENABLED, '结账开关当前是关的(src/config.js)')
 
 test.use({ timezoneId: 'America/New_York' })
 
@@ -72,6 +78,7 @@ test('弹窗打开时背后的页面不跟着滚 —— 手机上最恼人的那
 })
 
 test('表单里按回车就提交,不用非去点按钮', async ({ page }) => {
+  needsCheckout()
   await choosePickup(page, '到店自取')
   await addFirstDish(page)
   await openCheckout(page)
@@ -90,6 +97,7 @@ test('表单里按回车就提交,不用非去点按钮', async ({ page }) => {
 })
 
 test('必填项没填时下单按钮就是禁用的 —— 比等浏览器弹气泡更早一步', async ({ page }) => {
+  needsCheckout()
   await choosePickup(page, '到店自取')
   await addFirstDish(page)
   await openCheckout(page)
@@ -106,6 +114,7 @@ test('必填项没填时下单按钮就是禁用的 —— 比等浏览器弹气
 })
 
 test('邮箱格式不对也过不去 —— 邮件是订单状态唯一的送达渠道', async ({ page }) => {
+  needsCheckout()
   await choosePickup(page, '到店自取')
   await addFirstDish(page)
   await openCheckout(page)
@@ -158,4 +167,15 @@ test('没选过语言时一律默认中文 —— 哪怕浏览器是英文', asy
   await p2.goto('/')
   await expect(p2.getByText('选择取餐方式', { exact: false }).first()).toBeVisible()
   await ctx.close()
+})
+
+test('结账开关关着时,付款按钮禁用并写明「即将上线」', async ({ page }) => {
+  test.skip(CHECKOUT_ENABLED, '结账开关是开的')
+  await choosePickup(page, '到店自取')
+  await addFirstDish(page)
+  await openCheckout(page)
+
+  // 关着的时候按钮必须是死的,并且话说清楚 —— 不能让客人点了没反应、以为是网站坏了
+  await expect(page.locator('.checkout-modal button[type="submit"]')).toBeDisabled()
+  await expect(page.getByText('即将上线', { exact: false }).first()).toBeVisible()
 })
