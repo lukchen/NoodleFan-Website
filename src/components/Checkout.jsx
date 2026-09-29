@@ -114,7 +114,13 @@ export default function Checkout({ t, onClose }) {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
 
-  const isDirty = form.name || form.phone || form.email || form.time || form.note
+  // 「改过没有」只看这一次打开之后客人有没有真的动过手 —— 不能看表单里有没有内容。
+  // 表单会从 localStorage 把上次填的姓名邮箱带出来,按内容判断的话老客人一打开
+  // 就是「脏」的,Esc 和点遮罩从此永远失效,只剩右上角那个 ✕ 能关。
+  // 而且现在每次改动都会存进 localStorage,关掉也丢不了东西,这个拦截只是为了
+  // 防手滑,不必拦得那么死。
+  const [touched, setTouched] = useState(false)
+  const isDirty = touched
 
   useEffect(() => {
     function onKey(e) { if (e.key === 'Escape' && !isDirty) onClose() }
@@ -123,6 +129,7 @@ export default function Checkout({ t, onClose }) {
   }, [isDirty, onClose])
 
   function handleChange(e) {
+    setTouched(true)
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
@@ -148,10 +155,9 @@ export default function Checkout({ t, onClose }) {
           // only the dish id, qty, and chosen options are sent.
           items: items.map(i => ({ id: i.id, qty: i.qty, selections: i.selections })),
           customer: { name: form.name, phone: form.phone, email: form.email },
-          // 取餐点必须跟单走:少了它,Allston 的团购单和到店自取单在后台长得一模一样。
-          pickupPoint: point
-            ? { id: point.id, kind: point.kind, nameZh: point.nameZh, nameEn: point.nameEn }
-            : null,
+          // 取餐点只传 id —— kind 和名字由服务端查表得出(见 _shared/points.ts):
+          // 那两个字段决定扣不扣款、查不查备料上限,不能让调用方说了算。
+          pickupPoint: point ? { id: point.id } : null,
           // 哪一班车 —— 后台按「取餐点 + 发车日」统计成团进度并结算
           pickupRunDate: fixedRun ? toLocalDateString(fixedRun.pickupAt) : null,
           pickupDate: form.date,
@@ -281,7 +287,7 @@ export default function Checkout({ t, onClose }) {
                   key={slot.value}
                   type="button"
                   className={`time-slot${form.time === slot.value ? ' time-slot--active' : ''}`}
-                  onClick={() => setForm(prev => ({ ...prev, time: slot.value }))}>
+                  onClick={() => { setTouched(true); setForm(prev => ({ ...prev, time: slot.value })) }}>
                   {slot.label}
                 </button>
               ))}
