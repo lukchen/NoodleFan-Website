@@ -15,6 +15,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2?target=deno'
 import { sendEmail, tplCaptured, tplCancelled, tplRunSummary, OPS_EMAIL } from '../_shared/email.ts'
 import { corsHeaders, timingSafeEqual, authDelay } from '../_shared/cors.ts'
+import { cutoffUtc as cutoffUtcAt } from '../_shared/cutoff.ts'
 
 
 const supabase = createClient(
@@ -24,7 +25,6 @@ const supabase = createClient(
 
 const MIN_ORDERS  = Number(Deno.env.get('MIN_ORDERS') ?? '5')
 const CUTOFF_HOUR = Number(Deno.env.get('CUTOFF_HOUR') ?? '12')   // 取餐当天 12:00 截单
-const TZ = 'America/New_York'
 
 // CORS 头要按请求的 Origin 逐个算,所以这里做成工厂:
 // 处理函数里 `const json = jsonWith(CORS)` 之后,下面所有 json(...) 调用不用改。
@@ -34,17 +34,6 @@ function jsonWith(cors: Record<string, string>) {
       status,
       headers: { ...cors, 'Content-Type': 'application/json' },
     })
-}
-
-// run_date 是「哪天发车」,截单时刻是那天波士顿时间的 CUTOFF_HOUR。
-// 服务器跑在 UTC,夏令时一年变两次,所以按当天的实际偏移换算,不写死 -5/-4。
-function cutoffUtc(runDate: string): Date {
-  const guess = new Date(`${runDate}T${String(CUTOFF_HOUR).padStart(2, '0')}:00:00Z`)
-  const tzName = new Intl.DateTimeFormat('en-US', { timeZone: TZ, timeZoneName: 'shortOffset' })
-    .formatToParts(guess).find(p => p.type === 'timeZoneName')?.value ?? 'GMT-5'
-  const m = tzName.match(/GMT([+-]\d+)(?::(\d+))?/)
-  const offMin = m ? Number(m[1]) * 60 + (Number(m[2] ?? 0) * Math.sign(Number(m[1]))) : -300
-  return new Date(guess.getTime() - offMin * 60000)
 }
 
 async function stripePost(path: string, key: string, form?: Record<string, string>) {
@@ -158,6 +147,9 @@ async function broadcast() {
     })
   } catch (_e) { /* 广播失败不影响钱已经处理完 */ }
 }
+
+// 截单时刻的换算在 _shared/cutoff.ts 里(那边有测试),这里只把小时数传进去。
+const cutoffUtc = (runDate: string) => cutoffUtcAt(runDate, CUTOFF_HOUR)
 
 Deno.serve(async (req) => {
   const CORS = corsHeaders(req)
