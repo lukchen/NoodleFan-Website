@@ -1,0 +1,38 @@
+/* 手机上的点击热区。
+ *
+ * 苹果的人机界面指南要求可点区域至少 44×44pt,安卓是 48dp —— 不是美学问题:
+ * 手指的接触面比鼠标指针大得多,30px 高的按钮在走路、单手、戴手套时很容易点偏,
+ * 而我们最常被点的那个按钮就是菜单上的「加入」。
+ *
+ * 只在细指针(触屏)且窄屏时放大,桌面端的紧凑排版保持不变。
+ * 用 min-height 而不是改 padding —— 不影响这些按钮在各自 flex 容器里的对齐。
+ */
+@media (max-width: 700px) and (pointer: coarse) {
+  /* 主操作:菜单上的「加入」、结账里的取餐时段,直接给到 44 */
+  .btn-add,
+  .time-slot {
+    min-height: 44px;
+  }
+
+  /* 次级但天天点:分类标签、购物车开关和它的关闭键 */
+  .cat-tab,
+  .cart-btn,
+  .cart-close,
+  .wechat-nav-btn {
+    min-height: 40px;
+  }
+  .cart-close {
+    min-width: 40px;
+  }
+
+  /* 「更换取餐点」原来只有 22px 高,是全站最小的可点元素 */
+  .pickup-strip-change,
+  .pickup-sum-change {
+    min-height: 40px;
+  }
+
+  /* 语言切换是低频控件,给到 36 就够,再大会把导航栏撑开 */
+  .lang-toggle {
+    min-height: 36px;
+  }
+}
