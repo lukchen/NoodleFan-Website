@@ -148,12 +148,14 @@ test('语言切换真的换语言,且刷新后记住 —— 英文客人不该�
   await ctx.close()
 })
 
-test('没选过语言时跟着浏览器语言走', async ({ browser }) => {
+test('没选过语言时一律默认中文 —— 哪怕浏览器是英文', async ({ browser }) => {
+  // 客群是波士顿的中国人,其中不少人的设备本身是英文系统。
+  // 跟着浏览器语言走会把他们默认送进英文站,反而要多点一次。
   const ctx = await browser.newContext({ locale: 'en-US' })
   const p2 = await ctx.newPage()
   await stubBackend(p2, { lang: null })
   await p2.addInitScript(() => localStorage.removeItem('nf_lang'))
   await p2.goto('/')
-  await expect(p2.getByText('How would you like to pick up?', { exact: false }).first()).toBeVisible()
+  await expect(p2.getByText('选择取餐方式', { exact: false }).first()).toBeVisible()
   await ctx.close()
 })
