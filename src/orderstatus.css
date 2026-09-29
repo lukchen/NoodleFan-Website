@@ -6,6 +6,25 @@
  * 注意:App.css 里还留着一条已经没人用的 .os-bookmark —— 下次动 App.css 时顺手删掉。
  */
 
+/* 不在进度条上的两个状态:整条流水线换成一块状态牌。
+   取消要红得能一眼认出来 —— 客人最怕的是「我到底被扣钱没有」。 */
+.os-banner {
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  padding: 0.7rem 0.9rem;
+  margin: 0 0 0.9rem;
+}
+.os-banner--cancelled { background: #fdecec; color: #b03030; border: 1px solid #e3b4b4; }
+.os-banner--waiting   { background: #fdf6ec; color: #8a6a1f; border: 1px solid #e3d2a8; }
+
+/* 取消的单,顶上那个对勾要换成叉,否则「订单已取消」旁边还挂着个绿勾 */
+.os-thanks--cancelled .os-check {
+  background: #b03030;
+  color: #fff;
+}
+
 /* 保存链接 —— 客人一关浏览器,这个 session_id 就再也找不回来了。
    所以这块不是提示语,是个能真正复制走的东西。 */
 .os-save {

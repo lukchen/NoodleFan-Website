@@ -15,6 +15,15 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 // Customer-facing order progression (mirrors the kitchen's status flow).
 const STEPS = ['paid', 'preparing', 'ready', 'completed']
 
+// 不在这条流水线上的两个状态,各自有自己的版面 —— 硬套进度条只会误导:
+//   cancelled_no_run 未成团取消 —— 进度条会停在「已确认」,而这单根本不会出餐
+//   authorized       等待成团   —— 还没扣款,谈不上「已确认」
+// 取消的单还必须把取餐码和取餐时间藏掉:那两样东西是在请客人来取一顿不存在的餐。
+const OFF_TRACK = {
+  cancelled_no_run: 'cancelled',
+  authorized: 'waiting',
+}
+
 export default function OrderStatus({ sessionId, t, lang, setLang }) {
   const { clearCart } = useCart()
   const [order, setOrder] = useState(null)
@@ -99,6 +108,8 @@ export default function OrderStatus({ sessionId, t, lang, setLang }) {
   }, [orderFound, fetchOrder])
 
   const currentStep = order ? STEPS.indexOf(order.status) : -1
+  const offTrack = order ? OFF_TRACK[order.status] : null
+  const cancelled = offTrack === 'cancelled'
 
   return (
     <>
@@ -118,30 +129,43 @@ export default function OrderStatus({ sessionId, t, lang, setLang }) {
 
         {order && (
           <div className="os-card">
-            <div className="os-thanks">
-              <div className="os-check">✓</div>
-              <h1>{s.thanksTitle}</h1>
+            <div className={`os-thanks${cancelled ? ' os-thanks--cancelled' : ''}`}>
+              <div className="os-check">{cancelled ? '✕' : '✓'}</div>
+              <h1>
+                {cancelled ? s.cancelledTitle
+                  : offTrack === 'waiting' ? s.waitingTitle
+                  : s.thanksTitle}
+              </h1>
             </div>
 
-            <div className="os-code">
-              <span className="os-code-label">{s.codeLabel}</span>
-              <span className="os-code-value">{order.pickup_code}</span>
-            </div>
+            {/* 取消的单不显示取餐码 —— 留着它等于告诉客人「还是来一趟吧」 */}
+            {!cancelled && (
+              <div className="os-code">
+                <span className="os-code-label">{s.codeLabel}</span>
+                <span className="os-code-value">{order.pickup_code}</span>
+              </div>
+            )}
 
-            <div className="os-steps">
-              {STEPS.map((st, i) => {
-                const state = i < currentStep ? 'done' : i === currentStep ? 'active' : 'todo'
-                return (
-                  <div key={st} className={`os-step os-step--${state}`}>
-                    <span className="os-step-dot" />
-                    <span className="os-step-label">{s.statuses[st]}</span>
-                  </div>
-                )
-              })}
-            </div>
+            {offTrack ? (
+              <div className={`os-banner os-banner--${offTrack}`}>{s.statuses[order.status]}</div>
+            ) : (
+              <div className="os-steps">
+                {STEPS.map((st, i) => {
+                  const state = i < currentStep ? 'done' : i === currentStep ? 'active' : 'todo'
+                  return (
+                    <div key={st} className={`os-step os-step--${state}`}>
+                      <span className="os-step-dot" />
+                      <span className="os-step-label">{s.statuses[st]}</span>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
             <p className="os-status-desc">{s.statusDesc[order.status]}</p>
 
-            <div className="os-pickup">🕐 {s.pickupAt} {order.pickup_date} {order.pickup_time}</div>
+            {!cancelled && (
+              <div className="os-pickup">🕐 {s.pickupAt} {order.pickup_date} {order.pickup_time}</div>
+            )}
 
             <ul className="os-items">
               {order.items.map((it, i) => {
