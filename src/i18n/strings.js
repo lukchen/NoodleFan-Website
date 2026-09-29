@@ -121,6 +121,8 @@ const strings = {
       loading: 'Confirming your order…',
       notFound: 'We couldn\'t find this order. If you just paid, give it a moment and refresh.',
       thanksTitle: 'Thank you! Your order is confirmed.',
+      waitingTitle: 'Order placed — waiting for the run to fill.',
+      cancelledTitle: 'Order cancelled — you were not charged.',
       codeLabel: 'Pickup code',
       pickupAt: 'Pickup',
       statuses: {
@@ -269,6 +271,8 @@ const strings = {
       loading: '正在确认您的订单…',
       notFound: '没找到这笔订单。如果您刚付款，请稍候片刻再刷新。',
       thanksTitle: '感谢下单！订单已确认。',
+      waitingTitle: '订单已提交，等待成团。',
+      cancelledTitle: '订单已取消，未扣任何费用。',
       codeLabel: '取餐码',
       pickupAt: '取餐',
       statuses: {
