@@ -14,6 +14,7 @@ import MobileCartBar from './components/MobileCartBar'
 import OrderStatus from './components/OrderStatus'
 import { ORDERING_ENABLED } from './config'
 import './App.css'
+import './touch.css'
 
 function OrderSuccess({ t, onClose }) {
   return (
@@ -81,8 +82,27 @@ function AppInner({ t, lang, setLang }) {
   )
 }
 
+// 语言记在本地 —— 英文客人切一次就该一直是英文。不记的话,他每刷新一次、
+// 每点开一次自己的小票链接,页面又变回中文,得再找一遍那个切换按钮。
+const LANG_KEY = 'nf_lang'
+
+function initialLang() {
+  try {
+    const saved = localStorage.getItem(LANG_KEY)
+    if (saved === 'en' || saved === 'zh') return saved
+    // 没存过就看浏览器语言:中文环境给中文,其余一律英文
+    return /^zh\b/i.test(navigator.language || '') ? 'zh' : 'en'
+  } catch {
+    return 'zh'   // 隐私模式下读不到 localStorage,按主力客群给中文
+  }
+}
+
 export default function App() {
-  const [lang, setLang] = useState('zh')
+  const [lang, setLangState] = useState(initialLang)
+  const setLang = (next) => {
+    setLangState(next)
+    try { localStorage.setItem(LANG_KEY, next) } catch { /* 存不了就只在本次会话生效 */ }
+  }
   const [hash, setHash] = useState(window.location.hash)
   const t = { ...strings[lang], lang }
 
