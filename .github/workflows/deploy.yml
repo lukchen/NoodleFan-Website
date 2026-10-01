@@ -23,7 +23,34 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+
+      # 测试先跑 —— 红了就不部署。
+      # 以前这里只有 build:语法没错就上线,逻辑坏了(算错价、少算税、
+      # 导航栏溢出)照样发到客人面前,只能靠事后自己发现。
+      - name: 单元测试
+        run: npm test
+
+      # 端到端打的是真实构建产物(playwright.config.js 里的 webServer 会自己
+      # build + preview)。只装 chromium —— desktop 和 mobile 两个 project 都用它。
+      - name: 装 chromium
+        run: npx playwright install --with-deps chromium
+      - name: 端到端测试
+        run: npm run test:e2e
+
+      # 测试那一步里 webServer 已经 build 过,但要部署的产物不该是测试的副产品:
+      # 这里重新 build 一次,上传的 dist 来源明确。
       - run: npm run build
+
+      # 测试失败时把 trace 和报告捞出来 —— 否则 CI 里红一次只剩一行日志,
+      # 复现不了就只能瞎猜。
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: |
+            playwright-report
+            test-results
+          retention-days: 7
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
