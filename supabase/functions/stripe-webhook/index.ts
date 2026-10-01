@@ -196,7 +196,7 @@ Deno.serve(async (req) => {
     try {
       const { data: row } = await supabase
         .from('orders')
-        .select('customer_email, customer_name, pickup_code, pickup_point_name, pickup_date, pickup_time, run_date, total, items, capture_mode')
+        .select('customer_email, customer_name, pickup_code, pickup_point_name, pickup_date, pickup_time, run_date, subtotal, tax, total, items, capture_mode')
         .eq('stripe_session_id', session.id)
         .single()
       if (row) {

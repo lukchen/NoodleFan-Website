@@ -65,7 +65,7 @@ async function readFeeNet(paymentIntentId: string, key: string) {
 async function loadRunOrders(point: string, runDate: string) {
   const { data, error } = await supabase
     .from('orders')
-    .select('id, pickup_code, customer_name, customer_phone, customer_email, total, status, stripe_payment_intent, pickup_point_name, pickup_date, pickup_time, run_date, items')
+    .select('id, pickup_code, customer_name, customer_phone, customer_email, subtotal, tax, total, status, stripe_payment_intent, pickup_point_name, pickup_date, pickup_time, run_date, items')
     .eq('pickup_point', point)
     .eq('run_date', runDate)
     .eq('status', 'authorized')

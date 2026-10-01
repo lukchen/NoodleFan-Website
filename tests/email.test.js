@@ -134,3 +134,27 @@ describe('运营信箱', () => {
     expect(OPS_EMAIL).toContain('@')
   })
 })
+
+// 补的是一个真实的 bug:模板一直支持「小计 / 销售税 / 合计」三行,
+// 但 stripe-webhook 取数据时 select 里漏了 subtotal 和 tax ——
+// 于是 hasBreakdown 恒为 false,客人收到的收据上只有一行 $2.68,
+// 一个 $2.50 的烧饼凭空变成 $2.68,看不出那 0.18 是税。
+// 模板本身测不出来这种 bug,所以这里直接钉住取数的 select。
+describe('发邮件前取的字段够不够', () => {
+  const fs = require('node:fs')
+  const sources = [
+    'supabase/functions/stripe-webhook/index.ts',
+    'supabase/functions/run-dispatch/index.ts',
+  ]
+
+  it.each(sources)('%s 取的订单字段里有 subtotal 和 tax', (file) => {
+    const src = fs.readFileSync(file, 'utf8')
+    const selects = [...src.matchAll(/\.select\('([^']*)'\)/g)].map(m => m[1])
+    const orderSelects = selects.filter(s => s.includes('items'))
+    expect(orderSelects.length).toBeGreaterThan(0)
+    for (const sel of orderSelects) {
+      expect(sel, `这个 select 缺税额明细:${sel}`).toContain('subtotal')
+      expect(sel).toContain('tax')
+    }
+  })
+})
