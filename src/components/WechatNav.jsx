@@ -17,13 +17,15 @@ export default function WechatNav({ t }) {
 
   return (
     <>
-      <button className="wechat-nav-btn" onClick={() => setOpen(true)}>
+      <button className="wechat-nav-btn" onClick={() => setOpen(true)} aria-label={t.wechat.navBtn}>
         {/* 带个小码缩略图 —— 光一个「微信群」文字按钮客人不知道点开是什么,
             看见是二维码才会想到「哦,可以扫」。见 wechat.css 里的裁切说明。 */}
         <span className="wechat-nav-thumb" aria-hidden="true">
           <img src={`${import.meta.env.BASE_URL}${QR_SRC}`} alt="" />
         </span>
-        {t.wechat.navBtn}
+        {/* 窄屏只留二维码缩略图 —— 文字一起放,店名会被挤到盖住。
+            aria-label 在上面,读屏软件照样念得出「微信群」。 */}
+        <span className="wechat-nav-label">{t.wechat.navBtn}</span>
       </button>
       {open && <WechatModal t={t} onClose={() => setOpen(false)} />}
     </>

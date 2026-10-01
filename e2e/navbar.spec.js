@@ -60,3 +60,27 @@ test('标语按剩余空间截断,而不是把导航栏撑开', async ({ page })
   // 窄屏下标语必须自己让位 —— 让不出来就是又回到把操作区顶出去的老路
 expect(narrow).toBeLessThan(wide)
 })
+
+test('手机上店名不会被右边的按钮盖住', async ({ page }) => {
+  await stubBackend(page)
+  await page.setViewportSize({ width: 390, height: 844 })   // iPhone 13
+  await page.goto('/')
+
+  const box = await page.evaluate(() => {
+    const name = [...document.querySelectorAll('.navbar-brand > span')]
+      .find(x => !x.className.includes('tagline'))
+    const links = document.querySelector('.navbar-links')
+    return {
+      nameRight: name.getBoundingClientRect().right,
+      linksLeft: links.getBoundingClientRect().left,
+      nameText: name.innerText,
+      truncated: name.scrollWidth > name.clientWidth + 1,
+    }
+  })
+
+  // 店名的右边界不能越过功能区的左边界 —— 越过了就是视觉上压在一起
+  expect(box.nameRight, '店名盖住了右边的功能按钮').toBeLessThanOrEqual(box.linksLeft)
+  // 390px 上应该放得下完整店名,不该靠截断来避让
+  expect(box.truncated, '店名被截断了,说明空间还是不够').toBe(false)
+  expect(box.nameText).toContain('粉面王')
+})

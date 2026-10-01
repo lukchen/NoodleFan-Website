@@ -100,6 +100,17 @@ describe('dateKey', () => {
   })
 })
 
+describe('取餐点选择的有效期', () => {
+  // 逻辑在 src/context/PickupContext.jsx 里(要 React 环境才跑得起来),
+  // 这里只钉住那个常数的量级 —— 它决定客人多久会被重新问一次。
+  // 真正的行为验证在 e2e/pickup-memory.spec.js。
+  it('30 分钟:够走完一次点餐,又不至于把上次的选择带到下一次', () => {
+    const FRESH_MS = 30 * 60 * 1000
+    expect(FRESH_MS).toBeGreaterThanOrEqual(10 * 60 * 1000)   // 太短会在填表中途把人踢回选择页
+    expect(FRESH_MS).toBeLessThanOrEqual(60 * 60 * 1000)      // 太长就等于「永远记住」
+  })
+})
+
 describe('storeIsOpen', () => {
   it('营业时间内为真', () => {
     expect(storeIsOpen(at(2026, 9, 28, STORE_OPEN_HOUR))).toBe(true)

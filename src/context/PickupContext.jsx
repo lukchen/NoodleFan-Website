@@ -6,21 +6,52 @@ const PickupContext = createContext(null)
 
 const STORAGE_KEY = 'nf-pickup-point'
 const RUN_KEY = 'nf-pickup-run'
+const SAVED_AT_KEY = 'nf-pickup-saved-at'
 
-// 取餐方式的全局状态。客人选定后记住,下次进站不用再选。
+// 选择只在这段时间内有效,过了就当没选过,重新问一遍。
+//
+// 为什么要有期限:取餐点和日期是这一单的前提,不是客人的个人偏好。
+// 永久记住的话,他上周四选了 Allston 周二那班,今天中午想买个烧饼当午饭,
+// 一进来页面已经替他定成「Allston 周二 6PM」—— 他得先看懂顶上那条小字、
+// 再找到「更换」,才能改回到店自取。沉默地替客人做决定,比多问一次糟得多。
+//
+// 30 分钟是按「一次点餐」来定的:选点、翻菜单、加菜、填表、付款,中间被打断
+// 接个电话也够。超过这个长度基本就是下一次来了。
+const FRESH_MS = 30 * 60 * 1000
+
+// 读上次的选择 —— 过期就连带清掉,免得下次又拿到一份陈的。
+function loadSaved() {
+  try {
+    const at = Number(localStorage.getItem(SAVED_AT_KEY) || 0)
+    if (!at || Date.now() - at > FRESH_MS) {
+      localStorage.removeItem(STORAGE_KEY)
+      localStorage.removeItem(RUN_KEY)
+      localStorage.removeItem(SAVED_AT_KEY)
+      return { pointId: null, runKey: null }
+    }
+    return {
+      pointId: localStorage.getItem(STORAGE_KEY) || null,
+      runKey: localStorage.getItem(RUN_KEY) || null,
+    }
+  } catch {
+    return { pointId: null, runKey: null }   // 隐私模式下读不到,当没选过
+  }
+}
+
+// 取餐方式的全局状态。客人选定后在 FRESH_MS 内记住,同一次点餐不用反复选。
 //
 // 已售份数来自 run-stats(按取餐点 + 发车日聚合)。拿不到的时候一律当「还没卖」
 // 处理 —— 备料上限的真正防线在 create-checkout 里,那边下单时会再查一次并拒单。
 // 前端这份只负责别让客人白填一遍表。
 export function PickupProvider({ children }) {
-  const [pointId, setPointId] = useState(() => {
-    try { return localStorage.getItem(STORAGE_KEY) || null } catch { return null }
-  })
+  // 只在组件第一次挂载时读一次,之后以内存里的状态为准 —— 别在渲染里反复读
+  // localStorage,那是同步 IO。
+  const saved = useMemo(loadSaved, [])
+
+  const [pointId, setPointId] = useState(saved.pointId)
   // 客人订的是哪一天(YYYY-MM-DD)。定点配送每天都跑,日期和取餐点一样是这一单的前提:
   // 它决定截单时刻、当天备料份数和跟谁凑单。
-  const [runKey, setRunKey] = useState(() => {
-    try { return localStorage.getItem(RUN_KEY) || null } catch { return null }
-  })
+  const [runKey, setRunKey] = useState(saved.runKey)
   // 每分钟走一次,让倒计时动起来
   const [now, setNow] = useState(() => new Date())
   useEffect(() => {
@@ -67,6 +98,9 @@ export function PickupProvider({ children }) {
   function choose(id, key = null) {
     setPointId(id)
     setRunKey(key)
+    // 有效期从「做出选择」那一刻算起,不是从「上次打开网站」算 ——
+    // 否则一个每隔二十分钟刷一次页面的人,永远不会被问第二次。
+    try { localStorage.setItem(SAVED_AT_KEY, String(Date.now())) } catch { /* 隐私模式 */ }
   }
 
   // 换取餐点/换日期立刻重查;之后每分钟刷一次,让「仅剩 N 份」跟得上别人下单。

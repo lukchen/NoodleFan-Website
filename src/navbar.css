@@ -14,9 +14,17 @@
   flex: 0 1 auto;
 }
 
-/* 品牌本身(logo + 店名)不参与收缩 —— 要缩也是缩标语 */
+/* logo 不缩;店名优先完整显示,但窄到放不下时宁可自己截断,
+   也不能溢出去跟右边的功能按钮叠在一起(手机上就是「粉面王」的「王」
+   被微信群按钮盖住的那个毛病)。 */
 .navbar-logo { flex: none; }
-.navbar-brand > span:not(.navbar-tagline) { flex: none; }
+.navbar-brand { overflow: hidden; }
+.navbar-brand > span:not(.navbar-tagline) {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 .navbar-tagline {
   min-width: 0;
@@ -26,4 +34,12 @@
 /* 右边这一组是功能入口,任何情况下都不许被挤走或挤没 */
 .navbar-links {
   flex: none;
+}
+
+/* 窄屏:微信群按钮收成一个二维码图标,把宽度让给店名。
+   导航栏在 390px 上要塞下 logo + 店名 + 微信群 + 购物车 + 语言切换,
+   「微信群」三个字就是压垮它的那一项。 */
+@media (max-width: 600px) {
+  .wechat-nav-label { display: none; }
+  .wechat-nav-btn { padding-left: 0.35rem; padding-right: 0.35rem; }
 }
