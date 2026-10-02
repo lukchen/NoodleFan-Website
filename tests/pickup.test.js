@@ -21,9 +21,15 @@ describe('取餐点定义', () => {
     expect(getPoint('nope')).toBeNull()
   })
 
-  it('两个配送点班期不重叠:Malden 周一三,Allston 周二四', () => {
-    expect(getPoint('malden').days).toEqual([1, 3])
-    expect(getPoint('allston').days).toEqual([2, 4])
+  it('两个配送点班期不重叠:Malden 周一三五,Allston 周二四六', () => {
+    expect(getPoint('malden').days).toEqual([1, 3, 5])
+    expect(getPoint('allston').days).toEqual([2, 4, 6])
+    // 不重叠是硬要求 —— 同一天两个点都要跑,一辆车送不过来。
+    const overlap = getPoint('malden').days.filter(d => getPoint('allston').days.includes(d))
+    expect(overlap).toEqual([])
+    // 周日两个点都不发车
+    expect(getPoint('malden').days).not.toContain(0)
+    expect(getPoint('allston').days).not.toContain(0)
   })
 
   it('起送单数和备料上限就是说好的 5 和 15', () => {
@@ -55,10 +61,11 @@ describe('upcomingRuns', () => {
       .toEqual(['2026-09-29', '2026-10-01'])
   })
 
-  it('周四之后跨过周五~周日,下一班落在下周二', () => {
-    // 2026-10-01 周四 → 下两班是 10/6(二)和 10/8(四)
+  it('周四当天过了截单,下两班是周六和下周二 —— 中间跳过周日', () => {
+    // 2026-10-01 是周四。班次一律从明天起排(upcomingRuns 不放今天),
+    // 所以下两班是 10/3(六)和 10/6(二) —— 中间的 10/4 是周日,不发车。
     expect(upcomingRuns(allston, at(2026, 10, 1)).map(r => r.key))
-      .toEqual(['2026-10-06', '2026-10-08'])
+      .toEqual(['2026-10-03', '2026-10-06'])
   })
 
   it('班次带着送达时刻(18:00)和截单时刻(当天 12:00)', () => {
@@ -71,8 +78,9 @@ describe('upcomingRuns', () => {
 
   it('跨月跨年都不错位', () => {
     const malden = getPoint('malden')
+    // 2026-12-30 周三 → 下两班 1/1(五)和 1/4(一),跨年不错位
     expect(upcomingRuns(malden, at(2026, 12, 30)).map(r => r.key))
-      .toEqual(['2027-01-04', '2027-01-06'])
+      .toEqual(['2027-01-01', '2027-01-04'])
   })
 })
 

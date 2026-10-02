@@ -31,12 +31,12 @@ test('选完到店自取就能看到菜单,并把菜加进购物车', async ({ p
   expect(cart[0].qty).toBe(1)
 })
 
-test('Allston 只给周二/周四两个可订日期,且不含今天', async ({ page }) => {
+test('Allston 只给周二/周四/周六的日期,且不含今天', async ({ page }) => {
   await page.goto('/')
   const card = page.locator('.pickup-option', { hasText: 'Allston' })
   const days = (await card.innerText()).match(/周[一二三四五六日]\s+\d+\/\d+/g) ?? []
   expect(days.length).toBeGreaterThan(0)
-  for (const d of days) expect(d.slice(0, 2)).toMatch(/周(二|四)/)
+  for (const d of days) expect(d.slice(0, 2)).toMatch(/周(二|四|六)/)
   // 今天(9/29 周二)已过中午截单,不该还出现在可订列表里
   expect(days.join()).not.toContain('9/29')
 })
