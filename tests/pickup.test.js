@@ -50,9 +50,9 @@ describe('upcomingRuns', () => {
     expect(upcomingRuns(allston, at(2026, 9, 28))).toHaveLength(OPEN_RUNS)
   })
 
-  it('不放今天 —— 今天中午就截单了,下午点进来只会看到一个关掉的日期', () => {
-    // 2026-09-29 是周二,正是 Allston 的班期
-    const runs = upcomingRuns(allston, at(2026, 9, 29, 9))
+  it('下午点进来看不到今天 —— 中午已经截单,留着就是个点不了的日期', () => {
+    // 2026-09-29 是周二,正是 Allston 的班期,但下午 3 点早过了 12:00
+    const runs = upcomingRuns(allston, at(2026, 9, 29, 15))
     expect(runs.map(r => r.key)).not.toContain('2026-09-29')
   })
 
@@ -61,11 +61,30 @@ describe('upcomingRuns', () => {
       .toEqual(['2026-09-29', '2026-10-01'])
   })
 
-  it('周四当天过了截单,下两班是周六和下周二 —— 中间跳过周日', () => {
-    // 2026-10-01 是周四。班次一律从明天起排(upcomingRuns 不放今天),
-    // 所以下两班是 10/3(六)和 10/6(二) —— 中间的 10/4 是周日,不发车。
-    expect(upcomingRuns(allston, at(2026, 10, 1)).map(r => r.key))
+  it('今天还没到中午:今晚这一班就在第一位 —— 上午想起来订晚饭,来得及', () => {
+    // 2026-10-03 周六上午 10:00,Allston 周六有车,12:00 才截单
+    expect(upcomingRuns(allston, at(2026, 10, 3, 10)).map(r => r.key))
       .toEqual(['2026-10-03', '2026-10-06'])
+  })
+
+  it('过了中午 12:00,今天这一班立刻从列表里消失 —— 不留一个点不了的日期', () => {
+    // 12:00:00 整就算过了 —— 截单时刻本身不属于可下单的时间
+    expect(upcomingRuns(allston, at(2026, 10, 3, 12)).map(r => r.key))
+      .toEqual(['2026-10-06', '2026-10-08'])
+    expect(upcomingRuns(allston, at(2026, 10, 3, 15)).map(r => r.key))
+      .toEqual(['2026-10-06', '2026-10-08'])
+  })
+
+  it('今天这个点不发车,就从明天起排', () => {
+    // 2026-10-02 周五,Allston 只跑二四六
+    expect(upcomingRuns(allston, at(2026, 10, 2, 10)).map(r => r.key))
+      .toEqual(['2026-10-03', '2026-10-06'])
+  })
+
+  it('周四上午:今天 + 周六,中间的周日不发车', () => {
+    // 2026-10-01 周四,at() 默认 10:00,还没过截单 —— 今天这一班还在第一位
+    expect(upcomingRuns(allston, at(2026, 10, 1)).map(r => r.key))
+      .toEqual(['2026-10-01', '2026-10-03'])
   })
 
   it('班次带着送达时刻(18:00)和截单时刻(当天 12:00)', () => {
@@ -78,9 +97,9 @@ describe('upcomingRuns', () => {
 
   it('跨月跨年都不错位', () => {
     const malden = getPoint('malden')
-    // 2026-12-30 周三 → 下两班 1/1(五)和 1/4(一),跨年不错位
+    // 2026-12-30 周三上午,Malden 跑一三五 → 今天 12/30 和 1/1(五),跨年不错位
     expect(upcomingRuns(malden, at(2026, 12, 30)).map(r => r.key))
-      .toEqual(['2027-01-01', '2027-01-04'])
+      .toEqual(['2026-12-30', '2027-01-01'])
   })
 })
 

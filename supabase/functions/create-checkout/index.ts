@@ -10,9 +10,11 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2?target=deno
 import menu, { resolveSelections } from '../_shared/menu.js'
 import { runTally } from '../_shared/tally.ts'
 import { resolvePoint } from '../_shared/points.ts'
+import { cutoffUtc } from '../_shared/cutoff.ts'
 import { corsHeaders } from '../_shared/cors.ts'
 
 const TAX_RATE = 0.07 // MA 6.25% + Boston local option 0.75%
+const CUTOFF_HOUR = 12 // 发车当天中午截单(与前端 src/pickup.js 保持一致)
 const DAILY_LIMIT = 15 // 每道菜每班备料上限(与前端 src/pickup.js 保持一致)
 const SITE_URL = 'https://noodlefanboston.com/'
 
@@ -80,6 +82,14 @@ Deno.serve(async (req) => {
     // 备料是实打实的:多卖一份就是取餐那天有人空手而归,只能退款道歉。
     if (isDropoff) {
       const runDate = pickupRunDate ?? pickupDate
+
+      // 截单之后不许再下单。前端现在允许订「今天」这一班(中午 12:00 前),
+      // 所以边界是真会被踩到的:11:58 打开页面、12:05 点提交,或者开着旧页面
+      // 不刷新。放进来的后果不是少卖一单,是这一单落在一个 run-dispatch
+      // 可能已经结算过的班次上 —— 钱收了,备料单上却没有它,取餐那天客人空手。
+      if (Date.now() >= cutoffUtc(runDate, CUTOFF_HOUR).getTime()) {
+        throw new Error('cutoff passed')
+      }
       const { dishes: sold } = await runTally(supabase, point.id, runDate)
       for (const it of enriched) {
         const left = DAILY_LIMIT - (sold[it.id] ?? 0)

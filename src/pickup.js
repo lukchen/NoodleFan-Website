@@ -87,18 +87,25 @@ function makeRun(d, point, offset) {
   return { key: dateKey(d), date: d, cutoff, pickupAt, offset }
 }
 
-// 可订的班次:从明天起,按这个点的班期往后找 OPEN_RUNS 班。
-// 不放今天 —— 今天中午就截单了,下午来的客人点进去只会看到一个已经关掉的日期。
+// 可订的班次:按这个点的班期往后找 OPEN_RUNS 班。
+//
+// 今天这一班算不算,看有没有过中午截单 —— 上午十点想起来订今晚的饭,
+// 离截单还有两小时,没道理不让订。过了 12:00 它就自动从列表里消失,
+// 不会出现「看得见却点不了」的日期。
 // 往后要找到 LOOKAHEAD_DAYS 天:周日不发车,周六之后的下一班要跨到下周一。
 export function upcomingRuns(point, now = new Date()) {
   if (!point || point.kind !== 'dropoff') return []
   const runs = []
-  for (let i = 1; i <= LOOKAHEAD_DAYS && runs.length < OPEN_RUNS; i++) {
+  for (let i = 0; i <= LOOKAHEAD_DAYS && runs.length < OPEN_RUNS; i++) {
     const d = new Date(now)
     d.setDate(d.getDate() + i)
     d.setHours(0, 0, 0, 0)
     if (!point.days.includes(d.getDay())) continue
-    runs.push(makeRun(d, point, i))
+    const run = makeRun(d, point, i)
+    // 今天(i === 0)已经过了截单就跳过。比较的是完整时刻,不是日期 ——
+    // 12:00:01 就该关掉。
+    if (i === 0 && now >= run.cutoff) continue
+    runs.push(run)
   }
   return runs
 }
