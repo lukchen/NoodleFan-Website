@@ -61,8 +61,8 @@ const menu = [
     nameZh: '江西三鲜脊骨泡粉',
     shortZh: '三鲜脊骨泡粉',
     shortEn: 'Pork Bone & Mushroom',
-    descEn: 'Silky rice noodles and a slow-braised pork spine bone in slow-simmered pork bone broth, with soybeans, wood ear, and shiitake. Clean and comforting.',
-    descZh: '猪骨清汤慢煨的招牌泡粉，配黄豆、木耳、香菇三鲜，以及原汤猪脊骨。汤清味鲜，不辣不腻。',
+    descEn: 'Silky rice noodles and a slow-braised pork spine bone in slow-simmered pork bone broth, with soybeans, wood ear and shiitake, finished with scallion and cilantro. Clean and comforting.',
+    descZh: '猪骨清汤慢煨的招牌泡粉，配黄豆、木耳、香菇三鲜，撒葱和香菜，以及原汤猪脊骨。汤清味鲜，不辣不腻。',
   },
   {
     id: 5,
@@ -73,8 +73,8 @@ const menu = [
     nameZh: '江西香辣牛肉泡粉',
     shortZh: '香辣泡粉',
     shortEn: 'Spicy Beef',
-    descEn: 'Rice noodles in clear pork bone broth, topped with chili-simmered beef in fragrant red oil, with soybeans, cilantro and crisp pickled greens.',
-    descZh: '猪骨清汤打底，铺上小火慢煨的红油香辣牛肉块，配黄豆、香菜与爽口小咸菜，鲜辣入味，江西招牌。',
+    descEn: 'Rice noodles in clear pork bone broth, topped with chili-simmered beef in fragrant red oil, with soybeans, scallion, cilantro and crisp pickled greens.',
+    descZh: '猪骨清汤打底，铺上小火慢煨的红油香辣牛肉块，配黄豆、葱、香菜与爽口小咸菜，鲜辣入味，江西招牌。',
   },
   // 台北夜市卤肉饭(id 6)2026-10 从网站下架 —— 只是不在网上卖,
   // Drive 的菜品定价表和外卖平台菜单不动。要恢复的话连同 202 套餐、
