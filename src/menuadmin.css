@@ -1,0 +1,73 @@
+/* 后台「菜单」标签。厨房里单手操作,所以每个可点的东西都给够 44px。 */
+.menu-admin { padding: 0.4rem 0 2rem; }
+
+.ma-hint, .ma-empty {
+  font-size: 0.82rem;
+  line-height: 1.7;
+  color: var(--color-text-soft, #857a6b);
+  margin: 0 0 1rem;
+}
+.ma-error {
+  font-size: 0.85rem;
+  color: #fff;
+  background: var(--color-primary, #8c1d18);
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  margin: 0 0 1rem;
+}
+
+.ma-section { margin-bottom: 1.4rem; }
+.ma-section-head {
+  margin: 0 0 0.4rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.ma-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  padding: 0.55rem 0.2rem;
+  border-bottom: 1px solid var(--color-border, #e8dcc8);
+  font-size: 0.85rem;
+}
+/* 下架的菜整行淡掉 —— 一眼看出哪些现在不在卖 */
+.ma-row--off { opacity: 0.45; }
+
+.ma-name {
+  flex: 1 1 10rem;
+  min-width: 0;
+  font-weight: 600;
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+.ma-price {
+  font-weight: 400;
+  font-size: 0.78rem;
+  color: var(--color-text-soft, #857a6b);
+  font-variant-numeric: tabular-nums;
+}
+
+.ma-check, .ma-cap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 44px;        /* 厨房里手指点得中 */
+  white-space: nowrap;
+  cursor: pointer;
+}
+.ma-check input { width: 20px; height: 20px; }
+
+.ma-cap input {
+  width: 4rem;
+  min-height: 36px;
+  padding: 0.2rem 0.4rem;
+  border: 1px solid var(--color-border, #e8dcc8);
+  border-radius: 6px;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.ma-cap input:disabled, .ma-check input:disabled { opacity: 0.5; cursor: not-allowed; }

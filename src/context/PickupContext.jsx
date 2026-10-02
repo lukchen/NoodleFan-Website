@@ -84,6 +84,41 @@ export function PickupProvider({ children }) {
     })
   }
 
+  // ── 菜品当天状态(下架 / 今日售罄 / 每班备几份)────────────────────
+  // 来自后台「菜单」标签。拿不到就按「都能卖、默认 15 份」处理 ——
+  // 真正的防线在 create-checkout,那边下单时会再查一次并拒单。
+  // 这里宁可多显示一道菜(下单时被拦),也不要因为一次网络抖动
+  // 把整张菜单变成空的。
+  const [dishSettings, setDishSettings] = useState({})
+  useEffect(() => {
+    let alive = true
+    async function load() {
+      try {
+        const res = await fetch(`${SUPABASE_URL}/functions/v1/menu-settings`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({}),
+        })
+        if (!res.ok) throw new Error('menu-settings failed')
+        const data = await res.json()
+        if (alive) setDishSettings(data.settings ?? {})
+      } catch {
+        if (alive) setDishSettings({})
+      }
+    }
+    load()
+    // 厨房标了售罄,开着页面的客人一分钟内就该看到
+    const id = setInterval(load, 60000)
+    return () => { alive = false; clearInterval(id) }
+  }, [])
+
+  const dishStatus = useCallback((dishId) => (
+    dishSettings[dishId] ?? { listed: true, soldOutToday: false, cap: DAILY_LIMIT }
+  ), [dishSettings])
+
   // ── 这一班已经卖掉多少 ──────────────────────────────────────────────
   // 每道菜每班只备 DAILY_LIMIT 份。不查的话第 16 个人照样能下单付钱,
   // 到取餐那天才发现没货,只能退款道歉。
@@ -133,10 +168,13 @@ export function PickupProvider({ children }) {
   }, [point?.kind, point?.id, runDate])
 
   // 这道菜这一班还能订几份。到店自取现做现卖,不限量。
+  // 标了「今日售罄」的一律返回 0 —— 自取也适用,厨房没货就是没货。
   const remainingFor = useCallback((dishId) => {
+    const st = dishSettings[dishId] ?? { soldOutToday: false, cap: DAILY_LIMIT }
+    if (st.soldOutToday) return 0
     if (point?.kind !== 'dropoff') return DAILY_LIMIT
-    return Math.max(0, DAILY_LIMIT - (sold[dishId] ?? 0))
-  }, [point?.kind, sold])
+    return Math.max(0, (st.cap ?? DAILY_LIMIT) - (sold[dishId] ?? 0))
+  }, [point?.kind, sold, dishSettings])
 
   const value = {
     pointId, setPointId, choose,
@@ -148,6 +186,8 @@ export function PickupProvider({ children }) {
     dailyLimit: DAILY_LIMIT,
     soldByDish: sold,
     remainingFor,
+    dishSettings,
+    dishStatus,
   }
 
   return <PickupContext.Provider value={value}>{children}</PickupContext.Provider>

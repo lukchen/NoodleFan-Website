@@ -11,11 +11,11 @@ import menu, { resolveSelections } from '../_shared/menu.js'
 import { runTally } from '../_shared/tally.ts'
 import { resolvePoint } from '../_shared/points.ts'
 import { cutoffUtc } from '../_shared/cutoff.ts'
+import { normalize, canOrder, settingFor } from '../_shared/dish-settings.ts'
 import { corsHeaders } from '../_shared/cors.ts'
 
 const TAX_RATE = 0.07 // MA 6.25% + Boston local option 0.75%
 const CUTOFF_HOUR = 12 // 发车当天中午截单(与前端 src/pickup.js 保持一致)
-const DAILY_LIMIT = 15 // 每道菜每班备料上限(与前端 src/pickup.js 保持一致)
 const SITE_URL = 'https://noodlefanboston.com/'
 
 const supabase = createClient(
@@ -77,9 +77,40 @@ Deno.serve(async (req) => {
       }
     })
 
-    // 超卖拦截。前端已经把卖光的菜标成「今日已订满」,但那只是显示 ——
-    // 两个人同时下最后一份、或者有人开着旧页面不刷新,都会绕过它。
-    // 备料是实打实的:多卖一份就是取餐那天有人空手而归,只能退款道歉。
+    // 下架 / 今日售罄 / 备料上限,三道都在服务端再查一次。
+    // 前端已经把这些菜标灰了,但那只是显示 —— 开着旧页面不刷新的人、
+    // 两个人同时下最后一份、直接打接口的人,都会绕过它。
+    // 后果是实打实的:卖出一份做不出来的餐,取餐那天只能退款道歉。
+    {
+      const { data: rows, error: setErr } = await supabase
+        .from('dish_settings')
+        .select('dish_id, listed, sold_out_on, run_cap')
+      if (setErr) throw new Error(setErr.message)
+      const settings = normalize(rows ?? [])
+      for (const it of enriched) {
+        const v = canOrder(settings, it.id, { capped: false })
+        if (!v.ok) {
+          throw new Error(v.reason === 'unlisted'
+            ? `unavailable: ${it.nameZh}`
+            : `sold out today: ${it.nameZh}`)
+        }
+      }
+      // 备料上限按每道菜自己的数(后台可调,默认 15)
+      if (isDropoff) {
+        const runDate = pickupRunDate ?? pickupDate
+        const { dishes: sold } = await runTally(supabase, point.id, runDate)
+        for (const it of enriched) {
+          const cap = settingFor(settings, it.id).cap
+          const left = cap - (sold[it.id] ?? 0)
+          if (it.qty > left) {
+            throw new Error(left <= 0
+              ? `sold out: ${it.nameZh}`
+              : `only ${left} left: ${it.nameZh}`)
+          }
+        }
+      }
+    }
+
     if (isDropoff) {
       const runDate = pickupRunDate ?? pickupDate
 
@@ -89,15 +120,6 @@ Deno.serve(async (req) => {
       // 可能已经结算过的班次上 —— 钱收了,备料单上却没有它,取餐那天客人空手。
       if (Date.now() >= cutoffUtc(runDate, CUTOFF_HOUR).getTime()) {
         throw new Error('cutoff passed')
-      }
-      const { dishes: sold } = await runTally(supabase, point.id, runDate)
-      for (const it of enriched) {
-        const left = DAILY_LIMIT - (sold[it.id] ?? 0)
-        if (it.qty > left) {
-          throw new Error(left <= 0
-            ? `sold out: ${it.nameZh}`
-            : `only ${left} left: ${it.nameZh}`)
-        }
       }
     }
 

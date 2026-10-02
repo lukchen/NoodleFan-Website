@@ -18,7 +18,7 @@ export const cancelledOrder = { ...paidOrder, status: 'cancelled_no_run' }
 
 // Edge Function 全部走 /functions/v1/<name>;realtime 是 websocket,page.route 拦不到,
 // 连不上会自己重试,不影响断言。
-export async function stubBackend(page, { order = paidOrder, checkoutUrl, lang = 'zh' } = {}) {
+export async function stubBackend(page, { order = paidOrder, checkoutUrl, lang = 'zh', dishSettings = {} } = {}) {
   // 语言钉死 —— 默认语言现在跟着浏览器语言走(Playwright 是 en-US),
   // 不钉的话下面所有中文选择器都会落空。
   if (lang) await page.addInitScript(l => localStorage.setItem('nf_lang', l), lang)
@@ -39,6 +39,9 @@ export async function stubBackend(page, { order = paidOrder, checkoutUrl, lang =
 
   await page.route(`${SUPABASE}/functions/v1/run-stats*`, route =>
     route.fulfill({ json: { dishes: {}, orders: 0 } }))
+  // 菜品当天状态(下架 / 今日售罄 / 每班备几份)。默认空 = 全部正常在卖。
+  await page.route(`${SUPABASE}/functions/v1/menu-settings`, route =>
+    route.fulfill({ json: { settings: dishSettings, defaultCap: 15 } }))
   await page.route(`${SUPABASE}/functions/v1/create-checkout`, route =>
     route.fulfill({ json: { url: checkoutUrl ?? 'http://localhost:4173/?stripe=stub' } }))
   await page.route(`${SUPABASE}/functions/v1/order-status`, route =>

@@ -83,13 +83,16 @@ function MenuCard({ item, t, lang, onCustomize, remaining }) {
 
 export default function MenuSection({ t, lang, choosingPickup, onPickupChosen }) {
   const { addItem } = useCart()
-  const { point, remainingFor } = usePickup()
+  const { point, remainingFor, dishStatus } = usePickup()
   const [customizing, setCustomizing] = useState(null)
   const [activeCat, setActiveCat] = useState(null)
   const sectionRefs = useRef({})
 
+  // 下架的菜直接不出现在菜单上。「今日售罄」不在这里过滤 —— 那种菜要留在
+  // 菜单上置灰,客人才知道这家有这道菜、明天可以再来;凭空消失等于白白
+  // 丢掉一次下次再来的理由。售罄由 remainingFor 返回 0 来表现。
   const sections = categories
-    .map(c => ({ ...c, dishes: menu.filter(d => d.category === c.id) }))
+    .map(c => ({ ...c, dishes: menu.filter(d => d.category === c.id && dishStatus(d.id).listed) }))
     .filter(c => c.dishes.length > 0)
 
   // Highlight whichever category is currently under the sticky header.
@@ -185,7 +188,8 @@ export default function MenuSection({ t, lang, choosingPickup, onPickupChosen })
                     t={t}
                     lang={lang}
                     onCustomize={setCustomizing}
-                    remaining={capped ? remainingFor(item.id) : null}
+                    // 售罄对自取同样适用,所以不止 capped 的时候要传
+                    remaining={capped || dishStatus(item.id).soldOutToday ? remainingFor(item.id) : null}
                   />
                 ))}
               </div>

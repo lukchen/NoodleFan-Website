@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import RunBoard from './RunBoard'
 import Stats from './Stats'
+import MenuAdmin from './MenuAdmin'
 import '../runboard.css'
 import '../admin.css'
 import { createClient } from '@supabase/supabase-js'
@@ -60,7 +61,7 @@ export default function Admin() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [alerting, setAlerting] = useState(false)
-  const [tab, setTab] = useState('store')   // store = 到店自取 | group = 团餐预约 | stats = 数据
+  const [tab, setTab] = useState('store')   // store = 到店自取 | group = 团餐预约 | menu = 菜单 | stats = 数据
   // 两个按钮要二次确认:
   //   待取餐 —— 会立刻给客人发邮件,发出去收不回来,客人会直接过来
   //   已完成 —— 收尾动作,点了这单就从待处理里消失,漏发的餐没人再盯着
@@ -352,6 +353,11 @@ export default function Admin() {
           团餐预约 <span className="admin-tab-count">{groupTodo}</span>
         </button>
         <button
+          className={`admin-tab${tab === 'menu' ? ' admin-tab--active' : ''}`}
+          onClick={() => setTab('menu')}>
+          菜单
+        </button>
+        <button
           className={`admin-tab${tab === 'stats' ? ' admin-tab--active' : ''}`}
           onClick={() => setTab('stats')}>
           数据
@@ -359,6 +365,7 @@ export default function Admin() {
       </div>
 
       {/* 挂载时才去拉数据 —— 聚合要扫全表,没人看的时候不该每次刷新订单都跟着跑一遍 */}
+      {tab === 'menu' && <MenuAdmin password={password} />}
       {tab === 'stats' && <Stats password={password} />}
 
       {tab === 'store' && (
