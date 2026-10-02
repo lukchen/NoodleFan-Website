@@ -296,14 +296,14 @@ export const categories = [
     taglineZh: '慢熬老汤，暖身暖胃', taglineEn: 'Slow-simmered broths, warming and rich',
   },
   {
-    id: 'combo2', nameZh: '双人套餐', nameEn: 'Combo for Two',
-    taglineZh: '两份主食 + 两份饮料', taglineEn: 'Two mains and two drinks',
-  },
-  {
     // 小菜不写导语 —— 菜名本身已经说清楚了,再加一句是凑字数。
     // tagline 留空,MenuSection 会整行不渲染。
     id: 'side', nameZh: '小菜', nameEn: 'Sides',
     taglineZh: '', taglineEn: '',
+  },
+  {
+    id: 'combo2', nameZh: '双人套餐', nameEn: 'Combo for Two',
+    taglineZh: '两份主食 + 两份饮料', taglineEn: 'Two mains and two drinks',
   },
   {
     id: 'drink', nameZh: '饮料', nameEn: 'Drinks',
