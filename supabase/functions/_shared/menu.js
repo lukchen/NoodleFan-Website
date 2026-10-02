@@ -76,18 +76,9 @@ const menu = [
     descEn: 'Rice noodles in clear pork bone broth, topped with chili-simmered beef in fragrant red oil, with soybeans, cilantro and crisp pickled greens.',
     descZh: '猪骨清汤打底，铺上小火慢煨的红油香辣牛肉块，配黄豆、香菜与爽口小咸菜，鲜辣入味，江西招牌。',
   },
-  {
-    id: 6,
-    category: 'rice',
-    price: 15.99,
-    image: '/images/Taiwanese%20Braised%20Pork%20Rice%20Bowl.png',
-    nameEn: 'Taiwanese Braised Pork Rice Bowl',
-    nameZh: '台北夜市卤肉饭',
-    shortZh: '卤肉饭',
-    shortEn: 'Braised Pork Rice',
-    descEn: 'Taipei street style braised pork belly over rice with pickled daikon, greens and an egg.',
-    descZh: '台北夜市经典卤肉饭，红葱酥慢卤的五花肉浇在热米饭上，配腌黄萝卜、小咸菜、小油菜和香卤蛋。',
-  },
+  // 台北夜市卤肉饭(id 6)2026-10 从网站下架 —— 只是不在网上卖,
+  // Drive 的菜品定价表和外卖平台菜单不动。要恢复的话连同 202 套餐、
+  // ADDONS.braisedPork 和 MODIFIERS[6] 一起放回来,id 6 别给别的菜用。
 
   // ── 小菜 Sides (single-order) ──
   {
@@ -203,17 +194,7 @@ const menu = [
     descEn: 'For two: Pork Bone & Mushroom and Spicy Beef rice noodle soups, plus 2 drinks — save $1.99.',
     descZh: '双人份：江西三鲜脊骨泡粉 + 江西香辣牛肉泡粉，一清一辣，另配自选饮料两份，省 $1.99。',
   },
-  {
-    id: 202,
-    category: 'combo2',
-    price: 34.99,
-    image: '/images/Taiwanese%20Braised%20Pork%20Rice%20Bowl.png',
-    images: ['/images/Taiwanese%20Braised%20Pork%20Rice%20Bowl.png', '/images/Taiwanese%20Beef%20Noodle.png'],
-    nameEn: 'Taipei Sisters Combo for Two (Incl. 2 Drinks)',
-    nameZh: '② 台北姐妹花套餐（含饮料×2）',
-    descEn: 'For two: Braised Pork Rice Bowl & Taiwanese Beef Noodle, plus 2 drinks — save $3.99.',
-    descZh: '双人份：台北夜市卤肉饭 + 台式牛肉面，一饭一面，另配自选饮料两份，省 $3.99。',
-  },
+  // 台北姐妹花套餐(id 202)随卤肉饭一起下架 —— 套餐里有一半做不了。
   {
     id: 203,
     category: 'combo2',
@@ -221,7 +202,7 @@ const menu = [
     image: '/images/Authentic%20Jiangxi%20Fried%20Rice%20Noodle.png',
     images: ['/images/Authentic%20Jiangxi%20Fried%20Rice%20Noodle.png', '/images/Jiangxi%20Spicy%20Beef%20Rice%20Noodle%20Soup.png'],
     nameEn: 'Jiangxi Double Combo for Two (Incl. 2 Drinks)',
-    nameZh: '③ 赣味双拼套餐（含饮料×2）',
+    nameZh: '② 赣味双拼套餐（含饮料×2）',
     descEn: 'For two: Jiangxi Fried Rice Noodle & Spicy Beef Rice Noodle Soup, plus 2 drinks — save $3.99.',
     descZh: '双人份：招牌江西炒粉 + 江西香辣牛肉泡粉，一炒一泡，另配自选饮料两份，省 $3.99。',
   },
@@ -232,7 +213,7 @@ const menu = [
     image: '/images/Authentic%20Jiangxi%20Fried%20Rice%20Noodle.png',
     images: ['/images/Authentic%20Jiangxi%20Fried%20Rice%20Noodle.png', '/images/Golden%20Curry%20Beef%20Noodle.png'],
     nameEn: 'Coast to Coast Combo for Two (Incl. 2 Drinks)',
-    nameZh: '④ 走南闯北套餐（含饮料×2）',
+    nameZh: '③ 走南闯北套餐（含饮料×2）',
     descEn: 'For two: Jiangxi Fried Rice Noodle & Golden Curry Beef Noodle, plus 2 drinks — save $3.99.',
     descZh: '双人份：招牌江西炒粉 + 天津黄汤牛肉拉面，南炒北汤，另配自选饮料两份，省 $3.99。',
   },
@@ -243,7 +224,7 @@ const menu = [
     image: '/images/Taiwanese%20Beef%20Noodle.png',
     images: ['/images/Taiwanese%20Beef%20Noodle.png', '/images/Jiangxi%20Spicy%20Beef%20Rice%20Noodle%20Soup.png'],
     nameEn: 'Twin Beef Combo for Two (Incl. 2 Drinks)',
-    nameZh: '⑤ 海峡双牛套餐（含饮料×2）',
+    nameZh: '④ 海峡双牛套餐（含饮料×2）',
     descEn: 'For two: Taiwanese Beef Noodle & Jiangxi Spicy Beef Rice Noodle Soup, plus 2 drinks — save $2.99.',
     descZh: '双人份：台式牛肉面 + 江西香辣牛肉泡粉，两碗牛肉各有风味，另配自选饮料两份，省 $2.99。',
   },
@@ -254,7 +235,7 @@ const menu = [
     image: '/images/Jiangxi%20Spicy%20Beef%20Rice%20Noodle%20Soup.png',
     images: ['/images/Jiangxi%20Spicy%20Beef%20Rice%20Noodle%20Soup.png', '/images/Golden%20Curry%20Beef%20Noodle.png'],
     nameEn: 'Beef Duo · Rice Noodle & Wheat Noodle (Incl. 2 Drinks)',
-    nameZh: '⑥ 粉面双牛套餐（含饮料×2）',
+    nameZh: '⑤ 粉面双牛套餐（含饮料×2）',
     descEn: 'For two: Spicy Beef Rice Noodle Soup & Golden Curry Beef Noodle — one rice noodle, one wheat, plus 2 drinks — save $2.99.',
     descZh: '双人份：江西香辣牛肉泡粉 + 天津黄汤牛肉拉面，一粉一面两碗牛肉，另配自选饮料两份，省 $2.99。',
   },
@@ -373,7 +354,6 @@ const ADDONS = {
   gardenMushroom: { id: 'add-gardenmushroom', nameEn: 'Extra Garden Mushroom (Wood Ear, Shiitake & Soybean)', nameZh: '加三鲜', delta: 2.5 },
   shreddedPork:   { id: 'add-shreddedpork',   nameEn: 'Extra Shredded Pork', nameZh: '加额外肉丝', delta: 2.5 },
   beefBrisket:    { id: 'add-beefbrisket',    nameEn: 'Extra Beef',         nameZh: '加牛肉',   delta: 4.5 },
-  braisedPork:    { id: 'add-braisedpork',    nameEn: 'Extra Braised Pork', nameZh: '加卤肉',   delta: 4.5 },
   egg:            { id: 'add-egg',            nameEn: 'Extra Egg',          nameZh: '加鸡蛋',   delta: 1.5 },
   vegetables:     { id: 'add-vegetables',     nameEn: 'Extra Vegetables',   nameZh: '加蔬菜',   delta: 2 },
   hamSausage:     { id: 'add-hamsausage',     nameEn: 'Extra Ham Sausage',  nameZh: '加火腿肠', delta: 3 },
@@ -412,15 +392,18 @@ const MODIFIERS = {
   3: { spice: [['none', 'mild', 'regular', 'extra'], 'regular'],                 remove: ['pickle'],                                                          combo: ['ham'],                     addon: ['riceNoodles', 'shreddedPork', 'egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
   4: { spice: [['none', 'extra'], 'none'],                                       remove: ['scallion', 'cilantro', 'pickle', 'woodear', 'soybean', 'shiitake'], combo: ['tofu', 'balls', 'deluxe'], addon: ['riceNoodles', 'gardenMushroom', 'egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
   5: { spice: [['mild', 'regular', 'extra'], 'regular'],                         remove: ['scallion', 'cilantro', 'pickle'],                                  combo: ['tofu', 'balls', 'deluxe'], addon: ['riceNoodles', 'beefBrisket', 'egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
-  6: {                                                                           remove: ['egg', 'cilantro'],                                                 combo: ['tofu'],                    addon: ['rice', 'braisedPork', 'egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
   22:{ spice: [['none', 'extra'], 'none'],                     noodle: 'thick', remove: ['scallion', 'cilantro', 'pickle'],                                  combo: ['tofu', 'balls', 'deluxe'], addon: ['noodles', 'beefBrisket', 'egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
   21:{ spice: [['none', 'extra'], 'none'],                                       remove: ['scallion', 'cilantro'],                                            combo: ['tofu', 'balls', 'deluxe'], addon: ['egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
 }
 
 // 双人套餐：两份主食，辣度/面型每份各选一次，饮料两份。
-const COMBO2_BASE = { 201: [4, 5], 202: [6, 2], 203: [3, 5], 204: [3, 1], 205: [2, 5], 206: [5, 1] }
+// 202(台北姐妹花)随卤肉饭一起下架,这里也必须拿掉 —— 留着的话 MODIFIERS[6]
+// 已经不存在,下面这个循环会在加载菜单时就抛 TypeError,整个点餐页白屏。
+const COMBO2_BASE = { 201: [4, 5], 203: [3, 5], 204: [3, 1], 205: [2, 5], 206: [5, 1] }
 for (const [comboId, bases] of Object.entries(COMBO2_BASE)) {
   const [a, b] = bases.map((id) => MODIFIERS[id])
+  // 下架某道主食却忘了改这里 —— 与其白屏,不如跳过这个套餐并留一条日志。
+  if (!a || !b) { console.warn(`combo ${comboId} 引用了不存在的主食,已跳过`); continue }
   MODIFIERS[comboId] = {
     spice: a.spice ?? b.spice,
     noodle: a.noodle ?? b.noodle,
