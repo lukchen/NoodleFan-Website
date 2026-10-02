@@ -1,0 +1,138 @@
+/* 后台「数据」标签。独立文件,跟 admin.css 一样不塞进 App.css。
+   图表没用任何图表库 —— 这几张都是横条,CSS 就够了,
+   为了它们多打包 200KB 的 recharts 不值当。 */
+
+.stats { padding: 0.4rem 0 2rem; }
+
+/* ── 时间窗 ───────────────────────────────────────────────────── */
+.stats-ranges {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+.stats-range {
+  border: 1px solid var(--color-border, #e8dcc8);
+  background: transparent;
+  color: var(--color-text-soft, #857a6b);
+  border-radius: 999px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  min-height: 36px;        /* 手机上点得中 */
+}
+.stats-range--active {
+  background: var(--color-primary, #8c1d18);
+  border-color: var(--color-primary, #8c1d18);
+  color: #fff;
+  font-weight: 600;
+}
+.stats-loading { font-size: 0.8rem; color: var(--color-text-soft, #857a6b); }
+
+/* ── 大盘卡片 ─────────────────────────────────────────────────── */
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+.stats-card {
+  background: var(--color-surface, #fdf8f0);
+  border: 1px solid var(--color-border, #e8dcc8);
+  border-radius: 10px;
+  padding: 0.8rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.stats-card--accent { border-color: var(--color-primary, #8c1d18); }
+.stats-card-label { font-size: 0.78rem; color: var(--color-text-soft, #857a6b); }
+.stats-card-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  /* 等宽数字:切换时间窗时数字不会左右抖 */
+  font-variant-numeric: tabular-nums;
+}
+.stats-card-note { font-size: 0.72rem; color: var(--color-text-soft, #857a6b); line-height: 1.4; }
+
+.stats-pending {
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--color-text-soft, #857a6b);
+  background: var(--color-surface, #fdf8f0);
+  border-left: 3px solid var(--color-border, #e8dcc8);
+  padding: 0.6rem 0.8rem;
+  border-radius: 0 8px 8px 0;
+  margin: 0 0 1.2rem;
+}
+
+/* ── 分区与横条 ───────────────────────────────────────────────── */
+.stats-section { margin-bottom: 1.6rem; }
+.stats-section h3 {
+  margin: 0 0 0.6rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.stats-two {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 0 1.4rem;
+}
+
+.stats-bars { list-style: none; margin: 0; padding: 0; }
+.stats-bars li {
+  display: grid;
+  /* 标签列固定宽:各行的条从同一个位置起跑,否则长短不一没法横向比较 */
+  grid-template-columns: 5.5rem 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.22rem 0;
+  font-size: 0.82rem;
+}
+.stats-bar-label {
+  color: var(--color-text-soft, #857a6b);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.stats-bar-track {
+  background: var(--color-border, #e8dcc8);
+  border-radius: 999px;
+  height: 10px;
+  overflow: hidden;
+}
+.stats-bar-fill {
+  display: block;
+  height: 100%;
+  background: var(--color-primary, #8c1d18);
+  border-radius: 999px;
+  min-width: 2px;          /* 卖出 1 份也要看得见,否则等于没这一行 */
+}
+.stats-bar-value {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--color-text, #2e2a25);
+}
+
+.stats-empty, .stats-error {
+  font-size: 0.88rem;
+  color: var(--color-text-soft, #857a6b);
+  padding: 1rem 0;
+}
+.stats-error { color: var(--color-primary, #8c1d18); }
+
+.stats-note {
+  font-size: 0.74rem;
+  line-height: 1.7;
+  color: var(--color-text-soft, #857a6b);
+  border-top: 1px solid var(--color-border, #e8dcc8);
+  padding-top: 0.8rem;
+}
+
+@media (max-width: 480px) {
+  .stats-bars li { grid-template-columns: 4.5rem 1fr auto; font-size: 0.78rem; }
+  .stats-card-value { font-size: 1.3rem; }
+}
