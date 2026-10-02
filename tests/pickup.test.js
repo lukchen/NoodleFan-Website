@@ -21,15 +21,17 @@ describe('取餐点定义', () => {
     expect(getPoint('nope')).toBeNull()
   })
 
-  it('两个配送点班期不重叠:Malden 周一三五,Allston 周二四六', () => {
-    expect(getPoint('malden').days).toEqual([1, 3, 5])
-    expect(getPoint('allston').days).toEqual([2, 4, 6])
+  it('两个配送点班期不重叠:Malden 周五周日,Allston 周六周一', () => {
+    expect(getPoint('malden').days).toEqual([0, 5])
+    expect(getPoint('allston').days).toEqual([1, 6])
     // 不重叠是硬要求 —— 同一天两个点都要跑,一辆车送不过来。
     const overlap = getPoint('malden').days.filter(d => getPoint('allston').days.includes(d))
     expect(overlap).toEqual([])
-    // 周日两个点都不发车
-    expect(getPoint('malden').days).not.toContain(0)
-    expect(getPoint('allston').days).not.toContain(0)
+    // 周二到周四不发车
+    for (const d of [2, 3, 4]) {
+      expect(getPoint('malden').days).not.toContain(d)
+      expect(getPoint('allston').days).not.toContain(d)
+    }
   })
 
   it('起送单数和备料上限就是说好的 5 和 15', () => {
@@ -51,40 +53,42 @@ describe('upcomingRuns', () => {
   })
 
   it('下午点进来看不到今天 —— 中午已经截单,留着就是个点不了的日期', () => {
-    // 2026-09-29 是周二,正是 Allston 的班期,但下午 3 点早过了 12:00
-    const runs = upcomingRuns(allston, at(2026, 9, 29, 15))
-    expect(runs.map(r => r.key)).not.toContain('2026-09-29')
+    // 2026-10-05 是周一,正是 Allston 的班期,但下午 3 点早过了 12:00
+    const runs = upcomingRuns(allston, at(2026, 10, 5, 15))
+    expect(runs.map(r => r.key)).not.toContain('2026-10-05')
   })
 
-  it('周一看 Allston,给出本周二和本周四', () => {
+  it('周一上午看 Allston,给出今天和本周六', () => {
     expect(upcomingRuns(allston, at(2026, 9, 28)).map(r => r.key))
-      .toEqual(['2026-09-29', '2026-10-01'])
+      .toEqual(['2026-09-28', '2026-10-03'])
   })
 
   it('今天还没到中午:今晚这一班就在第一位 —— 上午想起来订晚饭,来得及', () => {
-    // 2026-10-03 周六上午 10:00,Allston 周六有车,12:00 才截单
-    expect(upcomingRuns(allston, at(2026, 10, 3, 10)).map(r => r.key))
-      .toEqual(['2026-10-03', '2026-10-06'])
+    // 2026-10-05 周一上午 10:00,Allston 周一有车,12:00 才截单
+    expect(upcomingRuns(allston, at(2026, 10, 5, 10)).map(r => r.key))
+      .toEqual(['2026-10-05', '2026-10-10'])
   })
 
   it('过了中午 12:00,今天这一班立刻从列表里消失 —— 不留一个点不了的日期', () => {
     // 12:00:00 整就算过了 —— 截单时刻本身不属于可下单的时间
-    expect(upcomingRuns(allston, at(2026, 10, 3, 12)).map(r => r.key))
-      .toEqual(['2026-10-06', '2026-10-08'])
-    expect(upcomingRuns(allston, at(2026, 10, 3, 15)).map(r => r.key))
-      .toEqual(['2026-10-06', '2026-10-08'])
+    expect(upcomingRuns(allston, at(2026, 10, 5, 12)).map(r => r.key))
+      .toEqual(['2026-10-10', '2026-10-12'])
+    expect(upcomingRuns(allston, at(2026, 10, 5, 15)).map(r => r.key))
+      .toEqual(['2026-10-10', '2026-10-12'])
   })
 
   it('今天这个点不发车,就从明天起排', () => {
-    // 2026-10-02 周五,Allston 只跑二四六
+    // 2026-10-02 周五是 Malden 的班期,Allston 只跑周六和周一
     expect(upcomingRuns(allston, at(2026, 10, 2, 10)).map(r => r.key))
-      .toEqual(['2026-10-03', '2026-10-06'])
+      .toEqual(['2026-10-03', '2026-10-05'])
   })
 
-  it('周四上午:今天 + 周六,中间的周日不发车', () => {
-    // 2026-10-01 周四,at() 默认 10:00,还没过截单 —— 今天这一班还在第一位
-    expect(upcomingRuns(allston, at(2026, 10, 1)).map(r => r.key))
-      .toEqual(['2026-10-01', '2026-10-03'])
+  it('周二到周四没有车,要一直等到周五/周六', () => {
+    // 2026-09-30 是周三 —— 两个点都不跑,各自跳到自己最近的班期
+    expect(upcomingRuns(allston, at(2026, 9, 30)).map(r => r.key))
+      .toEqual(['2026-10-03', '2026-10-05'])
+    expect(upcomingRuns(getPoint('malden'), at(2026, 9, 30)).map(r => r.key))
+      .toEqual(['2026-10-02', '2026-10-04'])
   })
 
   it('班次带着送达时刻(18:00)和截单时刻(当天 12:00)', () => {
@@ -97,9 +101,9 @@ describe('upcomingRuns', () => {
 
   it('跨月跨年都不错位', () => {
     const malden = getPoint('malden')
-    // 2026-12-30 周三上午,Malden 跑一三五 → 今天 12/30 和 1/1(五),跨年不错位
+    // 2026-12-30 周三没有车 → 跳到 1/1(五)和 1/3(日),跨年不错位
     expect(upcomingRuns(malden, at(2026, 12, 30)).map(r => r.key))
-      .toEqual(['2026-12-30', '2027-01-01'])
+      .toEqual(['2027-01-01', '2027-01-03'])
   })
 })
 
@@ -107,16 +111,16 @@ describe('nextRun / findRun', () => {
   const allston = getPoint('allston')
 
   it('nextRun 就是最近那一班', () => {
-    expect(nextRun(allston, at(2026, 9, 28)).key).toBe('2026-09-29')
+    expect(nextRun(allston, at(2026, 9, 28)).key).toBe('2026-09-28')
     expect(nextRun(getPoint('store'), at(2026, 9, 28))).toBeNull()
   })
 
   it('findRun 找得到就返回那一班', () => {
-    expect(findRun(allston, '2026-10-01', at(2026, 9, 28)).key).toBe('2026-10-01')
+    expect(findRun(allston, '2026-10-03', at(2026, 9, 28)).key).toBe('2026-10-03')
   })
 
   it('找不到就回退到最近一班 —— 客人存的旧链接里那一班早发走了,不能白屏', () => {
-    expect(findRun(allston, '2020-01-01', at(2026, 9, 28)).key).toBe('2026-09-29')
+    expect(findRun(allston, '2020-01-01', at(2026, 9, 28)).key).toBe('2026-09-28')
   })
 })
 

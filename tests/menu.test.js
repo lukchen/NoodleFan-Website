@@ -75,3 +75,41 @@ describe('菜单加载', () => {
     }
   })
 })
+
+// 「不要放」的选项和描述必须对得上。
+//
+// 这条规则是 Betsy 定的:菜里有的东西才给「不要」的选择。两个方向都会出事 ——
+// 客人勾了「不要香菜」、拿到手发现本来就没有,会觉得这店不靠谱;
+// 反过来碗里有葱却没写进描述,不吃葱的人根本不会想到要去点那个选项。
+//
+// 查出来的办法很笨但管用:选项说可以去掉某样配料,描述里就得提到它。
+describe('「不要放」的选项和描述对得上', () => {
+  // 选项 id → 描述里该出现的词(中文 / 英文)
+  const 配料 = {
+    scallion: ['葱', 'callion'],
+    cilantro: ['香菜', 'ilantro'],
+    pickle:   ['咸菜', 'ickled'],
+    woodear:  ['木耳', 'ood ear'],
+    soybean:  ['黄豆', 'oybean'],
+    shiitake: ['香菇', 'hiitake'],
+    egg:      ['蛋',   'gg'],
+  }
+
+  // 双人套餐的描述只写「A + B 两份主食」,本来就不列配料 —— 不适用这条规则。
+  const 单品 = (d) => d.category !== 'combo2'
+
+  it.each(menu.filter(单品).filter(d => (d.optionGroups ?? []).some(g => g.id === 'remove')).map(d => [d.nameZh, d]))(
+    '%s',
+    (_name, dish) => {
+      const group = dish.optionGroups.find(g => g.id === 'remove')
+      for (const choice of group.choices) {
+        const [zh, en] = 配料[choice.id.replace('no-', '')] ?? []
+        if (!zh) continue
+        expect(dish.descZh.includes(zh),
+          `可以「${choice.nameZh}」,但中文描述里没提到${zh}`).toBe(true)
+        expect(dish.descEn.toLowerCase().includes(en.toLowerCase()),
+          `可以「${choice.nameZh}」,但英文描述里没提到${en}`).toBe(true)
+      }
+    },
+  )
+})

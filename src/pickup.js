@@ -1,7 +1,7 @@
 // 取餐方式 —— 到店自取 + 定点配送(Allston / Malden)。
 //
-// 定点配送的玩法:两个点交替跑 —— 周一/周三/周五 Malden,周二/周四/周六 Allston,
-// 周日暂不发车。每个点开放最近 OPEN_RUNS 个班次,取餐当天 12:00 截单,
+// 定点配送的玩法:两个点交替跑 —— 周五/周日 Malden,周六/周一 Allston,
+// 周二到周四暂不发车。每个点开放最近 OPEN_RUNS 个班次,取餐当天 12:00 截单,
 // 满 MIN_ORDERS 单发车,每道菜当天限量 DAILY_LIMIT 份。
 // 客人先选取餐点和日期再看菜单 —— 这两项决定了截单时间、剩余份数和是否成团。
 //
@@ -13,7 +13,7 @@ export const MIN_ORDERS = 5        // 起送单数
 export const DAILY_LIMIT = 15      // 每道菜每天备料上限
 export const CUTOFF_HOUR = 12      // 取餐当天 12:00 截单
 export const OPEN_RUNS = 2         // 每个取餐点开放最近两个班次
-export const LOOKAHEAD_DAYS = 21   // 往后最多找这么多天(周日不发车,得跨周找)
+export const LOOKAHEAD_DAYS = 21   // 往后最多找这么多天(周二~周四不发车,得跨周找)
 
 // 店铺营业时间 —— 显示文案和「现在是否营业」都从这两个数字来,避免两处各写一份走偏。
 export const STORE_OPEN_HOUR = 11   // 11:00 AM
@@ -52,7 +52,7 @@ export const PICKUP_POINTS = [
     nameEn: 'Allston Pickup Spot',
     areaZh: '1 Brighton Ave, Boston, MA 02134(Super 88 超市门口)',
     areaEn: '1 Brighton Ave, Boston, MA 02134 (in front of Super 88)',
-    days: [2, 4, 6],       // 周二、周四、周六
+    days: [1, 6],          // 周一、周六
     pickupHour: 18,        // 18:00 送达
   },
   {
@@ -62,7 +62,7 @@ export const PICKUP_POINTS = [
     nameEn: 'Malden Pickup Spot',
     areaZh: '300 Pleasant St, Malden, MA 02148(停车场)',
     areaEn: '300 Pleasant St, Malden, MA 02148 (parking lot)',
-    days: [1, 3, 5],       // 周一、周三、周五
+    days: [0, 5],          // 周日、周五
     pickupHour: 18,        // 18:00 送达
   },
 ]
@@ -92,7 +92,7 @@ function makeRun(d, point, offset) {
 // 今天这一班算不算,看有没有过中午截单 —— 上午十点想起来订今晚的饭,
 // 离截单还有两小时,没道理不让订。过了 12:00 它就自动从列表里消失,
 // 不会出现「看得见却点不了」的日期。
-// 往后要找到 LOOKAHEAD_DAYS 天:周日不发车,周六之后的下一班要跨到下周一。
+// 往后要找到 LOOKAHEAD_DAYS 天:周二到周四不发车,周一之后的下一班要等到周五。
 export function upcomingRuns(point, now = new Date()) {
   if (!point || point.kind !== 'dropoff') return []
   const runs = []

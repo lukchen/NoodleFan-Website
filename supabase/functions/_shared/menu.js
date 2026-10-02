@@ -37,8 +37,8 @@ const menu = [
     nameZh: '台式牛肉面',
     shortZh: '台式牛肉面',
     shortEn: 'TW Beef Noodle',
-    descEn: 'Slow-braised beef brisket in a tomato, apple and spice broth built on beef tallow, with fresh noodles and a fried egg.',
-    descZh: '台式慢炖牛腩面，牛油炒香、番茄苹果与八角桂皮吊出的醇厚汤头，配新鲜面条与煎蛋。',
+    descEn: 'Slow-braised beef brisket in a tomato, apple and spice broth built on beef tallow, with fresh noodles, a fried egg, scallion and cilantro.',
+    descZh: '台式慢炖牛腩面，牛油炒香、番茄苹果与八角桂皮吊出的醇厚汤头，配新鲜面条与煎蛋，撒葱和香菜。',
   },
   {
     id: 3,
@@ -49,8 +49,8 @@ const menu = [
     nameZh: '招牌江西炒粉',
     shortZh: '炒粉',
     shortEn: 'Fried Rice Noodle',
-    descEn: 'Wok-tossed Jiangxi rice noodles with egg, pork, cabbage and baby bok choy — smoky, savory street-food style.',
-    descZh: '江西街头味的大火猛炒米粉，配鸡蛋、猪肉丝、包菜与小油菜，锅气十足、咸香够味。',
+    descEn: 'Wok-tossed Jiangxi rice noodles with egg, pork, cabbage, baby bok choy and crisp pickled greens — smoky, savory street-food style.',
+    descZh: '江西街头味的大火猛炒米粉，配鸡蛋、猪肉丝、包菜、小油菜与爽口小咸菜，锅气十足、咸香够味。',
   },
   {
     id: 4,
@@ -61,8 +61,8 @@ const menu = [
     nameZh: '江西三鲜脊骨泡粉',
     shortZh: '三鲜脊骨泡粉',
     shortEn: 'Pork Bone & Mushroom',
-    descEn: 'Silky rice noodles and a slow-braised pork spine bone in slow-simmered pork bone broth, with soybeans, wood ear and shiitake, finished with scallion and cilantro. Clean and comforting.',
-    descZh: '猪骨清汤慢煨的招牌泡粉，配黄豆、木耳、香菇三鲜，撒葱和香菜，以及原汤猪脊骨。汤清味鲜，不辣不腻。',
+    descEn: 'Silky rice noodles and a slow-braised pork spine bone in slow-simmered pork bone broth, with soybeans, wood ear, shiitake and crisp pickled greens, finished with scallion and cilantro. Clean and comforting.',
+    descZh: '猪骨清汤慢煨的招牌泡粉，配黄豆、木耳、香菇三鲜，撒葱和香菜，另配爽口小咸菜，以及原汤猪脊骨。汤清味鲜，不辣不腻。',
   },
   {
     id: 5,
@@ -213,7 +213,7 @@ const menu = [
     nameZh: '武汉热干面',
     shortZh: '热干面',
     shortEn: 'Hot-Dry Noodles',
-    descEn: "Wuhan's iconic noodles tossed in nutty sesame paste with pickled long beans and mustard stem. Served dry, no broth. Contains peanut, soybeans, wheat and sesame.",
+    descEn: "Wuhan's iconic noodles tossed in nutty sesame paste with pickled long beans, mustard stem and scallion. Served dry, no broth. Contains peanut, soybeans, wheat and sesame.",
     descZh: '武汉人的早午晚餐顶配。碱水面掸得根根爽利，拌上浓香芝麻酱，配酸豆角、榨菜和葱花，干拌不带汤，越拌越香。含花生、大豆、小麦、芝麻。',
   },
 
@@ -425,14 +425,14 @@ const COMBO_DRINK = [
 // dish id -> { spice: [choices, defaultId], noodle: defaultId, remove: [...], addon: [...] }
 const MODIFIERS = {
   // ── 单品 ──
-  1: { spice: [['none', 'extra'], 'none'],                      noodle: 'thick', remove: ['scallion', 'cilantro', 'pickle'],                                  combo: ['tofu', 'balls', 'deluxe'], addon: ['noodles', 'beefBrisket', 'egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
-  2: { spice: [['none', 'extra'], 'none'],                      noodle: 'thick', remove: ['scallion', 'cilantro', 'pickle'],                                  combo: ['tofu', 'balls', 'deluxe'], addon: ['noodles', 'beefBrisket', 'egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
+  1: { spice: [['none', 'extra'], 'none'],                      noodle: 'thick', remove: ['scallion', 'cilantro'],                                  combo: ['tofu', 'balls', 'deluxe'], addon: ['noodles', 'beefBrisket', 'egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
+  2: { spice: [['none', 'extra'], 'none'],                      noodle: 'thick', remove: ['scallion', 'cilantro'],                                  combo: ['tofu', 'balls', 'deluxe'], addon: ['noodles', 'beefBrisket', 'egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
   3: { spice: [['none', 'mild', 'regular', 'extra'], 'regular'],                 remove: ['pickle'],                                                          combo: ['ham'],                     addon: ['riceNoodles', 'shreddedPork', 'egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
   4: { spice: [['none', 'extra'], 'none'],                                       remove: ['scallion', 'cilantro', 'pickle', 'woodear', 'soybean', 'shiitake'], combo: ['tofu', 'balls', 'deluxe'], addon: ['riceNoodles', 'gardenMushroom', 'egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
   5: { spice: [['mild', 'regular', 'extra'], 'regular'],                         remove: ['scallion', 'cilantro', 'pickle'],                                  combo: ['tofu', 'balls', 'deluxe'], addon: ['riceNoodles', 'beefBrisket', 'egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
-  22:{ spice: [['none', 'extra'], 'none'],                     noodle: 'thick', remove: ['scallion', 'cilantro', 'pickle'],                                  combo: ['tofu', 'balls', 'deluxe'], addon: ['noodles', 'beefBrisket', 'egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
+  22:{ spice: [['none', 'extra'], 'none'],                     noodle: 'thick', remove: ['scallion', 'cilantro'],                                  combo: ['tofu', 'balls', 'deluxe'], addon: ['noodles', 'beefBrisket', 'egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
   // 热干面:干拌不带汤,所以没有「面型」(就是碱水面)也没有套餐。
-  24:{ spice: [['none', 'mild', 'regular', 'extra'], 'regular'],                   remove: ['scallion', 'cilantro'],                                            addon: ['pickledBeans', 'mustardStem', 'scallionEgg'] },
+  24:{ spice: [['none', 'mild', 'regular', 'extra'], 'regular'],                   remove: ['scallion'],                                            addon: ['pickledBeans', 'mustardStem', 'scallionEgg'] },
   21:{ spice: [['none', 'extra'], 'none'],                                       remove: ['scallion', 'cilantro'],                                            combo: ['tofu', 'balls', 'deluxe'], addon: ['egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
 }
 
