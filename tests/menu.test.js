@@ -56,6 +56,17 @@ describe('菜单加载', () => {
     }
   })
 
+  it('每道菜的图都真的在 public/images 里 —— 文件名拼错就是一个破图框', () => {
+    const fs = require('node:fs')
+    for (const d of menu) {
+      for (const img of [d.image, ...(d.images ?? [])]) {
+        // 菜单里的路径是 URL 编码过的(中文名、空格),对应到磁盘要先解回来
+        const file = 'public' + decodeURIComponent(img)
+        expect(fs.existsSync(file), `菜品 ${d.id}(${d.nameZh}) 的图找不到:${img}`).toBe(true)
+      }
+    }
+  })
+
   it('下架的菜不在菜单里,也不在任何套餐描述里', () => {
     const 下架 = ['卤肉饭', '姐妹花']
     const blob = JSON.stringify(menu)

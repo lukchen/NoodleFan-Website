@@ -112,6 +112,27 @@ const menu = [
     descZh: '红茶与八角桂皮慢卤、过夜浸味的茶叶蛋，整颗带壳，剥开满是纹路清香。',
   },
 
+  {
+    id: 25,
+    category: 'side',
+    price: 12.99,
+    image: '/images/Butter-Roasted%20Corn%20Ribs%20%E7%84%A6%E9%A6%99%E9%BB%84%E6%B2%B9%E7%8E%89%E7%B1%B3%E6%8E%92.png',
+    nameEn: 'Butter-Roasted Corn Ribs',
+    nameZh: '焦香黄油玉米排',
+    descEn: 'Sweet corn cut into ribs, roasted till the edges char and caramelize, then brushed with butter and herbs.',
+    descZh: '甜玉米竖切成条，高温烤到边缘焦糖化、微微卷起，刷上化开的黄油再撒一把香草，好拿好啃，外焦里爆汁。',
+  },
+  {
+    id: 26,
+    category: 'side',
+    price: 12.99,
+    image: '/images/Spicy%20Butter%20Corn%20Ribs%20%E9%A6%99%E8%BE%A3%E9%BB%84%E6%B2%B9%E7%8E%89%E7%B1%B3%E6%8E%92.png',
+    nameEn: 'Spicy Butter Corn Ribs',
+    nameZh: '香辣黄油玉米排',
+    descEn: 'Sweet corn ribs roasted till the edges char, brushed with butter and finished with a dusting of ground chili.',
+    descZh: '甜玉米竖切成条，烤到边缘焦糖化微微卷起，刷上化开的黄油，再撒一层辣椒面。奶香打底，辣得香而不冲。',
+  },
+
   // ── 饮料 Drinks (single-order) ──
   {
     id: 9,
@@ -180,6 +201,20 @@ const menu = [
     shortEn: 'Lanzhou Beef',
     descEn: 'Hand-pulled noodles in clear beef bone broth with sliced beef, daikon, scallion, cilantro and chili oil.',
     descZh: '兰州清汤牛肉面，牛骨慢熬的清亮汤头，配手拉面条、薄切牛肉、白萝卜、葱和香菜，淋一勺油泼辣子。',
+  },
+
+  // ── 武汉热干面 ──
+  {
+    id: 24,
+    category: 'noodle',
+    price: 12.99,
+    image: '/images/Wuhan%20Hot-Dry%20Sesame%20Noodles%20%E6%AD%A6%E6%B1%89%E7%83%AD%E5%B9%B2%E9%9D%A2.png',
+    nameEn: 'Wuhan Hot-Dry Sesame Noodles',
+    nameZh: '武汉热干面',
+    shortZh: '热干面',
+    shortEn: 'Hot-Dry Noodles',
+    descEn: "Wuhan's iconic noodles tossed in nutty sesame paste with pickled long beans and mustard stem. Served dry, no broth. Contains peanut, soybeans, wheat and sesame.",
+    descZh: '武汉人的早午晚餐顶配。碱水面掸得根根爽利，拌上浓香芝麻酱，配酸豆角、榨菜和葱花，干拌不带汤，越拌越香。含花生、大豆、小麦、芝麻。',
   },
 
   // ── 双人套餐 Combo for Two ──
@@ -355,6 +390,9 @@ const ADDONS = {
   shreddedPork:   { id: 'add-shreddedpork',   nameEn: 'Extra Shredded Pork', nameZh: '加额外肉丝', delta: 2.5 },
   beefBrisket:    { id: 'add-beefbrisket',    nameEn: 'Extra Beef',         nameZh: '加牛肉',   delta: 4.5 },
   egg:            { id: 'add-egg',            nameEn: 'Extra Egg',          nameZh: '加鸡蛋',   delta: 1.5 },
+  pickledBeans:   { id: 'add-pickledbeans',   nameEn: 'Extra Pickled Long Beans',   nameZh: '加额外酸豆角', delta: 1.99 },
+  mustardStem:    { id: 'add-mustardstem',    nameEn: 'Extra Pickled Mustard Stem', nameZh: '加额外榨菜',   delta: 1.99 },
+  scallionEgg:    { id: 'add-scallionegg',    nameEn: 'Scallion Oil Fried Egg',     nameZh: '葱油煎蛋',     delta: 2.5 },
   vegetables:     { id: 'add-vegetables',     nameEn: 'Extra Vegetables',   nameZh: '加蔬菜',   delta: 2 },
   hamSausage:     { id: 'add-hamsausage',     nameEn: 'Extra Ham Sausage',  nameZh: '加火腿肠', delta: 3 },
   tofuKnots:      { id: 'add-tofuknots',      nameEn: 'Extra Tofu Knots',   nameZh: '加豆腐结', delta: 3 },
@@ -393,6 +431,8 @@ const MODIFIERS = {
   4: { spice: [['none', 'extra'], 'none'],                                       remove: ['scallion', 'cilantro', 'pickle', 'woodear', 'soybean', 'shiitake'], combo: ['tofu', 'balls', 'deluxe'], addon: ['riceNoodles', 'gardenMushroom', 'egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
   5: { spice: [['mild', 'regular', 'extra'], 'regular'],                         remove: ['scallion', 'cilantro', 'pickle'],                                  combo: ['tofu', 'balls', 'deluxe'], addon: ['riceNoodles', 'beefBrisket', 'egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
   22:{ spice: [['none', 'extra'], 'none'],                     noodle: 'thick', remove: ['scallion', 'cilantro', 'pickle'],                                  combo: ['tofu', 'balls', 'deluxe'], addon: ['noodles', 'beefBrisket', 'egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
+  // 热干面:干拌不带汤,所以没有「面型」(就是碱水面)也没有套餐。
+  24:{ spice: [['none', 'mild', 'regular', 'extra'], 'regular'],                   remove: ['scallion', 'cilantro'],                                            addon: ['pickledBeans', 'mustardStem', 'scallionEgg'] },
   21:{ spice: [['none', 'extra'], 'none'],                                       remove: ['scallion', 'cilantro'],                                            combo: ['tofu', 'balls', 'deluxe'], addon: ['egg', 'vegetables', 'hamSausage', 'tofuKnots', 'beefBalls'] },
 }
 
