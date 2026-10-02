@@ -21,6 +21,7 @@ const STEPS = ['paid', 'preparing', 'ready', 'completed']
 // 取消的单还必须把取餐码和取餐时间藏掉:那两样东西是在请客人来取一顿不存在的餐。
 const OFF_TRACK = {
   cancelled_no_run: 'cancelled',
+  rejected: 'cancelled',        // 店家主动拒单,已全额退款
   authorized: 'waiting',
 }
 

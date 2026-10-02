@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import RunBoard from './RunBoard'
 import Stats from './Stats'
 import MenuAdmin from './MenuAdmin'
+import { REJECT_REASONS } from '../../supabase/functions/_shared/reject-reasons.js'
 import '../runboard.css'
 import '../admin.css'
 import { createClient } from '@supabase/supabase-js'
@@ -20,6 +21,7 @@ const STATUS_LABELS = {
   ready: '可取餐',
   completed: '已完成',
   cancelled_no_run: '未成团 · 已取消',
+  rejected: '已拒单 · 已退款',
 }
 
 // 哪些状态要二次确认,以及确认框里说什么。
@@ -39,7 +41,10 @@ const NEEDS_CONFIRM = {
 
 // 团餐订单在截单结算前钱还没到账,这时候按「备餐中」没有意义,
 // 更危险的是会把 status 改成 paid —— 库里写着已付款,Stripe 那边其实一分没扣。
-const SETTLED = (s) => s !== 'authorized' && s !== 'cancelled_no_run'
+const SETTLED = (s) => s !== 'authorized' && s !== 'cancelled_no_run' && s !== 'rejected'
+
+// 已经退过钱的单不能再拒一次
+const REJECTABLE = (s) => s !== 'cancelled_no_run' && s !== 'rejected' && s !== 'completed'
 
 function fmtRunDate(d) {
   if (!d) return ''
@@ -52,6 +57,66 @@ function formatTime(iso) {
   return new Date(iso).toLocaleString('zh-CN', {
     month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit',
   })
+}
+
+// 拒单弹窗。必须选一个理由 —— 客人收到的邮件里就是这句话,
+// 「订单取消」四个字不配任何解释,是一次把人得罪到底的做法。
+function RejectDialog({ order, busy, onCancel, onConfirm }) {
+  const [code, setCode] = useState(REJECT_REASONS[0].code)
+  const [note, setNote] = useState('')
+  const chosen = REJECT_REASONS.find(r => r.code === code)
+
+  return (
+    <div className="admin-confirm-overlay" onClick={busy ? undefined : onCancel}>
+      <div className="admin-confirm" onClick={e => e.stopPropagation()}>
+        <h3>接不了这一单？</h3>
+        <p className="admin-confirm-who">
+          {order.customer_name}
+          {order.pickup_code && <span> · 取餐码 {order.pickup_code}</span>}
+          <span> · ${Number(order.total).toFixed(2)}</span>
+        </p>
+        <p className="admin-confirm-warn">
+          确认后<strong>立刻全额退款 ${Number(order.total).toFixed(2)}</strong>，
+          并给客人发一封说明邮件。退款发出去就撤不回来了。
+        </p>
+
+        <div className="admin-reject-reasons">
+          {REJECT_REASONS.map(r => (
+            <label key={r.code} className={`admin-reject-reason${code === r.code ? ' admin-reject-reason--on' : ''}`}>
+              <input
+                type="radio"
+                name="reject-reason"
+                checked={code === r.code}
+                disabled={busy}
+                onChange={() => setCode(r.code)}
+              />
+              {r.labelZh}
+            </label>
+          ))}
+        </div>
+
+        {/* 客人看到的原话先摆出来 —— 发出去之前自己读一遍 */}
+        <p className="admin-reject-preview">客人会看到：{chosen?.textZh}</p>
+
+        <textarea
+          className="admin-reject-note"
+          rows={2}
+          maxLength={300}
+          disabled={busy}
+          value={note}
+          onChange={e => setNote(e.target.value)}
+          placeholder="想多说一句？（选填，会附在邮件里）"
+        />
+
+        <div className="admin-confirm-actions">
+          <button className="admin-confirm-cancel" disabled={busy} onClick={onCancel}>算了</button>
+          <button className="admin-confirm-ok" disabled={busy} onClick={() => onConfirm(code, note.trim())}>
+            {busy ? '退款中…' : '确认拒单并退款'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default function Admin() {
@@ -175,6 +240,35 @@ export default function Admin() {
     setAlerting(false)
   }
 
+  // 拒单 —— 跟改状态不同,这一步会真的把钱退回去,所以不做乐观更新:
+  // 等服务端确认退款成功再改界面。界面先变而退款失败的话,你会以为已经退了。
+  const [rejecting, setRejecting] = useState(null)   // { order } | null
+  const [rejectBusy, setRejectBusy] = useState(false)
+
+  async function rejectOrder(order, reasonCode, note) {
+    setRejectBusy(true)
+    try {
+      const res = await fetch(FN_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({ password, id: order.id, reject: reasonCode, rejectNote: note || null }),
+      })
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(json.error || `拒单失败 (${res.status})`)
+      setOrders(list => list.map(o => o.id === order.id ? { ...o, status: 'rejected' } : o))
+      setError('')
+      setRejecting(null)
+    } catch (e) {
+      setError(e.message || '拒单失败,钱没有退,请重试')
+    } finally {
+      setRejectBusy(false)
+    }
+  }
+
   async function updateStatus(id, status) {
     // 先乐观更新,点下去立刻有反馈 —— 但请求失败必须回滚。
     // 不回滚的话:界面写着「待取餐」,库里还是「备餐中」,客人那边也没收到邮件,
@@ -227,13 +321,14 @@ export default function Admin() {
   const storeOrders = orders.filter(o => !o.run_date)
   const groupOrders = orders.filter(o => !!o.run_date)
 
+  const DONE = (s) => s === 'completed' || s === 'cancelled_no_run' || s === 'rejected'
   const sortActive = (list) => [
-    ...list.filter(o => o.status !== 'completed' && o.status !== 'cancelled_no_run'),
-    ...list.filter(o => o.status === 'completed' || o.status === 'cancelled_no_run'),
+    ...list.filter(o => !DONE(o.status)),
+    ...list.filter(o => DONE(o.status)),
   ]
 
-  const storeTodo = storeOrders.filter(o => o.status !== 'completed').length
-  const groupTodo = groupOrders.filter(o => o.status !== 'completed' && o.status !== 'cancelled_no_run').length
+  const storeTodo = storeOrders.filter(o => !DONE(o.status)).length
+  const groupTodo = groupOrders.filter(o => !DONE(o.status)).length
 
   // 团餐按「取餐点 + 发车日」分组 —— 备餐和送货都是按班次来的
   const groupRuns = []
@@ -302,6 +397,14 @@ export default function Admin() {
         )}
         {order.status === 'cancelled_no_run' && (
           <p className="admin-order-hold">未成团已解除冻结,客人零扣费 —— 记得在群里通知。</p>
+        )}
+        {order.status === 'rejected' && (
+          <p className="admin-order-hold">已拒单并全额退款,客人已收到说明邮件。</p>
+        )}
+        {REJECTABLE(order.status) && (
+          <button className="admin-reject-btn" onClick={() => setRejecting({ order })}>
+            接不了这一单 · 退款
+          </button>
         )}
         {settled && (
           <div className="admin-status-buttons">
@@ -374,6 +477,15 @@ export default function Admin() {
             ? <p className="admin-empty">暂无到店自取订单</p>
             : sortActive(storeOrders).map(renderOrder)}
         </div>
+      )}
+
+      {rejecting && (
+        <RejectDialog
+          order={rejecting.order}
+          busy={rejectBusy}
+          onCancel={() => setRejecting(null)}
+          onConfirm={(code, note) => rejectOrder(rejecting.order, code, note)}
+        />
       )}
 
       {confirming && (

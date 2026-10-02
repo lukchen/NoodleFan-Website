@@ -128,6 +128,7 @@ const strings = {
       statuses: {
         authorized: 'Waiting for the run to fill',
         cancelled_no_run: 'Run cancelled — no charge',
+        rejected: 'Cancelled by the shop — refunded',
         paid: 'Confirmed',
         preparing: 'Preparing',
         ready: 'Ready',
@@ -136,6 +137,7 @@ const strings = {
       statusDesc: {
         authorized: 'Your card is held, not charged. Once the run reaches its minimum we charge and start cooking; if it doesn\'t, the hold is released and you pay nothing.',
         cancelled_no_run: 'This run did not reach its minimum, so it was cancelled. The hold on your card has been released — you were not charged.',
+        rejected: 'We were not able to make this order and have cancelled it. Your payment has been refunded in full — see the email we sent for the reason.',
         paid: 'We\'ve received your order.',
         preparing: 'The kitchen is preparing your order.',
         ready: 'Your order is ready — please come pick it up!',
@@ -278,6 +280,7 @@ const strings = {
       statuses: {
         authorized: '等待成团',
         cancelled_no_run: '未成团 · 未扣款',
+        rejected: '店家已取消 · 已全额退款',
         paid: '已确认',
         preparing: '备餐中',
         ready: '可取餐',
@@ -286,6 +289,7 @@ const strings = {
       statusDesc: {
         authorized: '您的付款已冻结,尚未扣款。满单发车时才会扣款并开始备餐;未成团会自动解除冻结,不收取任何费用。',
         cancelled_no_run: '这一班未达到起送单数,已取消。您卡上的冻结已解除,未扣任何费用。',
+        rejected: '很抱歉,这一单我们没能接下,已为您取消并全额退款。具体原因见我们发给您的邮件。',
         paid: '我们已收到您的订单。',
         preparing: '厨房正在为您备餐。',
         ready: '餐已备好，请到店取餐！',

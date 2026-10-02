@@ -239,6 +239,33 @@ export function tplCancelled(o: OrderForEmail) {
   }
 }
 
+export function tplRejected(o: OrderForEmail & { note?: string | null }, reason: { textZh: string; textEn: string }, extra?: string | null) {
+  // 这封信唯一的任务是让客人立刻知道两件事:今天拿不到餐了,钱已经退了。
+  // 所以退款写在最前面、字最大 —— 看到「订单取消」第一反应就是「我的钱呢」,
+  // 让他为这个问题多读三行,是额外的一次不愉快。
+  return {
+    subject: `订单已取消 · 已全额退款 · 取餐码 ${esc(String(o.pickup_code ?? ''))}`,
+    html: layout('很抱歉，这一单我们没能接下', `
+      <p style="margin:0 0 10px;">${esc(o.customer_name)}，${esc(reason.textZh)}</p>
+      ${extra ? `<p style="margin:0 0 10px;">${esc(extra)}</p>` : ''}
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+        style="margin:4px 0 16px;background:#fff;border:1px solid #e8dcc8;border-radius:10px;">
+        <tr><td style="padding:16px;font-size:15px;line-height:1.6;">
+          <strong>${money(o.total)} 已全额退回您的付款方式。</strong><br>
+          退款通常 5–10 个工作日到账，具体以发卡行为准。
+          <div style="color:#857a6b;font-size:13px;margin-top:8px;">
+            ${esc(reason.textEn)} Your ${money(o.total)} has been refunded in full;
+            it usually appears within 5–10 business days.
+          </div>
+        </td></tr></table>
+      <p style="margin:0;font-size:14px;">
+        给您添麻烦了，实在抱歉。欢迎下次再来：
+        <a href="https://noodlefanboston.com" style="color:#7a1f1f;">noodlefanboston.com</a>
+      </p>
+    `),
+  }
+}
+
 // ── 运营汇总(发给自己,不发客人)─────────────────────────────────────────
 // 结算是这一整班的分水岭:扣了款就得把餐做出来送到,取消了就别有人白跑。
 // 这两件事发生在 cron 里(取餐日中午 12:00 自动跑),没人盯着 —— 所以必须有一封

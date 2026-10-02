@@ -31,6 +31,9 @@ export function aggregate(orders: any[]) {
   const earned = orders.filter(o => EARNED.has(o.status))
   const authorized = orders.filter(o => o.status === 'authorized')
   const cancelled = orders.filter(o => o.status === 'cancelled_no_run')
+  // 拒单跟未成团分开报:一个是「需求没凑够」,一个是「我们接不住」,
+  // 要采取的行动完全相反 —— 一个是多拉人,一个是别超卖。
+  const rejected = orders.filter(o => o.status === 'rejected')
 
   const revenue = earned.reduce((s, o) => s + Number(o.total ?? 0), 0)
   const fees = earned.reduce((s, o) => s + Number(o.stripe_fee ?? 0), 0)
@@ -48,6 +51,8 @@ export function aggregate(orders: any[]) {
     authorizedAmount: round(authorized.reduce((s, o) => s + Number(o.total ?? 0), 0)),
     cancelledCount: cancelled.length,
     cancelledAmount: round(cancelled.reduce((s, o) => s + Number(o.total ?? 0), 0)),
+    rejectedCount: rejected.length,
+    rejectedAmount: round(rejected.reduce((s, o) => s + Number(o.total ?? 0), 0)),
   }
 
   // ── 按天 ──

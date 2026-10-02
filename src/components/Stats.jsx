@@ -120,7 +120,7 @@ export default function Stats({ password }) {
             </div>
           </section>
 
-          {(s.authorizedCount > 0 || s.cancelledCount > 0) && (
+          {(s.authorizedCount > 0 || s.cancelledCount > 0 || s.rejectedCount > 0) && (
             <p className="stats-pending">
               {s.authorizedCount > 0 && (
                 <span>
@@ -131,6 +131,11 @@ export default function Stats({ password }) {
               {s.cancelledCount > 0 && (
                 <span>
                   {' '}未成团取消:<strong>{s.cancelledCount}</strong> 单（{money(s.cancelledAmount)}）—— 这是因为没凑够 5 单而流失的生意。
+                </span>
+              )}
+              {s.rejectedCount > 0 && (
+                <span>
+                  {' '}拒单退款:<strong>{s.rejectedCount}</strong> 单（{money(s.rejectedAmount)}）—— 已经上门的生意没接住，比没凑够更可惜。
                 </span>
               )}
             </p>
