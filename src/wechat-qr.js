@@ -7,7 +7,7 @@
 //   1. 微信群 → 群二维码 → 保存图片
 //   2. 覆盖 public/images/Group chat_波士顿粉面王Noodle Fan.png
 //   3. 把下面的 QR_EXPIRES 改成新码的失效日
-export const QR_EXPIRES = '2026-10-03'   // 当前这张码的失效日(含当天)
+export const QR_EXPIRES = '2026-10-09'   // 当前这张码的失效日(含当天)
 
 export const QR_SRC = 'images/Group chat_波士顿粉面王Noodle Fan.png'
 
