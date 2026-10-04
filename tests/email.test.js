@@ -158,3 +158,41 @@ describe('发邮件前取的字段够不够', () => {
     }
   })
 })
+
+describe('备料汇总邮件带客人的备注', () => {
+  it('逐单清单里每一条都带备注 —— 忌口是按单的,照着信备料时必须看得见', () => {
+    const { html } = tplRunSummary({
+      pointName: 'Allston 取餐点',
+      runDate: '2026-10-05',
+      action: 'capture',
+      orders: [
+        { id: 'a', pickup_code: '1111', customer_name: '张三', total: 20,
+          items: [{ nameZh: '热干面', qty: 1, optionsZh: [] }], note: '不要香菜' },
+        { id: 'b', pickup_code: '2222', customer_name: '李四', total: 20,
+          items: [{ nameZh: '热干面', qty: 1, optionsZh: [] }], note: null },
+      ],
+      results: [{ id: 'a', ok: true }, { id: 'b', ok: true }],
+    })
+    expect(html).toContain('不要香菜')
+    // 没写备注的单不该多出一个空的备注框
+    expect(html.match(/备注：/g) ?? []).toHaveLength(1)
+  })
+
+  it('备注照样转义 —— 它是客人自己打的字,原样塞进 HTML 就是一个注入口', () => {
+    const { html } = tplRunSummary({
+      pointName: 'Allston 取餐点', runDate: '2026-10-05', action: 'capture',
+      orders: [{ id: 'a', pickup_code: '1111', customer_name: '张三', total: 20,
+        items: [{ nameZh: '热干面', qty: 1, optionsZh: [] }], note: '<script>alert(1)</script>' }],
+      results: [{ id: 'a', ok: true }],
+    })
+    expect(html).not.toContain('<script>alert(1)</script>')
+    expect(html).toContain('&lt;script&gt;')
+  })
+
+  it('run-dispatch 取的字段里有 note —— 模板支持了但没查出来,等于白做', () => {
+    const fs = require('node:fs')
+    const src = fs.readFileSync('supabase/functions/run-dispatch/index.ts', 'utf8')
+    const sel = [...src.matchAll(/\.select\('([^']*)'\)/g)].map(m => m[1]).find(x => x.includes('items'))
+    expect(sel).toContain('note')
+  })
+})

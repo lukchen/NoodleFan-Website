@@ -308,6 +308,8 @@ export function tplRunSummary(r: {
     const rows = [...tally.entries()].sort((a, b) => b[1] - a[1]).map(([k, q]) =>
       `<tr><td style="padding:5px 0;border-bottom:1px solid #e8dcc8;">${esc(k)}</td>
            <td style="padding:5px 0;border-bottom:1px solid #e8dcc8;text-align:right;font-weight:700;">${q}</td></tr>`).join('')
+    // 备注不进汇总(汇总只回答「总共做几份」),但下面逐单清单里每一条都带着 ——
+    // 忌口是按单的,按菜汇总反而会让人以为整批都不要放香菜。
     prep = `<h2 style="font-size:15px;margin:22px 0 6px;">备料汇总 —— 这一班要做的量</h2>
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;">${rows}</table>`
   }
@@ -325,6 +327,7 @@ export function tplRunSummary(r: {
         ${o.customer_phone ? `<span style="color:#857a6b;"> · ${esc(o.customer_phone)}</span>` : ''}
         ${o.pickup_time ? `<span style="color:#857a6b;"> · ${esc(o.pickup_time)}</span>` : ''}
         <div style="font-size:13px;margin-top:2px;">${items}</div>
+        ${o.note ? `<div style="font-size:13px;margin-top:4px;padding:4px 8px;background:#fdecec;border-left:3px solid #c94a4a;border-radius:0 4px 4px 0;"><strong>备注：</strong>${esc(o.note)}</div>` : ''}
       </td>
       <td style="padding:8px 0;border-bottom:1px solid #e8dcc8;text-align:right;vertical-align:top;white-space:nowrap;">
         ${money2(Number(o.total ?? 0))}
