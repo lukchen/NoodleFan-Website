@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import useScrollLock from '../useScrollLock'
 import { usePickup } from '../context/PickupContext'
-import { formatPickupAt, storeIsOpen, STORE_HOURS_TEXT, MIN_ORDERS } from '../pickup'
+import { formatPickupAt, storeIsOpen, STORE_HOURS_TEXT, MIN_ORDERS, STORE_OPEN_HOUR, STORE_CLOSE_HOUR } from '../pickup'
 import { useCart } from '../context/CartContext'
 import { QR_SRC, qrValid } from '../wechat-qr'
 import { WechatModal } from './WechatNav'
@@ -10,12 +10,18 @@ import '../checkout.css'
 
 const TAX_RATE = 0.07 // MA 6.25% + Boston 本地附加 0.75%（与 create-checkout 保持一致）
 
+// 取餐时段:从开门到打烊,15 分钟一档,最后一档在打烊前 15 分钟。
+//
+// 以前这里写死到 20:00(打烊前整整一小时),配上 20 分钟备餐,结果是
+// 晚上 7:40 之后下单就被顺延到第二天 —— 店还开着一个多小时,客人却被告知
+// 「今日出餐已结束」。每天白白丢掉一段最该卖面的时间。
+// 现在跟着营业时间走:改 pickup.js 里的 STORE_CLOSE_HOUR,这里自动跟上。
 function buildSlots() {
   const slots = []
-  for (let h = 11; h <= 20; h++) {
+  const lastH = STORE_CLOSE_HOUR - 1
+  for (let h = STORE_OPEN_HOUR; h <= lastH; h++) {
     // 15 分钟一档 —— 半小时太粗,客人下了班想卡着点来取,只能在两档之间将就。
     for (const m of [0, 15, 30, 45]) {
-      if (h === 20 && m > 0) break   // 最后一档 8:00 PM,给厨房留出到打烊的收尾时间
       const hh = String(h).padStart(2, '0')
       const mm = String(m).padStart(2, '0')
       const value = `${hh}:${mm}`

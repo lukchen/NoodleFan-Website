@@ -52,7 +52,7 @@ test('结账表单:姓名邮箱必填,手机号可选且标着「可选」', asy
   await expect(page.locator('.checkout-optional')).toBeVisible()
 })
 
-test('取餐时段 15 分钟一档、留 20 分钟备餐、最后一档 8:00 PM', async ({ page }) => {
+test('取餐时段 15 分钟一档、留 20 分钟备餐、最后一档 8:45 PM', async ({ page }) => {
   await choosePickup(page, '到店自取')
   await addFirstDish(page)
   await openCheckout(page)
@@ -63,7 +63,10 @@ test('取餐时段 15 分钟一档、留 20 分钟备餐、最后一档 8:00 PM'
 
   // 现在是 12:00,加 20 分钟备餐 → 第一档只能是 12:30(12:20 之后的第一个整刻)
   expect(slots[0].trim()).toBe('12:30 PM')
-  expect(slots[slots.length - 1].trim()).toBe('8:00 PM')
+  // 最后一档必须贴着打烊(9 PM)前 15 分钟。曾经写死成 8:00 PM,
+  // 配上 20 分钟备餐,晚上 7:40 之后下单就被顺延到第二天 ——
+  // 店还开着一个多小时,客人却看到「今日出餐已结束」。
+  expect(slots[slots.length - 1].trim()).toBe('8:45 PM')
 })
 
 test('打烊后下单自动变成次日预订,并明确告诉客人', async ({ page, context }) => {
@@ -121,4 +124,19 @@ test('结账窗的关闭按钮在滚动时不会跟着滚走', async ({ page }) 
   expect(Math.abs(after.y - before.y)).toBeLessThan(2)
   // 头部上方不该露出正在滚动的内容
   expect(after.y).toBeGreaterThan(0)
+})
+
+test('晚上 7:46 还能订今天 —— 店开到 9 点,不该在这个点就说今日结束', async ({ page, context }) => {
+  // 这是客人实际撞到的那一幕:7:46 PM 下单,页面却写「本单为次日预订」。
+  // 跟文件顶上那两个常数一样用 UTC 写:测试跑在 UTC 时区,
+  // 波士顿 19:46(EDT)= 次日 23:46Z
+  await context.clock.setFixedTime(new Date('2026-10-03T23:46:00Z'))
+  await choosePickup(page, '到店自取')
+  await addFirstDish(page)
+  await openCheckout(page)
+
+  await expect(page.locator('.checkout-modal')).not.toContainText('次日预订')
+  const slots = await page.locator('.checkout-modal button.time-slot').allInnerTexts()
+  // 7:46 + 20 分钟备餐 = 8:06 → 第一档 8:15
+  expect(slots[0].trim()).toBe('8:15 PM')
 })
