@@ -140,3 +140,27 @@ test('晚上 7:46 还能订今天 —— 店开到 9 点,不该在这个点就�
   // 7:46 + 20 分钟备餐 = 8:06 → 第一档 8:15
   expect(slots[0].trim()).toBe('8:15 PM')
 })
+
+test('8:50 PM 还开着门就还能下单 —— 给一个「尽快」时段,不顶到明天', async ({ page, context }) => {
+  // 店开到 9 点。格子最晚 8:45,加 20 分钟备餐,8:25 之后一档都不剩 ——
+  // 可这半小时里站在柜台前的人照样要吃饭。
+  await context.clock.setFixedTime(new Date('2026-10-04T00:50:00Z'))   // 波士顿 10/3 20:50
+  await choosePickup(page, '到店自取')
+  await addFirstDish(page)
+  await openCheckout(page)
+
+  await expect(page.locator('.checkout-modal')).not.toContainText('次日预订')
+  await expect(page.locator('.checkout-modal')).toContainText('现做现出')
+  const slots = await page.locator('.checkout-modal button.time-slot').allInnerTexts()
+  // 20:50 + 20 分钟 = 21:10,取整到 5 分钟还是 9:10
+  expect(slots).toHaveLength(1)
+  expect(slots[0].trim()).toBe('9:10 PM')
+})
+
+test('打烊之后才顺延到明天', async ({ page, context }) => {
+  await context.clock.setFixedTime(new Date('2026-10-04T01:30:00Z'))   // 波士顿 10/3 21:30,已打烊
+  await choosePickup(page, '到店自取')
+  await addFirstDish(page)
+  await openCheckout(page)
+  await expect(page.locator('.checkout-modal')).toContainText('次日预订')
+})

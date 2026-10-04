@@ -70,12 +70,31 @@ export default function Checkout({ t, onClose }) {
     return h * 60 + m >= cutoffMin
   })
 
-  // 今天的时段全过了(打烊、或者离最后一档不足 20 分钟)就顺延到明天,整天的时段都放开。
-  // 不这么做的话,晚上来的客人看到一句「今天没时段了」就直接走了 —— 他本来是愿意
-  // 订明天的。自取依然是「一天做一天的」,只是下单窗口提前到了前一晚。
-  const rollToTomorrow = todaySlots.length === 0
+  // 还开着门就一定能下单。
+  //
+  // 格子是 15 分钟一档、最晚 8:45,配上 20 分钟备餐,8:25 之后就一档都不剩了 ——
+  // 可是店开到 9 点,这最后半小时站在柜台前的人照样要吃饭。所以格子排空之后、
+  // 只要还没打烊,就补一个「尽快」档:取餐时刻 = 现在 + 20 分钟备餐(向上取到 5 分钟),
+  // 可能落在打烊之后几分钟。这是 Betsy 定的:不浪费任何一单,代价是偶尔晚几分钟锁门。
+  function asapSlot() {
+    const t = new Date(now.getTime() + 20 * 60000)
+    // 取整到下一个 5 分钟 —— 「约 9:07」不像个承诺,「约 9:10」才像
+    t.setMinutes(Math.ceil(t.getMinutes() / 5) * 5, 0, 0)
+    const h = t.getHours()
+    const hh = String(h).padStart(2, '0')
+    const mm = String(t.getMinutes()).padStart(2, '0')
+    const hour12 = h > 12 ? h - 12 : (h === 0 ? 12 : h)
+    return [{ value: `${hh}:${mm}`, label: `${t12(hour12, mm, h)}`, asap: true }]
+  }
+  function t12(hour12, mm, h) {
+    return `${hour12}:${mm} ${h >= 12 ? 'PM' : 'AM'}`
+  }
+
+  const asap = todaySlots.length === 0 && openNow ? asapSlot() : null
+  // 打烊之后才顺延到明天 —— 那时客人本来也拿不到餐,他是愿意订明天的。
+  const rollToTomorrow = todaySlots.length === 0 && !openNow
   const orderDate = rollToTomorrow ? tomorrow : today
-  const slots = rollToTomorrow ? TIME_SLOTS : todaySlots
+  const slots = rollToTomorrow ? TIME_SLOTS : (asap ?? todaySlots)
 
   // 表单也存本地 —— 从结账页退回菜单时这个组件会卸载,不存就等于客人白填一遍。
   // 存的是他自己设备上的联系方式,方便下次再来直接下单;卡号一概不经过这里。
@@ -270,6 +289,7 @@ export default function Checkout({ t, onClose }) {
           {/* 两种预约情形话不一样:
               顺延到明天 —— 必须点明「这是明天的单」,客人最怕的是以为今晚能取;
               只是打烊(时段还在今天) —— 说清现在没在营业、按时段备餐就够了。 */}
+          {asap && <p className="checkout-preorder">{t.checkout.asapNote}</p>}
           {rollToTomorrow
             ? <p className="checkout-preorder">{t.checkout.preorderTomorrow}</p>
             : !openNow && (
