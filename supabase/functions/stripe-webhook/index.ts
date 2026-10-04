@@ -1,5 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2?target=deno'
-import { sendEmail, tplConfirmed } from '../_shared/email.ts'
+import { sendEmail, tplConfirmed, tplNewOrder, OPS_EMAIL } from '../_shared/email.ts'
 
 // Verify Stripe webhook signature manually (HMAC-SHA256) — avoids the Stripe SDK,
 // which fails to make network connections in this Deno runtime.
@@ -196,12 +196,22 @@ Deno.serve(async (req) => {
     try {
       const { data: row } = await supabase
         .from('orders')
-        .select('customer_email, customer_name, pickup_code, pickup_point_name, pickup_date, pickup_time, run_date, subtotal, tax, total, items, capture_mode')
+        .select('customer_email, customer_name, customer_phone, note, pickup_code, pickup_point_name, pickup_date, pickup_time, run_date, subtotal, tax, total, items, capture_mode')
         .eq('stripe_session_id', session.id)
         .single()
       if (row) {
         const { subject, html } = tplConfirmed(row)
         await sendEmail(row.customer_email, subject, html)
+
+        // 再给自己发一封。后台页面只有开着才会响,而大部分时间没人盯着电脑 ——
+        // 自取的客人 20 分钟后就到门口了。这封信独立 try:给客人的那封已经发了,
+        // 这里失败不能把整段变成失败。
+        try {
+          const ops = tplNewOrder(row)
+          await sendEmail(OPS_EMAIL, ops.subject, ops.html)
+        } catch (e) {
+          console.error('ops new-order email failed (non-fatal):', e)
+        }
       }
     } catch (e) {
       console.error('confirm email failed (non-fatal):', e)

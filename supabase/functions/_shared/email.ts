@@ -278,6 +278,48 @@ export function tplRejected(o: OrderForEmail & { note?: string | null }, reason:
 // `supabase secrets set OPS_EMAIL=order@noodlefanboston.com` 即可,代码不用动。
 export const OPS_EMAIL = Deno.env.get('OPS_EMAIL') ?? 'noodlefanboston@gmail.com'
 
+// 新订单通知(发给自己)。
+//
+// 为什么需要它:后台页面只有开着才会响,而大部分时间没人盯着电脑。
+// 到店自取的客人下单后 20 分钟就来了 —— 漏看一单就是他站在门口等一份
+// 还没开始做的饭。邮件会进手机推送,这是唯一一条「不用盯着也能知道」的路。
+//
+// 写得短:它的任务是让你在手机锁屏上一眼看懂「要不要现在进厨房」,
+// 不是对账。详细信息后台都有。
+export function tplNewOrder(o: OrderForEmail & { note?: string | null; customer_phone?: string | null }) {
+  const isRun = !!o.run_date
+  const items = (o.items ?? []).map((it: any) => {
+    const opt = (it.optionsZh ?? []).length ? `（${it.optionsZh.join('、')}）` : ''
+    return `${esc(it.nameZh)}${esc(opt)} × ${it.qty}`
+  }).join('<br>')
+
+  // 标题要在锁屏上就说清三件事:自取还是团餐、取餐码、什么时候要
+  const when = isRun
+    ? `${o.pickup_point_name} ${prettyWhen(o.run_date!)}`
+    : `今天 ${o.pickup_time ?? ''}`.trim()
+
+  return {
+    subject: `【新订单】${isRun ? '团餐' : '自取'} ${when} · ${o.pickup_code ?? ''} · ${money(o.total)}`,
+    html: layout(`新订单 · ${isRun ? '团餐预约' : '到店自取'}`, `
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+        style="margin:4px 0 14px;background:#fff;border:1px solid #e8dcc8;border-radius:10px;">
+        <tr><td style="padding:16px;font-size:15px;line-height:1.7;">
+          <strong style="font-size:22px;letter-spacing:2px;">${esc(String(o.pickup_code ?? '—'))}</strong>
+          <div style="margin-top:6px;">${esc(o.customer_name)}${o.customer_phone ? ` · ${esc(o.customer_phone)}` : ''}</div>
+          <div style="color:#857a6b;">${esc(when)}</div>
+          <div style="margin-top:8px;">${items}</div>
+          ${o.note ? `<div style="margin-top:8px;padding:6px 10px;background:#fdecec;border-left:3px solid #c94a4a;border-radius:0 4px 4px 0;"><strong>备注：</strong>${esc(o.note)}</div>` : ''}
+          <div style="margin-top:10px;font-weight:700;">${money(o.total)}</div>
+        </td></tr></table>
+      <p style="margin:0;font-size:13px;color:#857a6b;">
+        ${isRun
+          ? '这一单的钱只是冻结，取餐日中午 12:00 截单后才扣款。满 5 单发车。'
+          : '客人大约 20 分钟后到店。到后台把状态点成「可取餐」会自动给他发邮件。'}
+      </p>
+    `),
+  }
+}
+
 type SettleResult = { id: string; code?: string | null; ok: boolean; error?: string | null }
 
 export function tplRunSummary(r: {

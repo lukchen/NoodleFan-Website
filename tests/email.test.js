@@ -2,7 +2,7 @@
 // 转义漏了就是一封从我们这儿发出的钓鱼邮件;汇总算错就是备料备错。
 import { describe, it, expect } from 'vitest'
 import {
-  prettyWhen, tplConfirmed, tplCancelled, tplRunSummary, OPS_EMAIL,
+  prettyWhen, tplConfirmed, tplCancelled, tplRunSummary, tplNewOrder, OPS_EMAIL,
 } from '../supabase/functions/_shared/email.ts'
 
 const order = (over = {}) => ({
@@ -194,5 +194,49 @@ describe('备料汇总邮件带客人的备注', () => {
     const src = fs.readFileSync('supabase/functions/run-dispatch/index.ts', 'utf8')
     const sel = [...src.matchAll(/\.select\('([^']*)'\)/g)].map(m => m[1]).find(x => x.includes('items'))
     expect(sel).toContain('note')
+  })
+})
+
+// 新订单通知 —— 发给自己的那封。
+// 后台只有开着才会响,这封邮件是唯一一条「不用盯着电脑也能知道来单了」的路。
+describe('新订单通知', () => {
+  const store = {
+    pickup_code: '1234', customer_name: '张三', customer_phone: '617-555-0101',
+    pickup_date: '2026-10-04', pickup_time: '18:30', run_date: null, total: 20.5,
+    items: [{ nameZh: '武汉热干面', qty: 2, optionsZh: ['加辣'] }], note: null,
+  }
+
+  it('标题一眼看清:自取还是团餐、取餐码、多少钱 —— 锁屏上就得看懂', () => {
+    const { subject } = tplNewOrder(store)
+    expect(subject).toContain('自取')
+    expect(subject).toContain('1234')
+    expect(subject).toContain('$20.50')
+  })
+
+  it('团餐标成团餐,并写明钱还只是冻结 —— 别以为已经到账了', () => {
+    const { subject, html } = tplNewOrder({ ...store, run_date: '2026-10-05', pickup_point_name: 'Allston 取餐点' })
+    expect(subject).toContain('团餐')
+    expect(html).toContain('冻结')
+  })
+
+  it('带菜品、选项和备注', () => {
+    const { html } = tplNewOrder({ ...store, note: '不要香菜' })
+    expect(html).toContain('武汉热干面')
+    expect(html).toContain('加辣')
+    expect(html).toContain('不要香菜')
+  })
+
+  it('客人打的字照样转义 —— 这封信也是 HTML', () => {
+    const { html } = tplNewOrder({ ...store, note: '<img src=x onerror=alert(1)>' })
+    expect(html).not.toContain('<img src=x')
+    expect(html).toContain('&lt;img')
+  })
+
+  it('stripe-webhook 取的字段里有 note 和 customer_phone —— 模板用得到就必须查出来', () => {
+    const fs = require('node:fs')
+    const src = fs.readFileSync('supabase/functions/stripe-webhook/index.ts', 'utf8')
+    const sel = [...src.matchAll(/\.select\('([^']*)'\)/g)].map(m => m[1]).find(x => x.includes('items'))
+    expect(sel).toContain('note')
+    expect(sel).toContain('customer_phone')
   })
 })
