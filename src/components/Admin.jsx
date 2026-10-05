@@ -202,18 +202,53 @@ export default function Admin() {
   }, [authed, password, fetchOrders])
 
   // 新单响铃 —— 厨房忙起来没人盯屏幕,只有横幅是会漏单的。
-  // 不用音频文件:图片/音频推不进这个仓库的部署流程,而且 WebAudio 合成的「叮咚」
-  // 不用等下载、离线也响。浏览器要求先有用户手势才能出声 —— 店员是点「登录」进来的,
-  // 那一下就是手势,AudioContext 能正常启动。
+  //
+  // 不用音频文件:WebAudio 合成的「叮咚」不用等下载、离线也响。
+  //
+  // iPad/iPhone 上曾经完全不响,原因是这里:AudioContext 必须在「用户手势正在发生」
+  // 的那一刻创建并 resume。原来的写法是等新单来了才 new AudioContext —— 那是定时器
+  // 里,不是手势,桌面 Chrome 睁一只眼闭一只眼,iOS Safari 直接让它停在 suspended。
+  // 现在改成:点「登录」(以及之后任何一次点横幅)时就把 ctx 建好并解锁,之后一直复用。
+  const audioRef = useRef(null)
+
+  // 必须在手势的同步调用栈里跑完 —— 放进 await 之后或 setTimeout 里就不算手势了。
+  function unlockAudio() {
+    try {
+      let ctx = audioRef.current
+      if (!ctx) {
+        ctx = new (window.AudioContext || window.webkitAudioContext)()
+        audioRef.current = ctx
+      }
+      if (ctx.state === 'suspended') ctx.resume()
+      // 播一个几乎听不见的极短音:iOS 要真的产生过一次输出,才认这个 ctx 解锁了
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      gain.gain.value = 0.0001
+      osc.connect(gain).connect(ctx.destination)
+      osc.start()
+      osc.stop(ctx.currentTime + 0.01)
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  // 声音到底能不能响 —— 不能的话横幅上要写出来,别让人以为「有声音我没听见」。
+  const [audioBlocked, setAudioBlocked] = useState(false)
+
   useEffect(() => {
     if (!alerting) return
-    let ctx
-    try {
-      ctx = new (window.AudioContext || window.webkitAudioContext)()
-    } catch { return }
+    const ctx = audioRef.current
+    if (!ctx) { setAudioBlocked(true); return }
 
     function ding() {
-      if (ctx.state === 'suspended') ctx.resume()
+      if (ctx.state === 'suspended') {
+        ctx.resume().catch(() => {})
+        // resume 在非手势里被拒是常态(iOS 尤其),这时候横幅上给一个「开启提示音」
+        if (ctx.state !== 'running') setAudioBlocked(true)
+      } else {
+        setAudioBlocked(false)
+      }
       // 两声一高一低,比单音更容易从厨房噪音里分辨出来
       ;[[880, 0], [1320, 0.18]].forEach(([freq, delay]) => {
         const osc = ctx.createOscillator()
@@ -233,7 +268,9 @@ export default function Admin() {
     ding()
     // 一直响到店员点「知道了」—— 响一次就停的话,离开两分钟回来照样不知道有新单
     const id = setInterval(ding, 3000)
-    return () => { clearInterval(id); ctx.close().catch(() => {}) }
+    // 注意不要在这里 close():ctx 是登录那一下解锁的,关掉就再也拿不回来了,
+    // 下一单又会变成哑的。
+    return () => clearInterval(id)
   }, [alerting])
 
   function acknowledge() {
@@ -298,7 +335,7 @@ export default function Admin() {
       <div className="admin-login">
         <div className="admin-login-box">
           <h1>粉面王 · 接单后台</h1>
-          <form onSubmit={e => { e.preventDefault(); fetchOrders(password) }}>
+          <form onSubmit={e => { e.preventDefault(); unlockAudio(); fetchOrders(password) }}>
             <input
               type="password"
               value={password}
@@ -430,6 +467,16 @@ export default function Admin() {
       {alerting && (
         <div className="admin-alert-banner" onClick={acknowledge}>
           有新订单！
+          {/* 声音被拦住时(多半是 iPad:AudioContext 没在手势里解锁,或者侧边静音键开着)
+              给一个按钮,点一下就是手势,当场解锁。不写这一条的话,人只会以为
+              「这玩意儿没声音」,然后再也不指望它。 */}
+          {audioBlocked && (
+            <button
+              className="admin-alert-ack"
+              onClick={e => { e.stopPropagation(); if (unlockAudio()) setAudioBlocked(false) }}>
+              🔔 开启提示音
+            </button>
+          )}
           <button className="admin-alert-ack" onClick={acknowledge}>知道了</button>
         </div>
       )}
