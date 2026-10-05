@@ -236,6 +236,28 @@ export default function Admin() {
   // 声音到底能不能响 —— 不能的话横幅上要写出来,别让人以为「有声音我没听见」。
   const [audioBlocked, setAudioBlocked] = useState(false)
 
+  // 任意一次触碰都解锁 —— 不要求店员专门做什么。
+  //
+  // 为什么不能只靠「登录」那一下:后台记着密码,大多数时候是自动进去的,
+  // 根本没有那一次点击。要求人家「每次手动点一次登录」是把系统的毛病
+  // 变成人的纪律 —— 忙起来一定会忘,而忘了的代价是漏单。
+  // 所以改成:进了后台之后,页面上任何一次点/摸/按键都顺手解锁,一次就够,
+  // 店员根本不会察觉这件事存在。
+  useEffect(() => {
+    if (!authed) return
+    const onGesture = () => { if (unlockAudio()) setAudioBlocked(false) }
+    const opts = { capture: true }
+    // pointerdown 覆盖鼠标和触屏,keydown 给用键盘的人留一条路。
+    // 不用 once —— 第一次可能赶上 iOS 还没准备好;unlockAudio 本身是幂等的,
+    // 多试几次没有代价。
+    window.addEventListener('pointerdown', onGesture, opts)
+    window.addEventListener('keydown', onGesture, opts)
+    return () => {
+      window.removeEventListener('pointerdown', onGesture, opts)
+      window.removeEventListener('keydown', onGesture, opts)
+    }
+  }, [authed])
+
   useEffect(() => {
     if (!alerting) return
     const ctx = audioRef.current
