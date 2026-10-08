@@ -113,3 +113,25 @@ describe('「不要放」的选项和描述对得上', () => {
     },
   )
 })
+
+// 微信群二维码那张图也必须真的在 public/ 里。
+//
+// 补的是一次真实的事故:微信导出的群名片有时是 .png 有时是 .JPG。
+// 换码时文件扩展名变了、QR_SRC 没跟着改,页面上就是一个破图框 ——
+// 而且本地开发时浏览器可能还缓存着旧图,看不出来,只有客人那边是空的。
+// 这是「新客人进不了群」,不是「图有点丑」。
+describe('微信群二维码', () => {
+  it('QR_SRC 指的文件真的存在', async () => {
+    const fs = require('node:fs')
+    const { QR_SRC } = await import('../src/wechat-qr.js')
+    const file = 'public/' + decodeURIComponent(QR_SRC)
+    expect(fs.existsSync(file), `QR_SRC 指向的图找不到:${QR_SRC}`).toBe(true)
+  })
+
+  it('有效期还没过 —— 过期了整块微信群入口会从网站上消失', async () => {
+    const { qrValid, QR_EXPIRES } = await import('../src/wechat-qr.js')
+    // 这条会在码过期那天变红。那正是它存在的意义:提醒换码,
+    // 而不是等到有人问「群二维码怎么没了」。
+    expect(qrValid(), `群码 ${QR_EXPIRES} 已过期,换一张新的并更新 QR_EXPIRES`).toBe(true)
+  })
+})
