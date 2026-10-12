@@ -400,7 +400,15 @@ export default function Admin() {
     }
     g.orders.push(o)
   }
-  groupRuns.sort((a, b) => (a.runDate < b.runDate ? -1 : 1))
+  // 新的班次在上面。另外:整班都已经结束的(发完/取消/拒掉)一律沉到底 ——
+  // 10/4 那班早就取消了,却因为日期排序压在 10/16 上面,等于每天都要先滑过
+  // 一堆已经办完的事才看得到今天要做的。
+  const runDone = (g) => g.orders.every(o => DONE(o.status))
+  groupRuns.sort((a, b) => {
+    const da = runDone(a), db = runDone(b)
+    if (da !== db) return da ? 1 : -1
+    return a.runDate < b.runDate ? 1 : -1
+  })
 
   function renderOrder(order) {
     const settled = SETTLED(order.status)
