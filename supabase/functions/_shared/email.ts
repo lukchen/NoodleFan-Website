@@ -37,6 +37,15 @@ const ADDRESSES: Record<string, string> = {
   '到店自取': '94 Shirley St, Boston, MA 02119',
 }
 
+// 取餐点英文名 —— 邮件是双语的,地点不能只有中文:不认字的客人
+// 拿着这封信照样要找到地方。
+const POINT_EN: Record<string, string> = {
+  'Allston 取餐点': 'Allston Pickup Spot',
+  'Malden 取餐点': 'Malden Pickup Spot',
+  '当日到店自取': 'Store Pickup',
+  '到店自取': 'Store Pickup',
+}
+
 const money = (n: number | null | undefined) => `$${Number(n ?? 0).toFixed(2)}`
 
 // 客人自己填的内容(姓名)会被拼进邮件正文的 HTML —— 不转义的话,
@@ -52,13 +61,17 @@ function esc(v: unknown): string {
     .replace(/'/g, '&#39;')
 }
 
-// 「2026-09-29」+「18:00」→「周二 9/29 6:00 PM」
+// 「2026-09-29」+「18:00」→「周二 Tue 9/29 6:00 PM」
+// 星期中英并排:日期和时间本来就是数字,只有星期是文字,
+// 不写英文的话英文客人得自己去查 10/16 是周几。
 const DAY_ZH = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
+const DAY_EN = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 export function prettyWhen(dateStr?: string | null, timeStr?: string | null): string {
   if (!dateStr) return ''
   const [y, m, d] = dateStr.split('-').map(Number)
   // 用 UTC 构造再读 UTC 字段,避开服务器时区把日期推前一天
-  const dow = DAY_ZH[new Date(Date.UTC(y, m - 1, d)).getUTCDay()]
+  const wd = new Date(Date.UTC(y, m - 1, d)).getUTCDay()
+  const dow = `${DAY_ZH[wd]} ${DAY_EN[wd]}`
   let t = ''
   if (timeStr) {
     const [hh, mm] = timeStr.split(':').map(Number)
@@ -95,11 +108,15 @@ function layout(title: string, bodyHtml: string): string {
 
 function itemsTable(o: OrderForEmail): string {
   const rows = (o.items ?? []).map(it => {
-    const opts = (it.optionsZh ?? []).join('、')
+    const optsZh = (it.optionsZh ?? []).join('、')
+    const optsEn = (it.optionsEn ?? []).join(', ')
+    // 菜名和选项都给英文 —— 「不辣」和「加辣」弄反是会吃坏人的,
+    // 客人要能自己核对这一单点的到底是什么。
     return `<tr>
       <td style="padding:6px 0;border-bottom:1px solid #e8dcc8;">
         ${esc(it.nameZh)} × ${it.qty}
-        ${opts ? `<br><span style="color:#857a6b;font-size:13px;">${esc(opts)}</span>` : ''}
+        ${it.nameEn ? `<br><span style="color:#857a6b;font-size:13px;">${esc(it.nameEn)}</span>` : ''}
+        ${optsZh ? `<br><span style="color:#857a6b;font-size:13px;">${esc(optsZh)}${optsEn ? ` · ${esc(optsEn)}` : ''}</span>` : ''}
       </td>
       <td style="padding:6px 0;border-bottom:1px solid #e8dcc8;text-align:right;white-space:nowrap;">
         ${money(it.price * it.qty)}
@@ -134,7 +151,8 @@ function pickupBlock(o: OrderForEmail): string {
       <div style="color:#857a6b;font-size:12px;">取餐时间 When</div>
       <div style="font-weight:700;margin-bottom:10px;">${when}</div>
       <div style="color:#857a6b;font-size:12px;">取餐地点 Where</div>
-      <div style="font-weight:700;">${esc(o.pickup_point_name)}</div>
+      <div style="font-weight:700;">${esc(o.pickup_point_name)}${
+        POINT_EN[o.pickup_point_name ?? ''] ? ` · ${esc(POINT_EN[o.pickup_point_name ?? ''])}` : ''}</div>
       <div style="color:#5c5245;font-size:13px;">${addr}</div>
     </td></tr></table>`
 }
@@ -168,16 +186,20 @@ export function tplConfirmed(o: OrderForEmail) {
          Payment of ${money(o.total)} completed. This email is your receipt.</p>`
   return {
     subject: isHold
-      ? `订单已确认 ${o.pickup_code ?? ''} · ${prettyWhen(o.run_date ?? o.pickup_date, o.pickup_time)}`
+      ? `订单已确认 Order confirmed ${o.pickup_code ?? ''} · ${prettyWhen(o.run_date ?? o.pickup_date, o.pickup_time)}`
       : `收据 Receipt ${o.pickup_code ?? ''} · ${money(o.total)}`,
     html: layout(isHold ? '订单已确认 Order confirmed' : '付款成功 · 收据 Payment receipt', `
       <p style="margin:0 0 4px;">${esc(o.customer_name)}，感谢您的订购。</p>
+      <p style="margin:0 0 4px;color:#857a6b;font-size:13px;">Thank you for your order.</p>
       ${paidNote}
       ${pickupBlock(o)}
       ${holdNote}
       ${itemsTable(o)}
       ${isHold ? '' : `<p style="margin:12px 0 0;font-size:14px;">
-        我们开始备餐后会再发一封邮件通知您「可以来取」，约 20 分钟。到店请出示取餐码。</p>`}
+        我们开始备餐后会再发一封邮件通知您「可以来取」，约 20 分钟。到店请出示取餐码。
+        <span style="display:block;color:#857a6b;font-size:13px;margin-top:4px;">
+          We'll email you again when it's ready — about 20 minutes. Show your pickup code at the counter.
+        </span></p>`}
     `),
   }
 }
@@ -186,21 +208,23 @@ export function tplConfirmed(o: OrderForEmail) {
 // 客人付完款那个页面会实时变状态,但他一关浏览器就什么都看不到了 —— 邮件是唯一能追到他的路。
 export function tplReady(o: OrderForEmail) {
   return {
-    subject: `餐已做好，请来取餐 · 取餐码 ${o.pickup_code ?? ''}`,
+    subject: `餐已做好 Order ready · 取餐码 Pickup code ${o.pickup_code ?? ''}`,
     html: layout('餐已做好，请来取餐 Your order is ready', `
       <p style="margin:0 0 4px;">${esc(o.customer_name)}，您的餐已做好，随时可以来取。</p>
       <p style="margin:0 0 4px;color:#857a6b;font-size:13px;">
         Your order is ready for pickup.</p>
       ${pickupBlock(o)}
-      <p style="margin:12px 0 0;font-size:14px;">到店请出示取餐码。
-        趁热吃口感最好，建议尽快取餐。</p>
+      <p style="margin:12px 0 0;font-size:14px;">到店请出示取餐码。趁热吃口感最好，建议尽快取餐。
+        <span style="display:block;color:#857a6b;font-size:13px;margin-top:4px;">
+          Show your pickup code at the counter. It tastes best hot, so please come soon.
+        </span></p>
     `),
   }
 }
 
 export function tplCaptured(o: OrderForEmail) {
   return {
-    subject: `本班次已成团 · 取餐码 ${o.pickup_code ?? ''}`,
+    subject: `本班次已成团 Run confirmed · 取餐码 Pickup code ${o.pickup_code ?? ''}`,
     html: layout('已成团，今天发车 We roll today', `
       <p style="margin:0 0 4px;">${esc(o.customer_name)}，本班次已成团。</p>
       <p style="margin:0 0 4px;">已从您的银行卡正式扣款 <strong>${money(o.total)}</strong>
@@ -208,18 +232,23 @@ export function tplCaptured(o: OrderForEmail) {
       <p style="margin:0 0 4px;color:#857a6b;font-size:13px;">
         The run filled — we've now charged the ${money(o.total)} that was on hold.</p>
       ${pickupBlock(o)}
-      <p style="margin:12px 0 0;font-size:14px;">到取餐点请出示取餐码。</p>
+      <p style="margin:12px 0 0;font-size:14px;">到取餐点请出示取餐码。
+        <span style="display:block;color:#857a6b;font-size:13px;margin-top:4px;">
+          Show your pickup code at the pickup spot.
+        </span></p>
     `),
   }
 }
 
 export function tplCancelled(o: OrderForEmail) {
   return {
-    subject: `本班次未成团，订单已取消 · 未扣款`,
-    html: layout('本班次未成团，订单已取消', `
+    subject: `本班次未成团，订单已取消 Run cancelled · 未扣款 You were not charged`,
+    html: layout('本班次未成团，订单已取消 Run cancelled', `
       <p style="margin:0 0 10px;">${esc(o.customer_name)}，很抱歉 ——
         ${esc(o.pickup_point_name)} ${prettyWhen(o.run_date ?? o.pickup_date)}
         本班次未能成团，今天不发车。</p>
+      <p style="margin:0 0 10px;color:#857a6b;font-size:13px;">
+        Sorry — this run didn't reach its minimum, so it is not going out today.</p>
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
         style="margin:4px 0 16px;background:#fff;border:1px solid #e8dcc8;border-radius:10px;">
         <tr><td style="padding:16px;font-size:15px;line-height:1.6;">
@@ -234,6 +263,10 @@ export function tplCancelled(o: OrderForEmail) {
       <p style="margin:0;font-size:14px;">
         <strong>今天请勿前往取餐点</strong> —— 本班次不会有人在现场。
         欢迎预订下一班次：<a href="https://noodlefanboston.com" style="color:#7a1f1f;">noodlefanboston.com</a>
+        <span style="display:block;color:#857a6b;font-size:13px;margin-top:6px;">
+          Please do not go to the pickup spot today — nobody will be there.
+          You're welcome to order for the next run.
+        </span>
       </p>
     `),
   }
@@ -244,8 +277,8 @@ export function tplRejected(o: OrderForEmail & { note?: string | null }, reason:
   // 所以退款写在最前面、字最大 —— 看到「订单取消」第一反应就是「我的钱呢」,
   // 让他为这个问题多读三行,是额外的一次不愉快。
   return {
-    subject: `订单已取消 · 已全额退款 · 取餐码 ${esc(String(o.pickup_code ?? ''))}`,
-    html: layout('很抱歉，这一单我们没能接下', `
+    subject: `订单已取消 Order cancelled · 已全额退款 Refunded in full · ${esc(String(o.pickup_code ?? ''))}`,
+    html: layout('很抱歉，这一单我们没能接下 Order cancelled', `
       <p style="margin:0 0 10px;">${esc(o.customer_name)}，${esc(reason.textZh)}</p>
       ${extra ? `<p style="margin:0 0 10px;">${esc(extra)}</p>` : ''}
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
@@ -261,6 +294,9 @@ export function tplRejected(o: OrderForEmail & { note?: string | null }, reason:
       <p style="margin:0;font-size:14px;">
         给您添麻烦了，实在抱歉。欢迎下次再来：
         <a href="https://noodlefanboston.com" style="color:#7a1f1f;">noodlefanboston.com</a>
+        <span style="display:block;color:#857a6b;font-size:13px;margin-top:6px;">
+          We're sorry for the trouble, and hope to see you again.
+        </span>
       </p>
     `),
   }

@@ -2,7 +2,7 @@
 // 转义漏了就是一封从我们这儿发出的钓鱼邮件;汇总算错就是备料备错。
 import { describe, it, expect } from 'vitest'
 import {
-  prettyWhen, tplConfirmed, tplCancelled, tplRunSummary, tplNewOrder, OPS_EMAIL,
+  prettyWhen, tplConfirmed, tplCancelled, tplRunSummary, tplNewOrder, tplReady, tplCaptured, OPS_EMAIL,
 } from '../supabase/functions/_shared/email.ts'
 
 const order = (over = {}) => ({
@@ -20,15 +20,17 @@ const order = (over = {}) => ({
 })
 
 describe('prettyWhen', () => {
-  it('把日期渲染成「周几 月/日 时间」', () => {
-    expect(prettyWhen('2026-09-29', '18:00')).toBe('周二 9/29 6:00 PM')
-    expect(prettyWhen('2026-09-29', '09:05')).toBe('周二 9/29 9:05 AM')
-    expect(prettyWhen('2026-09-29', '12:00')).toBe('周二 9/29 12:00 PM')
-    expect(prettyWhen('2026-09-29', '00:30')).toBe('周二 9/29 12:30 AM')
+  it('把日期渲染成「周几 Weekday 月/日 时间」—— 星期中英并排', () => {
+    // 日期和时间本来就是数字,只有星期是文字。不写英文的话,
+    // 英文客人得自己去查 9/29 是周几 —— 而那恰恰是他要不要请假去取餐的依据。
+    expect(prettyWhen('2026-09-29', '18:00')).toBe('周二 Tue 9/29 6:00 PM')
+    expect(prettyWhen('2026-09-29', '09:05')).toBe('周二 Tue 9/29 9:05 AM')
+    expect(prettyWhen('2026-09-29', '12:00')).toBe('周二 Tue 9/29 12:00 PM')
+    expect(prettyWhen('2026-09-29', '00:30')).toBe('周二 Tue 9/29 12:30 AM')
   })
 
   it('服务器跑在 UTC 也不会把日期推前一天', () => {
-    expect(prettyWhen('2026-01-01')).toBe('周四 1/1')
+    expect(prettyWhen('2026-01-01')).toBe('周四 Thu 1/1')
   })
 
   it('没有日期时返回空串,不渲染出 NaN', () => {
@@ -238,5 +240,62 @@ describe('新订单通知', () => {
     const sel = [...src.matchAll(/\.select\('([^']*)'\)/g)].map(m => m[1]).find(x => x.includes('items'))
     expect(sel).toContain('note')
     expect(sel).toContain('customer_phone')
+  })
+})
+
+// 给客人的每一封邮件都必须中英文都有。
+//
+// 为什么钉死:店在 Allston，客人里有不少看不懂中文的人。一封只有中文的
+// 「本班次未成团，请勿前往」= 他照样开车过去扑空。而这种缺失不会报错,
+// 只会安静地发出去 —— 只有收到的人知道。
+describe('客人收到的邮件是双语的', () => {
+  const order = {
+    customer_name: '张三',
+    customer_email: 'a@b.com',
+    pickup_code: '1234',
+    pickup_point_name: 'Allston 取餐点',
+    pickup_date: '2026-10-16',
+    pickup_time: '18:00',
+    run_date: '2026-10-16',
+    subtotal: 17.99, tax: 1.26, total: 19.25,
+    items: [{ nameZh: '江西香辣牛肉泡粉', nameEn: 'Jiangxi Spicy Beef Rice Noodle',
+              qty: 1, price: 17.99, optionsZh: ['单点', '小辣'], optionsEn: ['À la carte', 'Mild'] }],
+  }
+
+  const 每封 = [
+    ['下单确认', () => tplConfirmed({ ...order, capture_mode: 'manual' })],
+    ['收据', () => tplConfirmed({ ...order, capture_mode: 'automatic' })],
+    ['餐已做好', () => tplReady(order)],
+    ['已成团扣款', () => tplCaptured(order)],
+    ['未成团取消', () => tplCancelled(order)],
+  ]
+
+  it.each(每封)('%s:标题里中英文都有', (_name, make) => {
+    const { subject } = make()
+    expect(subject, '标题没有中文').toMatch(/[\u4e00-\u9fa5]/)
+    expect(subject, '标题没有英文').toMatch(/[A-Za-z]{3,}/)
+  })
+
+  it.each(每封)('%s:正文里中英文都有', (_name, make) => {
+    const { html } = make()
+    expect(html).toMatch(/[\u4e00-\u9fa5]/)
+    // 去掉 HTML 标签和样式再看 —— 否则 style/div 这些英文单词会让它白过
+    const text = html.replace(/<[^>]*>/g, ' ')
+    expect(text, '正文没有成句的英文').toMatch(/[A-Za-z]{3,}\s+[A-Za-z]{3,}/)
+  })
+
+  it('菜品名和选项都带英文 —— 「不辣」和「加辣」弄反是会吃坏人的', () => {
+    // 菜品清单在确认信/收据里(「餐已做好」那封只放取餐码,不重复列菜)
+    const { html } = tplConfirmed({ ...order, capture_mode: 'automatic' })
+    expect(html).toContain('江西香辣牛肉泡粉')
+    expect(html).toContain('Jiangxi Spicy Beef Rice Noodle')
+    expect(html).toContain('小辣')
+    expect(html).toContain('Mild')
+  })
+
+  it('取餐点也有英文名 —— 看不懂中文的人拿着这封信照样要找到地方', () => {
+    const { html } = tplCaptured(order)
+    expect(html).toContain('Allston 取餐点')
+    expect(html).toContain('Allston Pickup Spot')
   })
 })
