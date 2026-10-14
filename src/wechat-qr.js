@@ -9,9 +9,9 @@
 //      微信导出的有时是 .png 有时是 .JPG,换了扩展名却没改 QR_SRC,
 //      页面上就是一个破图框,而且本地开发看不出来,只有线上才会空)
 //   3. 把下面的 QR_EXPIRES 改成新码的失效日
-export const QR_EXPIRES = '2026-10-14'   // 当前这张码的失效日(含当天)
+export const QR_EXPIRES = '2026-10-21'   // 当前这张码的失效日(含当天)
 
-export const QR_SRC = 'images/Group chat_波士顿粉面王Noodle Fan.JPG'
+export const QR_SRC = 'images/Group chat_波士顿粉面王Noodle Fan.png'
 
 // 过期的码扫出来是报错页,不如不放 —— 到期后整块自动隐藏,
 // 免得客人扫半天以为店有问题。
